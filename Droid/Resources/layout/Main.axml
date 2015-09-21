@@ -109,7 +109,7 @@
             android:gravity="center"
             android:layout_alignParentRight="true" />
         <TextView
-            android:id="@+id/TextViewTimeNorth"
+            android:id="@+id/TextTimeNorth"
             android:text="2 Min"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -122,11 +122,11 @@
             android:textSize="26dp"
             android:textStyle="normal" />
         <TextView
-            android:id="@+id/TextViewDestNorth"
+            android:id="@+id/TextDestNorth"
             android:text="To Manhattan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/TextViewTimeNorth"
+            android:layout_below="@id/TextTimeNorth"
             android:layout_marginTop="5.0dp"
             android:gravity="center"
             android:fontFamily="sans-serif-light"
@@ -134,7 +134,7 @@
             android:typeface="sans"
             android:textSize="18dp"
             android:textStyle="normal"
-            android:layout_alignLeft="@id/TextViewTimeNorth" />
+            android:layout_alignLeft="@id/TextTimeNorth" />
     </LinearLayout>
 <!--    <GestureOverlayView
         android:layout_width="match_parent"

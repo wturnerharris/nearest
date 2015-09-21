@@ -92,14 +92,17 @@
     <AndroidResource Include="Resources\drawable-hdpi\orange.xml" />
     <AndroidResource Include="Resources\drawable-hdpi\purple.xml" />
     <AndroidResource Include="Resources\drawable-hdpi\brown.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\gray.xml" />
+    <AndroidResource Include="Resources\anim\tada.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Assets\fonts\" />
+    <Folder Include="Resources\anim\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\fonts\HelveticaNeueLTCom-Bd.ttf" />
     <AndroidAsset Include="Assets\fonts\HelveticaNeueLTCom-Lt.ttf" />
-    <AndroidAsset Include="Assets\fonts\HelveticaNeueLTCom-Md.ttf" />
+    <AndroidAsset Include="Assets\fonts\HelveticaNeueLTCom-Roman.ttf" />
   </ItemGroup>
 </Project>
