@@ -3,19 +3,26 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Net.Http;
 
 using Nearest.Models;
-using System.Net.Http;
 
 namespace Nearest.ViewModels
 {
 	public class TrainListViewModel : INotifyPropertyChanged
 	{
-		public ObservableCollection<Train> TrainList { get; set; }
+		String latitude;
+		String longitude;
+		public String requestString;
+		public ObservableCollection<Stop> stopListUptown { get; set; }
+		public ObservableCollection<Stop> stopListDowntown { get; set; }
 
-		public TrainListViewModel ()
+		public TrainListViewModel (Double lat, Double lon)
 		{
-			TrainList = new ObservableCollection<Train> ();
+			latitude = lat.ToString();
+			longitude = lon.ToString();
+			stopListUptown = new ObservableCollection<Stop> ();
+			stopListDowntown = new ObservableCollection<Stop> ();
 		}
 
 
@@ -40,14 +47,21 @@ namespace Nearest.ViewModels
 
 				var client = new HttpClient();
 
-				var json = await client.GetStringAsync("http://turnerharris.com/nearest/" +
-					"next.php?action=getTrains&lat=40.8248438&lon=-73.95145959999999&dir=0");
+				requestString = "http://turnerharris.com/nearest/" +
+					"next.php?action=getTrains&lat=" + latitude + "&lon=" + longitude;
 
-				var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Train>>(json);
-
-				foreach(var item in items)
+				for(int i = 0; i < 2; i++)
 				{
-					TrainList.Add(item);
+					var json = await client.GetStringAsync(requestString + "&dir="+ i.ToString());
+					var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Stop>>(json);
+
+					foreach( var item in items){
+						if (i==0) {
+							stopListDowntown.Add(item);
+						} else {
+							stopListUptown.Add(item);
+						}
+					}
 				}
 			}
 			finally 
