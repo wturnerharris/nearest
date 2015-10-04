@@ -12,27 +12,47 @@ namespace Nearest.Models
 		/**
 		 * Train Route ID / Label
 		 */
-		public string Name { get; set; }
+		public string route_id { get; set; }
 
 		/**
-		 * Arrival Time in Epoch
+		 * Arrival Time
 		 */
-		public string Time { get; set; }
+		public string arrival_time { get; set; }
 
 		/**
 		 * Stop or Station
 		 */
-		public string Stop { get; set; }
-
-		/**
-		 * Arrival time formatted
-		 */
-		public string Arrival { get; set; }
+		public string stop_name { get; set; }
 
 		/**
 		 * Last Stop and/or Headsign
 		 */
-		public string Destination { get; set; }
+		public string trip_headsign { get; set; }
+
+		/**
+		 * Arrival Time Epoch
+		 */
+		public int ts { get; set; }
+
+		/**
+		 * Return formatted time string
+		 */
+		public static String time (long unixTime) {
+			var unixDate = FromUnixTime (unixTime);
+			var newDate = (unixDate.TimeOfDay - DateTime.UtcNow.TimeOfDay).TotalMinutes;
+			var min = Math.Floor(newDate);
+			var timeStr = (min < 1 ? "< 1 Min" : min.ToString() + " Mins" );
+			return timeStr;
+		}
+
+		/**
+		 * Convert from unix time to DateTime
+		 */
+		public static DateTime FromUnixTime(long unixTime)
+		{
+			var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+			return epoch.AddSeconds(unixTime);
+		}
 	}
 }
 

@@ -49,18 +49,16 @@
         android:layout_below="@id/TextViewTagline">
         <Button
             android:id="@+id/ButtonSouth"
-            android:text="N"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_marginLeft="60.0dp"
-            android:layout_marginRight="60.0dp"
+            android:text=""
+            android:layout_width="75dip"
+            android:layout_height="75dip"
+            android:layout_marginLeft="60.0dip"
+            android:layout_marginRight="60.0dip"
             android:onClick="sendMessage"
             android:background="@drawable/yellow"
             android:fontFamily="sans-serif-light"
-            android:textSize="65dp"
-            android:textColor="@color/textblack"
-            android:textStyle="normal"
-            android:gravity="center" />
+            android:textSize="60dip"
+            android:textStyle="normal" />
         <TextView
             android:id="@+id/TextTimeSouth"
             android:text="5 Min"
@@ -94,20 +92,18 @@
         android:layout_below="@id/TextViewTagline"
         android:layout_alignParentRight="true">
         <Button
-            android:text="4"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:text=""
+            android:layout_width="75dip"
+            android:layout_height="75dip"
             android:id="@+id/ButtonNorth"
-            android:layout_marginLeft="60.0dp"
-            android:layout_marginRight="60.0dp"
+            android:layout_marginLeft="60.0dip"
+            android:layout_marginRight="60.0dip"
             android:onClick="sendMessage"
             android:layout_below="@id/TextViewTagline"
             android:background="@drawable/green"
             android:fontFamily="sans-serif-light"
-            android:textSize="65dp"
-            android:textStyle="normal"
-            android:gravity="center"
-            android:layout_alignParentRight="true" />
+            android:textSize="60dip"
+            android:textStyle="normal" />
         <TextView
             android:id="@+id/TextTimeNorth"
             android:text="2 Min"
