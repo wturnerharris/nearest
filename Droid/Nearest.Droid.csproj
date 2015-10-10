@@ -69,6 +69,7 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Detail.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -94,6 +95,7 @@
     <AndroidResource Include="Resources\drawable-hdpi\brown.xml" />
     <AndroidResource Include="Resources\drawable-hdpi\gray.xml" />
     <AndroidResource Include="Resources\anim\tada.xml" />
+    <AndroidResource Include="Resources\layout\Detail.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>

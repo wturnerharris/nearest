@@ -14,22 +14,22 @@ namespace Nearest.ViewModels
 		String latitude;
 		String longitude;
 		public String requestString;
-		public ObservableCollection<Stop> stopListUptown { get; set; }
-		public ObservableCollection<Stop> stopListDowntown { get; set; }
+
+		public ObservableCollection<List<Stop>> stopList { get; set; }
 
 		public TrainListViewModel (Double lat, Double lon)
 		{
-			latitude = lat.ToString();
-			longitude = lon.ToString();
-			stopListUptown = new ObservableCollection<Stop> ();
-			stopListDowntown = new ObservableCollection<Stop> ();
+			latitude = lat.ToString ();
+			longitude = lon.ToString ();
+			stopList = new ObservableCollection<List<Stop>> ();
+			stopList.Add (new List<Stop> ()); // down
+			stopList.Add (new List<Stop> ()); // up
 		}
 
 
 		private bool busy = false;
 
-		public bool IsBusy
-		{
+		public bool IsBusy {
 			get { return busy; }
 			set {
 				if (busy == value)
@@ -40,32 +40,26 @@ namespace Nearest.ViewModels
 			}
 		}
 
-		public async Task GetTrainsAsync(){
-			try
-			{
+		public async Task GetTrainsAsync ()
+		{
+			try {
 				IsBusy = true;
 
-				var client = new HttpClient();
+				var client = new HttpClient ();
 
 				requestString = "http://turnerharris.com/nearest/" +
-					"next.php?action=getTrains&lat=" + latitude + "&lon=" + longitude;
+				"next.php?action=getTrains&lat=" + latitude + "&lon=" + longitude;
 
-				for(int i = 0; i < 2; i++)
-				{
-					var json = await client.GetStringAsync(requestString + "&dir="+ i.ToString());
-					var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Stop>>(json);
+				for (int i = 0; i < 2; i++) {
+					var json = await client.GetStringAsync (requestString + "&dir=" + i.ToString ());
+					var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Stop>> (json);
 
-					foreach( var item in items){
-						if (i==0) {
-							stopListDowntown.Add(item);
-						} else {
-							stopListUptown.Add(item);
-						}
+					stopList [i].Clear (); // empty current list data
+					foreach (var item in items) {
+						stopList [i].Add (item);
 					}
 				}
-			}
-			finally 
-			{
+			} finally {
 				IsBusy = false;
 			}
 		}
@@ -78,13 +72,13 @@ namespace Nearest.ViewModels
 		#endregion
 
 
-		public void OnPropertyChanged(string name)
+		public void OnPropertyChanged (string name)
 		{
 			var changed = PropertyChanged;
 			if (changed == null)
 				return;
 
-			changed(this, new PropertyChangedEventArgs(name));
+			changed (this, new PropertyChangedEventArgs (name));
 
 
 		}

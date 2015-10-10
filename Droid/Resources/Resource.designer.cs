@@ -169,38 +169,41 @@ namespace Nearest.Droid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f080008
-			public const int ButtonNorth = 2131230728;
-			
-			// aapt resource value: 0x7f080004
-			public const int ButtonSouth = 2131230724;
-			
-			// aapt resource value: 0x7f080003
-			public const int LayoutDowntown = 2131230723;
-			
-			// aapt resource value: 0x7f080007
-			public const int LayoutUptown = 2131230727;
-			
-			// aapt resource value: 0x7f08000a
-			public const int TextDestNorth = 2131230730;
-			
-			// aapt resource value: 0x7f080006
-			public const int TextDestSouth = 2131230726;
-			
 			// aapt resource value: 0x7f080009
-			public const int TextTimeNorth = 2131230729;
+			public const int ButtonNorth = 2131230729;
 			
 			// aapt resource value: 0x7f080005
-			public const int TextTimeSouth = 2131230725;
+			public const int ButtonSouth = 2131230725;
+			
+			// aapt resource value: 0x7f080004
+			public const int LayoutDowntown = 2131230724;
+			
+			// aapt resource value: 0x7f080008
+			public const int LayoutUptown = 2131230728;
+			
+			// aapt resource value: 0x7f08000b
+			public const int TextDestNorth = 2131230731;
+			
+			// aapt resource value: 0x7f080007
+			public const int TextDestSouth = 2131230727;
+			
+			// aapt resource value: 0x7f08000a
+			public const int TextTimeNorth = 2131230730;
+			
+			// aapt resource value: 0x7f080006
+			public const int TextTimeSouth = 2131230726;
+			
+			// aapt resource value: 0x7f080003
+			public const int TextViewTagline = 2131230723;
 			
 			// aapt resource value: 0x7f080002
-			public const int TextViewTagline = 2131230722;
-			
-			// aapt resource value: 0x7f080001
-			public const int TextViewTitle = 2131230721;
+			public const int TextViewTitle = 2131230722;
 			
 			// aapt resource value: 0x7f080000
-			public const int mainLayout = 2131230720;
+			public const int detailView = 2131230720;
+			
+			// aapt resource value: 0x7f080001
+			public const int mainLayout = 2131230721;
 			
 			static Id()
 			{
@@ -216,7 +219,10 @@ namespace Nearest.Droid
 		{
 			
 			// aapt resource value: 0x7f030000
-			public const int Main = 2130903040;
+			public const int Detail = 2130903040;
+			
+			// aapt resource value: 0x7f030001
+			public const int Main = 2130903041;
 			
 			static Layout()
 			{

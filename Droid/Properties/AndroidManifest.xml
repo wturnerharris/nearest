@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.turnerharris.nearest">
 	<uses-sdk android:minSdkVersion="15" android:targetSdkVersion="22" />
-	<application android:label="Nearest" android:configChanges="orientation" android:screenOrientation="portrait">
-		<activity android:name=".MainActivity"    android:configChanges="orientation" android:screenOrientation="portrait" />
+	<application android:label="Nearest" android:configChanges="orientation" android:screenOrientation="portrait" android:icon="@drawable/icon">
+		<activity android:name=".MainActivity" android:configChanges="orientation" android:screenOrientation="portrait" />
 	</application>
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<uses-permission android:name="android.permission.INTERNET" />
