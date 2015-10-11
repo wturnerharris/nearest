@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <style name="NearestTheme" parent="android:Theme.Material.Light">
+        <!-- Your customizations go here -->
+        <item name="android:statusBarColor">@color/app_bars</item>
+		<item name="android:navigationBarColor">@color/app_bars</item>
+        <item name="android:textColorPrimary">@color/textblack</item>
+		<item name="android:colorPrimary">@color/app_bar</item>
+		<item name="android:colorPrimaryDark">@color/app_bar</item>
+		<item name="android:windowBackground">@color/app_bg</item>
+		<item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

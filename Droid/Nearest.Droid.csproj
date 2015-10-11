@@ -15,7 +15,7 @@
     <AndroidUseLatestPlatformSdk>True</AndroidUseLatestPlatformSdk>
     <AssemblyName>Nearest.Droid</AssemblyName>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
-    <TargetFrameworkVersion>v5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v6.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -85,22 +85,26 @@
     <AndroidResource Include="Resources\drawable-xhdpi\Icon.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\Icon.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\Icon.png" />
-    <AndroidResource Include="Resources\drawable-hdpi\yellow.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\green.xml" />
     <AndroidResource Include="Resources\values\Colors.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\red.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\blue.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\orange.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\purple.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\brown.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\gray.xml" />
     <AndroidResource Include="Resources\anim\tada.xml" />
     <AndroidResource Include="Resources\layout\Detail.axml" />
+    <AndroidResource Include="Resources\values\Styles.xml" />
+    <AndroidResource Include="Resources\values-v21\Styles.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\Blue.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\Brown.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\Gray.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\Green.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\Orange.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\Purple.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\Red.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\Yellow.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\Circle.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Assets\fonts\" />
     <Folder Include="Resources\anim\" />
+    <Folder Include="Resources\values-v21\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\fonts\HelveticaNeueLTCom-Bd.ttf" />

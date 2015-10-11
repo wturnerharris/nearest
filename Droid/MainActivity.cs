@@ -20,6 +20,8 @@ using Android.Net;
 using Nearest.ViewModels;
 using Nearest.Models;
 using Javax.Microedition.Khronos.Opengles;
+using Android.Graphics.Drawables;
+using Android.Graphics.Drawables.Shapes;
 
 namespace Nearest.Droid
 {
@@ -41,36 +43,37 @@ namespace Nearest.Droid
 		 */
 		public RelativeLayout mainLayout;
 		public LinearLayout northLayout, southLayout;
+		public bool isFullscreen = false;
 
 		protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate (bundle);
 
 			RequestWindowFeature (WindowFeatures.NoTitle);
-			Window.SetFlags (WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
 
 			// Set our view from the "main" layout resource
 			SetContentView (Resource.Layout.Main);
 
 			// Set Typeface and Styles
+			TypefaceStyle tfs = TypefaceStyle.Normal;
 			Typeface HnBd = Typeface.CreateFromAsset (Assets, "fonts/HelveticaNeueLTCom-Bd.ttf");
 			Typeface HnLt = Typeface.CreateFromAsset (Assets, "fonts/HelveticaNeueLTCom-Lt.ttf");
 			Typeface HnMd = Typeface.CreateFromAsset (Assets, "fonts/HelveticaNeueLTCom-Roman.ttf");
-			TypefaceStyle tfs = TypefaceStyle.Normal;
-
-			// Main app title and tagline
-			TextView title = FindViewById<TextView> (Resource.Id.TextViewTitle);
-			TextView tagLn = FindViewById<TextView> (Resource.Id.TextViewTagline);
-			TextView timeS = FindViewById<TextView> (Resource.Id.TextTimeSouth);
-			TextView destS = FindViewById<TextView> (Resource.Id.TextDestSouth);
-			TextView timeN = FindViewById<TextView> (Resource.Id.TextTimeNorth);
-			TextView destN = FindViewById<TextView> (Resource.Id.TextDestNorth);
 
 			mainLayout = FindViewById<RelativeLayout> (Resource.Id.mainLayout);
 			int childCount = mainLayout.ChildCount;
 
+			// Main app title and tagline
 			for (var i = 0; i < childCount; i++) {
 				switch (i) {
+				case 0:
+					TextView title = (TextView)mainLayout.GetChildAt (i);
+					title.SetTypeface (HnBd, tfs);
+					break;
+				case 1:
+					TextView tagLine = (TextView)mainLayout.GetChildAt (i);
+					tagLine.SetTypeface (HnLt, tfs);
+					break;
 				case 2:
 					southLayout = (LinearLayout)mainLayout.GetChildAt (i);
 					break;
@@ -82,34 +85,41 @@ namespace Nearest.Droid
 				}
 			}
 
-			//Animation hyperspaceJump = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
-
-			title.SetTypeface (HnBd, tfs);
-			tagLn.SetTypeface (HnLt, tfs);
-			timeS.SetTypeface (HnMd, tfs);
-			destS.SetTypeface (HnLt, tfs);
-			timeN.SetTypeface (HnMd, tfs);
-			destN.SetTypeface (HnLt, tfs);
-
 			/**
 			 * Define UI actions
 			 * 
 			 */
+			mainLayout.Click += delegate(object sender, EventArgs e) {
+				if (isFullscreen) {
+					Window.ClearFlags (WindowManagerFlags.Fullscreen);
+					isFullscreen = false;
+				} else {
+					Window.SetFlags (WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
+					isFullscreen = true;
+				}
+			};
 			for (var i = 0; i < 2; i++) {
 				var direction = i == 0 ? southLayout : northLayout;
+
+				TextView times = (TextView)direction.FindViewWithTag (tag: "time");
+				TextView label = (TextView)direction.FindViewWithTag (tag: "label");
+				times.SetTypeface (HnMd, tfs);
+				label.SetTypeface (HnLt, tfs);
+
 				Button button = (Button)direction.FindViewWithTag (tag: "button");
 				button.FindViewWithTag (tag: "button").Click += delegate {
 					var count = 0;
 					//StartActivity (typeof(Detail));
+					//Animation hyperspaceJump = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
 
 					Intent intent = new Intent (this, typeof(Detail));
-					ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (button, 0,
-						                          0, 60, 60);
+					ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (button, 0, 0, 60, 60);
+					intent.PutExtra ("trains", "test passed intent data");
 					StartActivity (intent, options.ToBundle ());
 
 					button.Text = string.Format ("{0}", count++);
 					button.SetBackgroundResource (
-						count % 2 == 0 ? Resource.Drawable.orange : Resource.Drawable.purple
+						count % 2 == 0 ? Resource.Drawable.Orange : Resource.Drawable.Purple
 					);
 				};
 			}
@@ -230,8 +240,13 @@ namespace Nearest.Droid
 						foreach (var direction in trainLVM.stopList) {
 							var nearestDirection = trainLVM.stopList [i] [0].next_train;
 							if (nearestDirection != null) {
+								//LayerDrawable bgDrawable = (LayerDrawable)button.Background;
+								//ColorDrawable circle = (ColorDrawable)bgDrawable.FindDrawableByLayerId (
+								//	                       Resource.Id.Circle);
+								//circle.Color = Color.Aquamarine;
 								button.Text = nearestDirection.route_id;
 								button.SetBackgroundResource (getTrainColor (nearestDirection.route_id));
+								button.SetTextColor (Color.White);
 								time.Text = Train.time (nearestDirection.ts);
 							} else {
 								button.Text = "!";
@@ -255,40 +270,40 @@ namespace Nearest.Droid
 			case "1":
 			case "2":
 			case "3":
-				resourceDrawable = Resource.Drawable.red;
+				resourceDrawable = Resource.Drawable.Red;
 				break;
 			case "A":
 			case "C":
 			case "E":
-				resourceDrawable = Resource.Drawable.blue;
+				resourceDrawable = Resource.Drawable.Blue;
 				break;
 			case "N":
 			case "Q":
 			case "R":
-				resourceDrawable = Resource.Drawable.yellow;
+				resourceDrawable = Resource.Drawable.Yellow;
 				break;
 			case "4":
 			case "5":
 			case "6":
 			case "G": /** TODO: This is alternate green */
-				resourceDrawable = Resource.Drawable.green;
+				resourceDrawable = Resource.Drawable.Green;
 				break;
 			case "B":
 			case "D":
 			case "F":
 			case "M":
-				resourceDrawable = Resource.Drawable.orange;
+				resourceDrawable = Resource.Drawable.Orange;
 				break;
 			case "7":
-				resourceDrawable = Resource.Drawable.purple;
+				resourceDrawable = Resource.Drawable.Purple;
 				break;
 			case "J":
 			case "Z":
-				resourceDrawable = Resource.Drawable.brown;
+				resourceDrawable = Resource.Drawable.Brown;
 				break;
 			case "L":
 			default: 
-				resourceDrawable = Resource.Drawable.gray;
+				resourceDrawable = Resource.Drawable.Gray;
 				break;
 			}
 			return resourceDrawable;

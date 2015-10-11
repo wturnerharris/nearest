@@ -77,44 +77,59 @@ namespace Nearest.Droid
 		public partial class Color
 		{
 			
-			// aapt resource value: 0x7f060002
-			public const int bg = 2131099650;
-			
 			// aapt resource value: 0x7f060003
-			public const int blue = 2131099651;
-			
-			// aapt resource value: 0x7f060008
-			public const int darkblue = 2131099656;
-			
-			// aapt resource value: 0x7f06000a
-			public const int darkgreen = 2131099658;
-			
-			// aapt resource value: 0x7f06000b
-			public const int darkorange = 2131099659;
-			
-			// aapt resource value: 0x7f060009
-			public const int darkpurple = 2131099657;
-			
-			// aapt resource value: 0x7f06000c
-			public const int darkred = 2131099660;
-			
-			// aapt resource value: 0x7f060005
-			public const int green = 2131099653;
-			
-			// aapt resource value: 0x7f060006
-			public const int orange = 2131099654;
+			public const int app_bar = 2131099651;
 			
 			// aapt resource value: 0x7f060004
-			public const int purple = 2131099652;
+			public const int app_bars = 2131099652;
+			
+			// aapt resource value: 0x7f060002
+			public const int app_bg = 2131099650;
+			
+			// aapt resource value: 0x7f060005
+			public const int blue = 2131099653;
 			
 			// aapt resource value: 0x7f060007
-			public const int red = 2131099655;
+			public const int brown = 2131099655;
+			
+			// aapt resource value: 0x7f06000d
+			public const int darkblue = 2131099661;
+			
+			// aapt resource value: 0x7f06000f
+			public const int darkgreen = 2131099663;
+			
+			// aapt resource value: 0x7f060010
+			public const int darkorange = 2131099664;
+			
+			// aapt resource value: 0x7f06000e
+			public const int darkpurple = 2131099662;
+			
+			// aapt resource value: 0x7f060011
+			public const int darkred = 2131099665;
+			
+			// aapt resource value: 0x7f060009
+			public const int gray = 2131099657;
+			
+			// aapt resource value: 0x7f060008
+			public const int green = 2131099656;
+			
+			// aapt resource value: 0x7f06000a
+			public const int orange = 2131099658;
+			
+			// aapt resource value: 0x7f06000c
+			public const int purple = 2131099660;
+			
+			// aapt resource value: 0x7f06000b
+			public const int red = 2131099659;
 			
 			// aapt resource value: 0x7f060000
 			public const int textblack = 2131099648;
 			
 			// aapt resource value: 0x7f060001
 			public const int textgray = 2131099649;
+			
+			// aapt resource value: 0x7f060006
+			public const int yellow = 2131099654;
 			
 			static Color()
 			{
@@ -130,31 +145,34 @@ namespace Nearest.Droid
 		{
 			
 			// aapt resource value: 0x7f020000
-			public const int blue = 2130837504;
+			public const int Blue = 2130837504;
 			
 			// aapt resource value: 0x7f020001
-			public const int brown = 2130837505;
+			public const int Brown = 2130837505;
 			
 			// aapt resource value: 0x7f020002
-			public const int gray = 2130837506;
+			public const int Circle = 2130837506;
 			
 			// aapt resource value: 0x7f020003
-			public const int green = 2130837507;
+			public const int Gray = 2130837507;
 			
 			// aapt resource value: 0x7f020004
-			public const int Icon = 2130837508;
+			public const int Green = 2130837508;
 			
 			// aapt resource value: 0x7f020005
-			public const int orange = 2130837509;
+			public const int Icon = 2130837509;
 			
 			// aapt resource value: 0x7f020006
-			public const int purple = 2130837510;
+			public const int Orange = 2130837510;
 			
 			// aapt resource value: 0x7f020007
-			public const int red = 2130837511;
+			public const int Purple = 2130837511;
 			
 			// aapt resource value: 0x7f020008
-			public const int yellow = 2130837512;
+			public const int Red = 2130837512;
+			
+			// aapt resource value: 0x7f020009
+			public const int Yellow = 2130837513;
 			
 			static Drawable()
 			{
@@ -169,41 +187,44 @@ namespace Nearest.Droid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f080009
-			public const int ButtonNorth = 2131230729;
+			// aapt resource value: 0x7f090009
+			public const int ButtonNorth = 2131296265;
 			
-			// aapt resource value: 0x7f080005
-			public const int ButtonSouth = 2131230725;
+			// aapt resource value: 0x7f090005
+			public const int ButtonSouth = 2131296261;
 			
-			// aapt resource value: 0x7f080004
-			public const int LayoutDowntown = 2131230724;
+			// aapt resource value: 0x7f09000c
+			public const int Circle = 2131296268;
 			
-			// aapt resource value: 0x7f080008
-			public const int LayoutUptown = 2131230728;
+			// aapt resource value: 0x7f090004
+			public const int LayoutDowntown = 2131296260;
 			
-			// aapt resource value: 0x7f08000b
-			public const int TextDestNorth = 2131230731;
+			// aapt resource value: 0x7f090008
+			public const int LayoutUptown = 2131296264;
 			
-			// aapt resource value: 0x7f080007
-			public const int TextDestSouth = 2131230727;
+			// aapt resource value: 0x7f09000b
+			public const int TextDestNorth = 2131296267;
 			
-			// aapt resource value: 0x7f08000a
-			public const int TextTimeNorth = 2131230730;
+			// aapt resource value: 0x7f090007
+			public const int TextDestSouth = 2131296263;
 			
-			// aapt resource value: 0x7f080006
-			public const int TextTimeSouth = 2131230726;
+			// aapt resource value: 0x7f09000a
+			public const int TextTimeNorth = 2131296266;
 			
-			// aapt resource value: 0x7f080003
-			public const int TextViewTagline = 2131230723;
+			// aapt resource value: 0x7f090006
+			public const int TextTimeSouth = 2131296262;
 			
-			// aapt resource value: 0x7f080002
-			public const int TextViewTitle = 2131230722;
+			// aapt resource value: 0x7f090003
+			public const int TextViewTagline = 2131296259;
 			
-			// aapt resource value: 0x7f080000
-			public const int detailView = 2131230720;
+			// aapt resource value: 0x7f090002
+			public const int TextViewTitle = 2131296258;
 			
-			// aapt resource value: 0x7f080001
-			public const int mainLayout = 2131230721;
+			// aapt resource value: 0x7f090000
+			public const int detailView = 2131296256;
+			
+			// aapt resource value: 0x7f090001
+			public const int mainLayout = 2131296257;
 			
 			static Id()
 			{
@@ -252,6 +273,22 @@ namespace Nearest.Droid
 			}
 			
 			private String()
+			{
+			}
+		}
+		
+		public partial class Style
+		{
+			
+			// aapt resource value: 0x7f080000
+			public const int NearestTheme = 2131230720;
+			
+			static Style()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Style()
 			{
 			}
 		}

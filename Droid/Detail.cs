@@ -10,6 +10,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Nearest.ViewModels;
 
 namespace Nearest.Droid
 {
@@ -21,6 +22,9 @@ namespace Nearest.Droid
 			base.OnCreate (bundle);
 
 			SetContentView (Resource.Layout.Detail);
+
+			var trains = Intent.GetStringExtra ("trains");
+			System.Console.WriteLine (trains);
 		}
 	}
 }
