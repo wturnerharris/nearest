@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="#8A8A8A">
+    <TextView
+        android:id="@+id/AlertContent"
+        android:layout_width="fill_parent"
+        android:paddingTop="10dp"
+        android:layout_height="wrap_content"
+        android:text="Custom Alert"
+        android:textColor="#ffffff"
+        android:background="#8A8A8A"
+        android:textSize="20sp"
+        android:typeface="sans"
+        android:gravity="center"
+        android:textAlignment="center" />
+</LinearLayout>
