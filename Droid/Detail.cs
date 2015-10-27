@@ -26,9 +26,15 @@ namespace Nearest.Droid
 			TextView RouteView = FindViewById<TextView> (Resource.Id.textView1);
 
 			var json = Intent.GetStringExtra ("trainLVM");
+			var dir = Intent.GetIntExtra ("direction", 0);
 			if (json != null) {
 				var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<List<Stop>>> (json);
-				RouteView.Text = "Data: " + items.Count + "\n" + json;
+				RouteView.Text = String.Format (
+					"Total Payload: {0}\nDirection: {1}\nDirection: {2}", 
+					items.Count, 
+					dir > 0 ? "North" : "South", 
+					json
+				);
 			} else {
 				RouteView.Text = "Json error!!";
 			}
