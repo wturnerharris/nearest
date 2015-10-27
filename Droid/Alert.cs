@@ -15,7 +15,7 @@ using Java.Lang;
 namespace Nearest.Droid
 {
 	[Activity (Label = "Alert")]			
-	public class Alert : Activity
+	public class Alert : Activity //DialogFragment
 	{
 		static int EXIT_DELAY = 3500;
 
@@ -33,21 +33,20 @@ namespace Nearest.Droid
 			try {
 				Bundle extras = this.Intent.Extras;
 				if (extras != null) {	
-					strNotificationToShow = extras.Get ().toString ();
-					myParentWidth = extras.GetInt ();
+					strNotificationToShow = extras.GetString ("alertBoxText");
+					myParentWidth = extras.GetInt ("parentWidth");
 				} else {
 					strNotificationToShow = "Oops.. Something went wrong.";
 					myParentWidth = this.Window.Attributes.Width;
 				}
-			} catch (Exception e) {
-				//e.PrintStackTrace ();
+			} catch (System.Exception e) {
+				System.Console.WriteLine (e.ToString ());
 				strNotificationToShow = "Oops.. Something went wrong.";
 				myParentWidth = this.Window.Attributes.Width;
 			} finally {
 				details.Text = strNotificationToShow;
 			}
 			WindowManagerLayoutParams Params = this.Window.Attributes;
-			//WindowManager.LayoutParams param = this.Window.Attributes;  
 			Params.Width = myParentWidth;
 			Params.Gravity = GravityFlags.Bottom;
 
@@ -64,9 +63,7 @@ namespace Nearest.Droid
 
 		private Runnable Exit ()
 		{
-			return new Runnable () {
-				Run = () => Finish ()
-			};
+			return new Runnable (() => Finish ());
 		}
 	}
 }
