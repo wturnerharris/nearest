@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <resources>
-    <style name="NearestTheme" parent="@style/Theme.AppCompat.Light">
+    <style name="Theme.Nearest" parent="@style/Theme.AppCompat.Light">
         <!-- Your customizations go here -->
 		<item name="windowNoTitle">true</item>
 		<item name="windowActionBar">false</item>

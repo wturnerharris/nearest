@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <resources>
-    <style name="NearestTheme" parent="android:Theme.Holo.Light">
+    <style name="Theme.Nearest" parent="android:Theme.Holo.Light">
         <!-- Your customizations go here -->
     </style>
 </resources>
