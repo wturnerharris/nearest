@@ -19,9 +19,14 @@ using Android.Net;
 using Android.Support.Design;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
+using Android.Gms.Location;
+using Android.Gms.Common.Apis;
+using Android.Util;
 
 using Nearest.ViewModels;
 using Nearest.Models;
+
+using Runnable = Java.Lang.Runnable;
 
 namespace Nearest.Droid
 {
@@ -31,11 +36,14 @@ namespace Nearest.Droid
 		Icon = "@drawable/icon", 
 		ScreenOrientation = ScreenOrientation.Portrait
 	)]
-	public class MainActivity : AppCompatActivity, ILocationListener
+	public class MainActivity : AppCompatActivity, 
+	GoogleApiClient.IConnectionCallbacks, 
+	GoogleApiClient.IOnConnectionFailedListener, 
+	Android.Gms.Location.ILocationListener
 	{
-		protected LocationManager locationMgr;
 		public TrainListViewModel trainLVM;
-		public Location location;
+		public Location CurrentLocation;
+		GoogleApiClient googleApiClient;
 
 		/**
 		 * Public UI Elements
@@ -44,7 +52,6 @@ namespace Nearest.Droid
 		public RelativeLayout mainLayout;
 		public LinearLayout northLayout, southLayout;
 		public bool isFullscreen = false;
-		public Intent pendingIntent;
 
 		readonly string[] PermissionsLocation = {
 			Manifest.Permission.AccessCoarseLocation,
@@ -69,7 +76,6 @@ namespace Nearest.Droid
 
 			mainLayout = FindViewById<RelativeLayout> (Resource.Id.mainLayout);
 			int childCount = mainLayout.ChildCount;
-			pendingIntent = new Intent (this, typeof(Detail));
 
 			// Main app title and tagline
 			for (var i = 0; i < childCount; i++) {
@@ -105,9 +111,11 @@ namespace Nearest.Droid
 					Window.SetFlags (WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
 					isFullscreen = true;
 				}
+				ShowAlert (isFullscreen ? "Fullscreen enabled" : "Fullscreen disabled");
 			};
 			for (var i = 0; i < 2; i++) {
 				var direction = i == 0 ? southLayout : northLayout;
+				var dirString = i == 0 ? "South" : "North";
 
 				TextView times = (TextView)direction.FindViewWithTag (tag: "time");
 				TextView label = (TextView)direction.FindViewWithTag (tag: "label");
@@ -115,25 +123,23 @@ namespace Nearest.Droid
 				label.SetTypeface (HnLt, tfs);
 
 				Button button = (Button)direction.FindViewWithTag (tag: "button");
-				int count = i;
 				button.FindViewWithTag (tag: "button").Click += delegate {
 					//StartActivity (typeof(Detail));
 					//Animation hyperspaceJump = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
 
-					ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (button, 0, 0, 60, 60);
-					if (pendingIntent == null) {
-						pendingIntent = new Intent (this, typeof(Detail));
-					}
 					if (trainLVM != null) {
+						ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (button, 0, 0, 60, 60);
+						Intent pendingIntent = new Intent (this, typeof(Detail));
 						var toJson = Newtonsoft.Json.JsonConvert.SerializeObject (trainLVM.stopList);
 						pendingIntent.PutExtra ("trainLVM", toJson);
+						pendingIntent.PutExtra ("direction", dirString);
+						StartActivity (pendingIntent, options.ToBundle ());
+					} else {
+						button.Text = "!";
+						button.SetBackgroundResource (
+							GetTrainColor ("")
+						);
 					}
-					StartActivity (pendingIntent, options.ToBundle ());
-
-					button.Text = string.Format ("{0}", count++);
-					button.SetBackgroundResource (
-						count % 2 == 0 ? Resource.Drawable.Orange : Resource.Drawable.Purple
-					);
 				};
 			}
 
@@ -158,9 +164,7 @@ namespace Nearest.Droid
 		protected override void OnPause ()
 		{
 			base.OnPause ();
-			if (locationMgr != null) {
-				locationMgr.RemoveUpdates (this);
-			}
+			EndLocationUpdates ();
 		}
 
 		/**
@@ -169,18 +173,16 @@ namespace Nearest.Droid
 		 */
 		public void handleConnections (String source)
 		{
-			Toast.MakeText (this, "Getting location info", ToastLength.Long).Show ();
 			if (IsConnected ()) {
 				try {
-					Task.RunOnUIThread (() => TryGetLocation ());
-					Task.RunOnUIThread (() => getTrainModelsAsync ());
+					Task.Run (() => TryGetLocation ());
 				} catch (Exception ex) {
-					System.Console.WriteLine ("DBG: Exception (handleConnections):\n" +
-					ex.Message.ToString ());
+					Report ("Exception (handleConnections):\n" +
+					ex.Message.ToString (), 0);
 				}
 			} else {
 				// Create ui-based handler for no internet
-				System.Console.WriteLine ("DBG: No internet is available");
+				Report ("No internet is available", 2);
 			}
 			return;
 		}
@@ -203,6 +205,7 @@ namespace Nearest.Droid
 		 */
 		async void TryGetLocation ()
 		{
+			Report ("Getting location info", 0);
 			if ((int)Build.VERSION.SdkInt < 23) {
 				await GetLocationAsync ();
 				return;
@@ -216,16 +219,16 @@ namespace Nearest.Droid
 			//Check to see if any permission in our group is available, if one, then all are
 			const string permission = Manifest.Permission.AccessFineLocation;
 			if (CheckSelfPermission (permission) == (int)Permission.Granted) {
-				System.Console.WriteLine ("DBG: Location permission granted.");
+				Report ("Location permission granted.", 0);
 				await GetLocationAsync ();
 				return;
 			}
 
 			//need to request permission
 			if (ShouldShowRequestPermissionRationale (permission)) {
-				System.Console.WriteLine ("DBG: Should show reason for permission.");
+				Report ("Should show reason for permission.", 0);
 				//Explain to the user why we need to read the contacts
-				Snackbar.Make (mainLayout, 
+				Snackbar.Make (FindViewById (Resource.Id.CoordinatorView), 
 					"Location access is required to show trains nearest you.", Snackbar.LengthIndefinite)
 					.SetAction ("OK", v => RequestPermissions (PermissionsLocation, RequestLocationId))
 					.Show ();
@@ -238,25 +241,22 @@ namespace Nearest.Droid
 		public override async void OnRequestPermissionsResult 
 		(int requestCode, string[] permissions, Permission[] grantResults)
 		{
-			System.Console.WriteLine ("DBG: Request Code:" + requestCode.ToString ());
+			Report ("Request Code:" + requestCode.ToString (), 0);
 			switch (requestCode) {
 			case RequestLocationId:
 				{
 					if (grantResults [0] == Permission.Granted) {
-						System.Console.WriteLine ("DBG: permission available");
+						Report ("Permission granted.", 0);
 						//Permission granted
-						Toast.MakeText (this,
-							"Location permission is available, getting lat/long",
-							ToastLength.Long).Show ();
-						
 						await GetLocationAsync ();
 					} else {
 						//Permission Denied :(
 						//Disabling location functionality
-						System.Console.WriteLine ("DBG: Location permission is denied.");
-						Toast.MakeText (this,
-							"Location permission is denied",
-							ToastLength.Long).Show ();
+						Report ("Location permission is denied.", 0);
+						Snackbar.Make (FindViewById (Resource.Id.CoordinatorView), 
+							"Location permission is denied.", Snackbar.LengthIndefinite)
+							.SetAction ("Try again?", v => RequestPermissions (PermissionsLocation, RequestLocationId))
+							.Show ();
 					}
 				}
 				break;
@@ -265,62 +265,42 @@ namespace Nearest.Droid
 
 		public async Task GetLocationAsync ()
 		{ 
-			System.Console.WriteLine ("DBG: Getting Location Async...");
 			try {
-				location = getLocation ();
-				await Task.Run (() => getLocation ());
+				Report ("Getting location async...", 0);
+				// register for location updates
+				await Task.Run (() => {
+					googleApiClient = new GoogleApiClient.Builder (this)
+						.AddApi (Android.Gms.Location.LocationServices.API)
+						.AddConnectionCallbacks (this)
+						.AddOnConnectionFailedListener (this)
+						.Build ();
+					googleApiClient.Connect ();
+				});
 			} catch (Exception ex) {
-				Toast.MakeText (this,
-					"Unable to get location",
-					ToastLength.Long).Show ();
-				System.Console.WriteLine ("DBG: Unable to get location: " + ex.ToString ());
-			} finally {
-				
+				Report ("Unable to get location\nDBG Exception: " + ex.ToString (), 2);
 			}
 		}
 
-		public Location getLocation ()
+		public void EndLocationUpdates ()
 		{
-			locationMgr = GetSystemService (Context.LocationService) as LocationManager;
-
-			Criteria locationCriteria = new Criteria ();
-			locationCriteria.Accuracy = Accuracy.Fine;
-			locationCriteria.PowerRequirement = Power.NoRequirement;
-			String LocationManagerBestProvider = locationMgr.GetBestProvider (locationCriteria, true);
-
-			string[] providers = {
-				LocationManager.PassiveProvider,
-				LocationManagerBestProvider,
-				LocationManager.NetworkProvider
-			};
-			int i;
-			for (i = 0; i < providers.Length; i++) {
-				System.Console.WriteLine ("DBG: Trying to get location, attempt #" + i.ToString ());
-				if (providers [i] != null && locationMgr.IsProviderEnabled (providers [i])) {
-					System.Console.WriteLine ("DBG: Requesting Updates for " + providers [i]);
-					locationMgr.RequestLocationUpdates (providers [i], 100, 0, this);
-				}
+			if (googleApiClient != null) {
+				LocationServices.FusedLocationApi.RemoveLocationUpdates (googleApiClient, this);
 			}
-			location = locationMgr.GetLastKnownLocation (providers [i - 1]);
-			return location;
 		}
 
 		/**
 		 * Set next train info
 		 * 
 		 */
-		public void setNextTrains ()
+		public void SetNextTrains ()
 		{
 			if (trainLVM.IsBusy) {
-				Toast.MakeText (this,
-					"TrainVLM is busy",
-					ToastLength.Long).Show ();
-				System.Console.WriteLine ("DBG: Async busy");
+				Report ("Still getting trains...", 0);
 			} else {
-				System.Console.WriteLine ("DBG: Setting next trains...");
+				Report ("Setting next trains...", 0);
 				// Loop throuh south and north view groups 
 				for (var i = 0; i < 2; i++) {
-					System.Console.WriteLine ("DBG: SetNextTrain" + i.ToString ());
+					Report ("SetNextTrain" + (i + 1).ToString (), 0);
 					var path = i == 0 ? southLayout : northLayout;
 					var button = (Button)path.FindViewWithTag (tag: "button");
 					var time = (TextView)path.FindViewWithTag (tag: "time");
@@ -330,12 +310,12 @@ namespace Nearest.Droid
 							var nearestDirection = trainLVM.stopList [i] [0].next_train;
 							if (nearestDirection != null) {
 								button.Text = nearestDirection.route_id;
-								button.SetBackgroundResource (getTrainColor (nearestDirection.route_id));
+								button.SetBackgroundResource (GetTrainColor (nearestDirection.route_id));
 								button.SetTextColor (Color.White);
 								time.Text = Train.time (nearestDirection.ts);
 							} else {
 								button.Text = "!";
-								button.SetBackgroundResource (getTrainColor ("0"));
+								button.SetBackgroundResource (GetTrainColor ("0"));
 								time.Text = "Problem";
 							}
 						}
@@ -348,7 +328,7 @@ namespace Nearest.Droid
 		 * Get Train Color
 		 * 
 		 */
-		public int getTrainColor (String StopId)
+		public int GetTrainColor (String StopId)
 		{
 			int resourceDrawable;
 			switch (StopId) {
@@ -398,62 +378,171 @@ namespace Nearest.Droid
 		 * Get train list view model
 		 * 
 		 */
-		public async Task getTrainModelsAsync ()
+		public void GetTrainModels (Location locationData)
 		{
-			if (location != null) {
-				Toast.MakeText (this,
-					"Lat: " + location.Latitude +
-					"\nLong: " + location.Longitude,
-					ToastLength.Long).Show ();
-				System.Console.WriteLine (
-					"DBG: Lat: " + location.Latitude +
-					"\nDBG: Long: " + location.Longitude
+			if (locationData != null) {
+				Report (
+					"Lat: " + locationData.Latitude +
+					"\nLong: " + locationData.Longitude,
+					2
 				);
 
 				try {
-					trainLVM = new TrainListViewModel (location.Latitude, location.Longitude);
-					await trainLVM.GetTrainsAsync ();
+					trainLVM = new TrainListViewModel (locationData.Latitude, locationData.Longitude);
+					Task.Run (
+						() => trainLVM.GetTrainsAsync ()
+					).ContinueWith (
+						task => RunOnUiThread (
+							() => SetNextTrains ()
+						)
+					).Wait ();
 				} catch (Exception ex) {
-					System.Console.WriteLine ("DBG: Exception: " + ex.Message.ToString ());
+					Report ("Exception: " + ex.Message.ToString (), 0);
 				} finally {
 					if (!this.trainLVM.IsBusy) {
-						Toast.MakeText (this,
-							"Train schedule received",
-							ToastLength.Long).Show ();
-						setNextTrains ();
+						Report ("Train schedule received", 0);
+					} else {
+						EndLocationUpdates ();
 					}
 				}
 			} else {
-				Toast.MakeText (this,
-					"Location not available",
-					ToastLength.Long).Show ();
-				System.Console.WriteLine ("DBG: problem getting getTrainModelsAsync");
+				Report ("problem getting GetTrainModelsAsync", 2);
 			}
 		}
 
-		public void OnProviderEnabled (string provider)
+		public void Report (String msg, int verbosity)
 		{
-			System.Console.WriteLine ("DBG: OnProviderEnabled");
+			RunOnUiThread (() => {
+				var appName = GetString (Resource.String.title) ?? "Nearest";
+				switch (verbosity) {
+				case 0:
+					Log.Debug (appName, "DBG: " + msg);
+					break;
+				case 1:
+					Toast.MakeText (this, msg, ToastLength.Short).Show ();
+					break;
+				case 2:
+					Report (msg, 0);
+					Report (msg, 1);
+					break;
+				}
+			});
+			return;
 		}
 
-		public void OnProviderDisabled (string provider)
+		public void ShowAlert (String str)
 		{
-			System.Console.WriteLine ("DBG: OnProviderDisabled");
+			var alertString = str == null ? "Unknown Issue" : str;
+
+			View coordinatorLayoutView = FindViewById<CoordinatorLayout> (Resource.Id.CoordinatorView);
+			if (coordinatorLayoutView != null) {
+				Snackbar.Make (coordinatorLayoutView, alertString, Snackbar.LengthShort).Show ();
+			} else {
+				ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (mainLayout, 0, 0, 60, 60);
+				Intent pendingIntent = new Intent (this, typeof(Alert));
+				pendingIntent.PutExtra ("alertBoxText", alertString);
+				pendingIntent.PutExtra ("parentWidth", mainLayout.Width);
+				StartActivity (pendingIntent, options.ToBundle ());
+			}
+
+			return;
 		}
 
-		public void OnStatusChanged (string provider, Availability status, Bundle extras)
+		public void OnLocationChanged (Location NewLocation)
 		{
-			System.Console.WriteLine ("DBG: OnStatusChanged");
+			// Show latest location
+			var l = DescribeLocation (NewLocation);
+			Report ("OnLocationChanged:\n" + l, 0);
+			EndLocationUpdates ();
+			GetTrainModels (NewLocation);
 		}
 
-		public void OnLocationChanged (Location locationChanged)
+		public async void OnConnected (Bundle connectionHint)
+		{           
+			// Get Last known location
+			var lastLocation = LocationServices.FusedLocationApi.GetLastLocation (googleApiClient);
+			Report (lastLocation == null ? "NULL" : DescribeLocation (lastLocation), 0);
+
+			await RequestLocationUpdates ();
+		}
+
+		async Task RequestLocationUpdates ()
 		{
-			System.Console.WriteLine ("DBG: OnLocationChanged");
-			if (locationChanged != null) {
-				location = locationChanged;
-				locationMgr.RemoveUpdates (this);
-				Task.Run (() => getTrainModelsAsync ());
+			// Describe our location request
+			var locationRequest = new LocationRequest ()
+				.SetInterval (10000)
+				.SetFastestInterval (1000)
+				.SetPriority (LocationRequest.PriorityHighAccuracy);
+
+			// Check to see if we can request updates first
+			if (await CheckLocationAvailability (locationRequest)) {
+
+				// Request updates
+				await LocationServices.FusedLocationApi.RequestLocationUpdates (googleApiClient,
+					locationRequest, 
+					this);
 			}
 		}
+
+		async Task<bool> CheckLocationAvailability (LocationRequest locationRequest)
+		{
+			// Build a new request with the given location request
+			var locationSettingsRequest = new LocationSettingsRequest.Builder ()
+				.AddLocationRequest (locationRequest)
+				.Build ();
+
+			// Ask the Settings API if we can fulfill this request
+			var locationSettingsResult = await LocationServices.SettingsApi.CheckLocationSettingsAsync (googleApiClient, locationSettingsRequest);
+
+
+			// If false, we might be able to resolve it by showing the location settings 
+			// to the user and allowing them to change the settings
+			if (!locationSettingsResult.Status.IsSuccess) {
+
+				if (locationSettingsResult.Status.StatusCode == LocationSettingsStatusCodes.ResolutionRequired)
+					locationSettingsResult.Status.StartResolutionForResult (this, 101);
+				else
+					Toast.MakeText (this, "Location Services Not Available for the given request.", ToastLength.Long).Show ();
+
+				return false;
+			}
+
+			return true;
+		}
+
+		public void OnConnectionSuspended (int cause)
+		{
+			Console.WriteLine ("GooglePlayServices Connection Suspended: {0}", cause);
+		}
+
+		public void OnConnectionFailed (Android.Gms.Common.ConnectionResult result)
+		{
+			Console.WriteLine ("GooglePlayServices Connection Failed: {0}", result);
+		}
+
+		protected override async void OnActivityResult (int requestCode, Result resultCode, Intent data)
+		{
+			base.OnActivityResult (requestCode, resultCode, data);
+
+			// See if we returned from a location settings dialog 
+			// and if succesfully, we can try location updates again
+			if (requestCode == 101) {
+				if (resultCode == Result.Ok)
+					await RequestLocationUpdates ();
+				else
+					Report ("Failed to resolve Location Settings changes", 1);
+			}
+		}
+
+		public string DescribeLocation (Location location)
+		{
+			CurrentLocation = location;
+			return string.Format ("{0}: {1}, {2} @ {3}",
+				location.Provider,
+				location.Latitude,
+				location.Longitude,
+				new DateTime (1970, 1, 1, 0, 0, 0).AddMilliseconds (location.Time));
+		}
+
 	}
 }
