@@ -25,10 +25,10 @@ namespace Nearest.Droid
 			SetContentView (Resource.Layout.Detail);
 			TextView RouteView = FindViewById<TextView> (Resource.Id.textView1);
 
-			var json = Intent.GetStringExtra ("trainLVM");
+			var json = Intent.GetStringExtra ("nextTimes");
 			var dir = Intent.GetStringExtra ("direction");
 			if (json != null) {
-				var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<List<Stop>>> (json);
+				var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Train>> (json);
 				RouteView.Text = String.Format (
 					"Total Payload: {0}\nDirection: {1}\nData: {2}", 
 					items.Count, 
