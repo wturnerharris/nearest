@@ -20,6 +20,7 @@ using Android.Support.Design;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Gms.Location;
+using Android.Gms.Common;
 using Android.Gms.Common.Apis;
 using Android.Util;
 
@@ -45,10 +46,6 @@ namespace Nearest.Droid
 		public Location CurrentLocation;
 		GoogleApiClient googleApiClient;
 
-		/**
-		 * Public UI Elements
-		 * 
-		 */
 		public RelativeLayout mainLayout;
 		public LinearLayout northLayout, southLayout;
 		public bool isFullscreen = false;
@@ -60,6 +57,10 @@ namespace Nearest.Droid
 
 		const int RequestLocationId = 0;
 
+		/// <summary>
+		/// Raises the create event.
+		/// </summary>
+		/// <param name="savedInstanceState">Saved instance state.</param>
 		protected override void OnCreate (Bundle savedInstanceState)
 		{
 			RequestWindowFeature (WindowFeatures.NoTitle);
@@ -122,6 +123,11 @@ namespace Nearest.Droid
 				times.SetTypeface (HnMd, tfs);
 				label.SetTypeface (HnLt, tfs);
 
+				List<Train> nextTimes = new List<Train> ();
+				if (trainLVM != null) {
+					nextTimes = trainLVM.stopList [i] [0].trains;
+				}
+
 				Button button = (Button)direction.FindViewWithTag (tag: "button");
 				button.FindViewWithTag (tag: "button").Click += delegate {
 					//StartActivity (typeof(Detail));
@@ -130,67 +136,74 @@ namespace Nearest.Droid
 					if (trainLVM != null) {
 						ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (button, 0, 0, 60, 60);
 						Intent pendingIntent = new Intent (this, typeof(Detail));
-						var toJson = Newtonsoft.Json.JsonConvert.SerializeObject (trainLVM.stopList);
-						pendingIntent.PutExtra ("trainLVM", toJson);
+						var toJson = Newtonsoft.Json.JsonConvert.SerializeObject (nextTimes);
+						pendingIntent.PutExtra ("nextTimes", toJson);
 						pendingIntent.PutExtra ("direction", dirString);
 						StartActivity (pendingIntent, options.ToBundle ());
 					} else {
-						button.Text = "!";
-						button.SetBackgroundResource (
-							GetTrainColor ("")
-						);
+						SetTrainsNotice (button, times);
 					}
 				};
 			}
-
-			// check connections
-			//handleConnections ("onCreate");
 		}
 
-		/**
-		 * Resume Activity
-		 * 
-		 */
+		/// <summary>
+		/// Raises the resume event.
+		/// </summary>
 		protected override void OnResume ()
 		{
 			base.OnResume ();
-			handleConnections ("onResume");
+			HandleConnections ();
 		}
 
-		/**
-		 * Pause Activity
-		 * 
-		 */
+		/// <Docs>Called as part of the activity lifecycle when an activity is going into
+		///  the background, but has not (yet) been killed.</Docs>
+		/// <summary>
+		/// Raises the pause event.
+		/// </summary>
 		protected override void OnPause ()
 		{
 			base.OnPause ();
 			EndLocationUpdates ();
 		}
 
-		/**
-		 * Handle connections; network and location
-		 * 
-		 */
-		public void handleConnections (String source)
+		/// <summary>
+		/// Handles the connections.
+		/// </summary>
+		public void HandleConnections ()
 		{
 			if (IsConnected ()) {
-				try {
-					Task.Run (() => TryGetLocation ());
-				} catch (Exception ex) {
-					Report ("Exception (handleConnections):\n" +
-					ex.Message.ToString (), 0);
+				if (IsGooglePlayServicesInstalled ()) {
+					try {
+						Task.Run (() => TryGetLocation ());
+					} catch (Exception ex) {
+						Report ("Exception (HandleConnections):\n" +
+						ex.Message.ToString (), 0);
+					}
+				} else {
+					Report ("Google Play Services is not installed", 0);
+					Snackbar.Make (FindViewById (Resource.Id.CoordinatorView), 
+						"Google Play Services is required to get your location.", Snackbar.LengthIndefinite)
+						.SetAction ("OK", v => HandleConnections ())
+						.Show ();
+					Finish ();
 				}
+
 			} else {
-				// Create ui-based handler for no internet
-				Report ("No internet is available", 2);
+				Report ("No internet is available", 0);
+				Snackbar.Make (FindViewById (Resource.Id.CoordinatorView), 
+					"Internet access is required to get train times.", Snackbar.LengthIndefinite)
+					.SetAction ("Try Again", v => HandleConnections ())
+					.Show ();
+				Finish ();
 			}
 			return;
 		}
 
-		/**
-		 * Detect internet access
-		 * 
-		 */
+		/// <summary>
+		/// Determines whether this instance is connected.
+		/// </summary>
+		/// <returns><c>true</c> if this instance is connected; otherwise, <c>false</c>.</returns>
 		public bool IsConnected ()
 		{
 			ConnectivityManager connectivityManager = (ConnectivityManager)GetSystemService (ConnectivityService);
@@ -199,10 +212,9 @@ namespace Nearest.Droid
 			return IsConnected;
 		}
 
-		/**
-		 * Detect Location
-		 * 
-		 */
+		/// <summary>
+		/// Tries to get the location.
+		/// </summary>
 		async void TryGetLocation ()
 		{
 			Report ("Getting location info", 0);
@@ -214,6 +226,10 @@ namespace Nearest.Droid
 			await GetLocationPermissionAsync ();
 		}
 
+		/// <summary>
+		/// Gets the location permission async.
+		/// </summary>
+		/// <returns>The location permission async.</returns>
 		async Task GetLocationPermissionAsync ()
 		{
 			//Check to see if any permission in our group is available, if one, then all are
@@ -238,6 +254,12 @@ namespace Nearest.Droid
 			RequestPermissions (PermissionsLocation, RequestLocationId);
 		}
 
+		/// <summary>
+		/// Raises the request permissions result event.
+		/// </summary>
+		/// <param name="requestCode">Request code.</param>
+		/// <param name="permissions">Permissions.</param>
+		/// <param name="grantResults">Grant results.</param>
 		public override async void OnRequestPermissionsResult 
 		(int requestCode, string[] permissions, Permission[] grantResults)
 		{
@@ -263,6 +285,10 @@ namespace Nearest.Droid
 			}
 		}
 
+		/// <summary>
+		/// Gets the location async.
+		/// </summary>
+		/// <returns>The location async.</returns>
 		public async Task GetLocationAsync ()
 		{ 
 			try {
@@ -281,6 +307,9 @@ namespace Nearest.Droid
 			}
 		}
 
+		/// <summary>
+		/// Ends the location updates.
+		/// </summary>
 		public void EndLocationUpdates ()
 		{
 			if (googleApiClient != null) {
@@ -288,10 +317,31 @@ namespace Nearest.Droid
 			}
 		}
 
-		/**
-		 * Set next train info
-		 * 
-		 */
+		/// <summary>
+		/// Determines whether this instance is google play services installed.
+		/// </summary>
+		/// <returns><c>true</c> if this instance is google play services installed; otherwise, <c>false</c>.</returns>
+		bool IsGooglePlayServicesInstalled ()
+		{
+			int queryResult = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable (this);
+			if (queryResult == ConnectionResult.Success) {
+				Report ("Google Play Services is installed.", 0);
+				return true;
+			}
+
+			if (GoogleApiAvailability.Instance.IsUserResolvableError (queryResult)) {
+				string errorString = GoogleApiAvailability.Instance.GetErrorString (queryResult);
+				Report (String.Format ("There is a problem with Google Play Services: {0} - {1}", 
+					queryResult, errorString), 2);
+
+				// Show error dialog to let user debug google play services
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Sets the next trains.
+		/// </summary>
 		public void SetNextTrains ()
 		{
 			if (trainLVM.IsBusy) {
@@ -314,9 +364,7 @@ namespace Nearest.Droid
 								button.SetTextColor (Color.White);
 								time.Text = Train.time (nearestDirection.ts);
 							} else {
-								button.Text = "!";
-								button.SetBackgroundResource (GetTrainColor ("0"));
-								time.Text = "Problem";
+								SetTrainsNotice (button, time);
 							}
 						}
 					}
@@ -324,10 +372,25 @@ namespace Nearest.Droid
 			}
 		}
 
-		/**
-		 * Get Train Color
-		 * 
-		 */
+		/// <summary>
+		/// Sets the trains notice.
+		/// </summary>
+		/// <param name="button">Button.</param>
+		/// <param name="time">Time.</param>
+		public void SetTrainsNotice (Button button, TextView time)
+		{
+			button.Text = "!";
+			button.SetBackgroundResource (
+				GetTrainColor ("")
+			);
+			time.Text = "Problem";
+		}
+
+		/// <summary>
+		/// Gets the color of the train.
+		/// </summary>
+		/// <returns>The train color.</returns>
+		/// <param name="StopId">Stop identifier.</param>
 		public int GetTrainColor (String StopId)
 		{
 			int resourceDrawable;
@@ -374,10 +437,10 @@ namespace Nearest.Droid
 			return resourceDrawable;
 		}
 
-		/**
-		 * Get train list view model
-		 * 
-		 */
+		/// <summary>
+		/// Gets the train models.
+		/// </summary>
+		/// <param name="locationData">Location data.</param>
 		public void GetTrainModels (Location locationData)
 		{
 			if (locationData != null) {
@@ -406,10 +469,15 @@ namespace Nearest.Droid
 					}
 				}
 			} else {
-				Report ("problem getting GetTrainModelsAsync", 2);
+				Report ("Problem with GetTrainModels", 2);
 			}
 		}
 
+		/// <summary>
+		/// Report the specified msg and verbosity.
+		/// </summary>
+		/// <param name="msg">Message.</param>
+		/// <param name="verbosity">Verbosity.</param>
 		public void Report (String msg, int verbosity)
 		{
 			RunOnUiThread (() => {
@@ -430,6 +498,10 @@ namespace Nearest.Droid
 			return;
 		}
 
+		/// <summary>
+		/// Shows the alert.
+		/// </summary>
+		/// <param name="str">String.</param>
 		public void ShowAlert (String str)
 		{
 			var alertString = str == null ? "Unknown Issue" : str;
@@ -448,6 +520,10 @@ namespace Nearest.Droid
 			return;
 		}
 
+		/// <summary>
+		/// Raises the location changed event.
+		/// </summary>
+		/// <param name="NewLocation">New location.</param>
 		public void OnLocationChanged (Location NewLocation)
 		{
 			// Show latest location
@@ -457,6 +533,10 @@ namespace Nearest.Droid
 			GetTrainModels (NewLocation);
 		}
 
+		/// <summary>
+		/// Raises the connected event.
+		/// </summary>
+		/// <param name="connectionHint">Connection hint.</param>
 		public async void OnConnected (Bundle connectionHint)
 		{           
 			// Get Last known location
@@ -466,6 +546,10 @@ namespace Nearest.Droid
 			await RequestLocationUpdates ();
 		}
 
+		/// <summary>
+		/// Requests the location updates.
+		/// </summary>
+		/// <returns>The location updates.</returns>
 		async Task RequestLocationUpdates ()
 		{
 			// Describe our location request
@@ -484,6 +568,11 @@ namespace Nearest.Droid
 			}
 		}
 
+		/// <summary>
+		/// Checks the location availability.
+		/// </summary>
+		/// <returns>The location availability.</returns>
+		/// <param name="locationRequest">Location request.</param>
 		async Task<bool> CheckLocationAvailability (LocationRequest locationRequest)
 		{
 			// Build a new request with the given location request
@@ -510,17 +599,36 @@ namespace Nearest.Droid
 			return true;
 		}
 
+		/// <summary>
+		/// Raises the connection suspended event.
+		/// </summary>
+		/// <param name="cause">Cause.</param>
 		public void OnConnectionSuspended (int cause)
 		{
 			Console.WriteLine ("GooglePlayServices Connection Suspended: {0}", cause);
 		}
 
+		/// <summary>
+		/// Raises the connection failed event.
+		/// </summary>
+		/// <param name="result">Result.</param>
 		public void OnConnectionFailed (Android.Gms.Common.ConnectionResult result)
 		{
 			Console.WriteLine ("GooglePlayServices Connection Failed: {0}", result);
 		}
 
-		protected override async void OnActivityResult (int requestCode, Result resultCode, Intent data)
+		/// <Docs>The integer request code originally supplied to
+		///  startActivityForResult(), allowing you to identify who this
+		///  result came from.</Docs>
+		/// <param name="data">An Intent, which can return result data to the caller
+		///  (various data can be attached to Intent "extras").</param>
+		/// <summary>
+		/// Raises the activity result event.
+		/// </summary>
+		/// <param name="requestCode">Request code.</param>
+		/// <param name="resultCode">Result code.</param>
+		protected override async void OnActivityResult 
+		(int requestCode, Result resultCode, Intent data)
 		{
 			base.OnActivityResult (requestCode, resultCode, data);
 
@@ -534,6 +642,11 @@ namespace Nearest.Droid
 			}
 		}
 
+		/// <summary>
+		/// Describes the location.
+		/// </summary>
+		/// <returns>The location.</returns>
+		/// <param name="location">Location.</param>
 		public string DescribeLocation (Location location)
 		{
 			CurrentLocation = location;
