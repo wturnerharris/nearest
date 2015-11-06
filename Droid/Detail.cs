@@ -25,18 +25,29 @@ namespace Nearest.Droid
 			SetContentView (Resource.Layout.Detail);
 			TextView RouteView = FindViewById<TextView> (Resource.Id.textView1);
 
-			var json = Intent.GetStringExtra ("nextTimes");
+			var nearestTrain = Intent.GetStringExtra ("nearestTrain");
 			var dir = Intent.GetStringExtra ("direction");
-			if (json != null) {
-				var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Train>> (json);
+			if (nearestTrain != null) {
+				var train = Newtonsoft.Json.JsonConvert.DeserializeObject<Train> (nearestTrain);
 				RouteView.Text = String.Format (
-					"Total Payload: {0}\nDirection: {1}\nData: {2}", 
-					items.Count, 
+					"Direction: {0}\nStation: {1}\nTime: {2}\nFarther Trains:\n", 
 					dir, 
-					json
+					train.stop_name,
+					train.GetTimeInMinutes ()
 				);
 			} else {
 				RouteView.Text = "Json error!!";
+			}
+			var fartherTrains = Intent.GetStringExtra ("fartherTrains");
+			if (fartherTrains != null) {
+				System.Console.WriteLine ("has Farther Trains");
+				var trains = Newtonsoft.Json.JsonConvert.DeserializeObject <List<Train>> (fartherTrains);
+				foreach (var fartherTrain in trains) {
+					RouteView.Text += String.Format ("{0}\n", fartherTrain.GetTimeInMinutes ());
+				}
+			} else {
+				System.Console.WriteLine ("has not Farther Trains");
+
 			}
 		}
 	}
