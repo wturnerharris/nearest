@@ -49,6 +49,7 @@ namespace Nearest.Droid
 		public RelativeLayout mainLayout;
 		public LinearLayout northLayout, southLayout;
 		public bool isFullscreen = false;
+		TimeSpan lastUpdated;
 
 		readonly string[] PermissionsLocation = {
 			Manifest.Permission.AccessCoarseLocation,
@@ -133,7 +134,13 @@ namespace Nearest.Droid
 		protected override void OnResume ()
 		{
 			base.OnResume ();
-			HandleConnections ();
+			var lastUpdate = (DateTime.Now.TimeOfDay - lastUpdated).TotalSeconds;
+			Report (String.Format ("Last updated: {0} seconds ago.", lastUpdate.ToString ()), 0);
+			if (lastUpdated.TotalSeconds == 0 || lastUpdate > 30) {
+				HandleConnections ();
+			} else {
+				SetNextTrains ();
+			}
 		}
 
 		/// <Docs>Called as part of the activity lifecycle when an activity is going into
@@ -294,6 +301,7 @@ namespace Nearest.Droid
 		{
 			if (googleApiClient != null) {
 				LocationServices.FusedLocationApi.RemoveLocationUpdates (googleApiClient, this);
+				lastUpdated = DateTime.Now.TimeOfDay;
 			}
 		}
 
