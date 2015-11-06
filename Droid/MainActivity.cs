@@ -116,34 +116,14 @@ namespace Nearest.Droid
 			};
 			for (var i = 0; i < 2; i++) {
 				var direction = i == 0 ? southLayout : northLayout;
-				var dirString = i == 0 ? "South" : "North";
 
 				TextView times = (TextView)direction.FindViewWithTag (tag: "time");
 				TextView label = (TextView)direction.FindViewWithTag (tag: "label");
 				times.SetTypeface (HnMd, tfs);
 				label.SetTypeface (HnLt, tfs);
 
-				List<Train> nextTimes = new List<Train> ();
-				if (trainLVM != null) {
-					nextTimes = trainLVM.stopList [i] [0].trains;
-				}
-
 				Button button = (Button)direction.FindViewWithTag (tag: "button");
-				button.FindViewWithTag (tag: "button").Click += delegate {
-					//StartActivity (typeof(Detail));
-					//Animation hyperspaceJump = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
-
-					if (trainLVM != null) {
-						ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (button, 0, 0, 60, 60);
-						Intent pendingIntent = new Intent (this, typeof(Detail));
-						var toJson = Newtonsoft.Json.JsonConvert.SerializeObject (nextTimes);
-						pendingIntent.PutExtra ("nextTimes", toJson);
-						pendingIntent.PutExtra ("direction", dirString);
-						StartActivity (pendingIntent, options.ToBundle ());
-					} else {
-						SetTrainsNotice (button, times);
-					}
-				};
+				SetTrainsNotice (button, times);
 			}
 		}
 
@@ -350,22 +330,46 @@ namespace Nearest.Droid
 				Report ("Setting next trains...", 0);
 				// Loop throuh south and north view groups 
 				for (var i = 0; i < 2; i++) {
-					Report ("SetNextTrain" + (i + 1).ToString (), 0);
+					var index = (i + 1).ToString ();
+					Report ("SetNextTrain " + index, 0);
 					var path = i == 0 ? southLayout : northLayout;
 					var button = (Button)path.FindViewWithTag (tag: "button");
 					var time = (TextView)path.FindViewWithTag (tag: "time");
+					var dirString = i == 0 ? "South" : "North";
 
 					if (trainLVM.stopList.Count > 0) {
-						foreach (var direction in trainLVM.stopList) {
-							var nearestDirection = trainLVM.stopList [i] [0].next_train;
-							if (nearestDirection != null) {
-								button.Text = nearestDirection.route_id;
-								button.SetBackgroundResource (GetTrainColor (nearestDirection.route_id));
-								button.SetTextColor (Color.White);
-								time.Text = Train.time (nearestDirection.ts);
-							} else {
-								SetTrainsNotice (button, time);
+						var nearestTrain = trainLVM.stopList [i] [0].next_train;
+						var fartherTrains = trainLVM.stopList [i] [0].trains;
+						if (nearestTrain != null) {
+							button.Text = nearestTrain.route_id;
+							button.SetBackgroundResource (GetTrainColor (nearestTrain.route_id));
+							button.SetTextColor (Color.White);
+							time.Text = Train.time (nearestTrain.ts);
+
+							EventHandler GetDetails = null;
+							GetDetails = delegate(object sender, EventArgs args) {
+								Report ("Click Event " + index, 0);
+								//StartActivity (typeof(Detail));
+								//Animation hyperspaceJump = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
+								ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (button, 0, 0, 60, 60);
+								Intent pendingIntent = new Intent (this, typeof(Detail));
+
+								var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject (nearestTrain);
+								pendingIntent.PutExtra ("nearestTrain", toJsonNearestTrain);
+
+								var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject (fartherTrains);
+								pendingIntent.PutExtra ("fartherTrains", toJsonFartherTrains);
+
+								pendingIntent.PutExtra ("direction", dirString);
+								StartActivity (pendingIntent, options.ToBundle ());
+
+								button.Click -= GetDetails;
+							};
+							if (!button.HasOnClickListeners) {
+								button.Click += GetDetails;
 							}
+						} else {
+							SetTrainsNotice (button, time);
 						}
 					}
 				}
