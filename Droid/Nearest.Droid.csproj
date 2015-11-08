@@ -123,6 +123,8 @@
     <AndroidResource Include="Resources\drawable-hdpi\Circle.xml" />
     <AndroidResource Include="Resources\values-v23\Styles.xml" />
     <AndroidResource Include="Resources\layout\Alert.axml" />
+    <AndroidResource Include="Resources\drawable-hdpi\detail_icon_close.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\circle_outline.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

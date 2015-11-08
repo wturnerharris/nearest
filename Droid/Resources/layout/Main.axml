@@ -1,145 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
+    android:fillViewport="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/mainLayout"
-    android:background="@color/app_bg"
-    tools:actionBarNavMode="list">
-<!-- Nearest -->
-    <TextView
-        android:text="@string/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="120.0dp"
-        android:id="@+id/TextViewTitle"
-        android:layout_centerHorizontal="true"
-        android:textColor="@color/textblack"
-        android:fontFamily="sans-serif-light"
-        android:typeface="sans"
-        android:textSize="38dp"
-        android:textStyle="bold" />
-<!-- Trains Headed Your Way -->
-    <TextView
-        android:text="@string/tagline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/TextViewTitle"
-        android:layout_marginTop="20.0dp"
-        android:id="@+id/TextViewTagline"
-        android:layout_centerHorizontal="true"
-        android:fontFamily="sans-serif-light"
-        android:textColor="@color/textblack"
-        android:typeface="sans"
-        android:textSize="26dp"
-        android:textStyle="normal" />
-<!-- Downtown Side -->
-    <LinearLayout
-        android:id="@+id/LayoutDowntown"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50.0dp"
-        android:orientation="vertical"
-        android:layout_below="@id/TextViewTagline"
-        android:tag="layout">
-        <Button
-            android:id="@+id/ButtonSouth"
-            android:text=""
-            android:layout_width="75dip"
-            android:layout_height="75dip"
-            android:layout_marginLeft="60dip"
-            android:layout_marginRight="60dip"
-            android:onClick="sendMessage"
-            android:background="@drawable/Circle"
-            android:fontFamily="sans-serif-light"
-            android:textSize="60dip"
-            android:textStyle="normal"
-            android:tag="button" />
-        <TextView
-            android:id="@+id/TextTimeSouth"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15.0dp"
-            android:fontFamily="sans-serif-light"
-            android:textColor="@color/textblack"
-            android:textSize="26dp"
-            android:gravity="center"
-            android:tag="time" />
-        <TextView
-            android:id="@+id/TextDestSouth"
-            android:text="To Brooklyn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5.0dp"
-            android:gravity="center"
-            android:fontFamily="sans-serif-light"
-            android:textColor="@color/textgray"
-            android:textSize="18dp"
-            android:tag="label" />
-    </LinearLayout>
-<!-- Uptown Side -->
-    <LinearLayout
-        android:id="@+id/LayoutUptown"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50.0dp"
-        android:orientation="vertical"
-        android:layout_below="@id/TextViewTagline"
-        android:layout_alignParentRight="true"
-        android:tag="layout">
-        <Button
-            android:text=""
-            android:layout_width="75dip"
-            android:layout_height="75dip"
-            android:id="@+id/ButtonNorth"
-            android:layout_marginLeft="60dip"
-            android:layout_marginRight="60dip"
-            android:onClick="sendMessage"
-            android:layout_below="@id/TextViewTagline"
-            android:background="@drawable/Circle"
-            android:fontFamily="sans-serif-light"
-            android:textSize="60dip"
-            android:textStyle="normal"
-            android:tag="button" />
-        <TextView
-            android:id="@+id/TextTimeNorth"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/ButtonNorth"
-            android:layout_alignLeft="@id/ButtonNorth"
-            android:layout_marginTop="15.0dp"
-            android:gravity="center"
-            android:fontFamily="sans-serif-light"
-            android:textColor="@color/textblack"
-            android:textSize="26dp"
-            android:textStyle="normal"
-            android:tag="time" />
-        <TextView
-            android:id="@+id/TextDestNorth"
-            android:text="To Manhattan"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/TextTimeNorth"
-            android:layout_marginTop="5.0dp"
-            android:gravity="center"
-            android:fontFamily="sans-serif-light"
-            android:textColor="@color/textgray"
-            android:typeface="sans"
-            android:textSize="18dp"
-            android:textStyle="normal"
-            android:layout_alignLeft="@id/TextTimeNorth"
-            android:tag="label" />
-    </LinearLayout>
-    <android.support.design.widget.CoordinatorLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/CoordinatorView" />
-<!--    <GestureOverlayView
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/mainLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/LayoutDowntown"
-        android:id="@+id/gestureOverlayViewBottom" /> -->
-</RelativeLayout>
+        android:background="@color/app_bg">
+    <!-- Nearest -->
+        <TextView
+            android:text="@string/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="120.0dp"
+            android:id="@+id/TextViewTitle"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/textblack"
+            android:fontFamily="sans-serif-light"
+            android:typeface="sans"
+            android:textSize="38dp"
+            android:textStyle="bold" />
+    <!-- Trains Headed Your Way -->
+        <TextView
+            android:text="@string/tagline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/TextViewTitle"
+            android:layout_marginTop="20.0dp"
+            android:id="@+id/TextViewTagline"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@color/textblack"
+            android:typeface="sans"
+            android:textSize="26dp"
+            android:textStyle="normal" />
+    <!-- Downtown Side -->
+        <LinearLayout
+            android:id="@+id/LayoutDowntown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50.0dp"
+            android:orientation="vertical"
+            android:layout_below="@id/TextViewTagline"
+            android:tag="layout">
+            <Button
+                android:id="@+id/ButtonSouth"
+                android:text=""
+                android:layout_width="75dip"
+                android:layout_height="75dip"
+                android:layout_marginLeft="60dip"
+                android:layout_marginRight="60dip"
+                android:background="@drawable/circle"
+                android:fontFamily="sans-serif-light"
+                android:textSize="60dip"
+                android:textStyle="normal"
+                android:tag="button" />
+            <TextView
+                android:id="@+id/TextTimeSouth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15.0dp"
+                android:fontFamily="sans-serif-light"
+                android:textColor="@color/textblack"
+                android:textSize="26dp"
+                android:gravity="center"
+                android:tag="time" />
+            <TextView
+                android:id="@+id/TextDestSouth"
+                android:text="To Brooklyn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5.0dp"
+                android:gravity="center"
+                android:fontFamily="sans-serif-light"
+                android:textColor="@color/textgray"
+                android:textSize="18dp"
+                android:tag="label" />
+        </LinearLayout>
+    <!-- Uptown Side -->
+        <LinearLayout
+            android:id="@+id/LayoutUptown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50.0dp"
+            android:orientation="vertical"
+            android:layout_below="@id/TextViewTagline"
+            android:layout_alignParentRight="true"
+            android:tag="layout">
+            <Button
+                android:text=""
+                android:layout_width="75dip"
+                android:layout_height="75dip"
+                android:id="@+id/ButtonNorth"
+                android:layout_marginLeft="60dip"
+                android:layout_marginRight="60dip"
+                android:layout_below="@id/TextViewTagline"
+                android:background="@drawable/Circle"
+                android:fontFamily="sans-serif-light"
+                android:textSize="60dip"
+                android:textStyle="normal"
+                android:tag="button" />
+            <TextView
+                android:id="@+id/TextTimeNorth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ButtonNorth"
+                android:layout_alignLeft="@id/ButtonNorth"
+                android:layout_marginTop="15.0dp"
+                android:gravity="center"
+                android:fontFamily="sans-serif-light"
+                android:textColor="@color/textblack"
+                android:textSize="26dp"
+                android:textStyle="normal"
+                android:tag="time" />
+            <TextView
+                android:id="@+id/TextDestNorth"
+                android:text="To Manhattan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/TextTimeNorth"
+                android:layout_marginTop="5.0dp"
+                android:gravity="center"
+                android:fontFamily="sans-serif-light"
+                android:textColor="@color/textgray"
+                android:typeface="sans"
+                android:textSize="18dp"
+                android:textStyle="normal"
+                android:layout_alignLeft="@id/TextTimeNorth"
+                android:tag="label" />
+        </LinearLayout>
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/CoordinatorView" />
+    </RelativeLayout>
+</ScrollView>

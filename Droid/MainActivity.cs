@@ -28,6 +28,7 @@ using Nearest.ViewModels;
 using Nearest.Models;
 
 using Runnable = Java.Lang.Runnable;
+using Android.Graphics.Drawables;
 
 namespace Nearest.Droid
 {
@@ -343,20 +344,24 @@ namespace Nearest.Droid
 					var path = i == 0 ? southLayout : northLayout;
 					var button = (Button)path.FindViewWithTag (tag: "button");
 					var time = (TextView)path.FindViewWithTag (tag: "time");
-					var dirString = i == 0 ? "South" : "North";
 
 					if (trainLVM.stopList.Count > 0) {
 						var nearestTrain = trainLVM.stopList [i] [0].next_train;
 						var fartherTrains = trainLVM.stopList [i] [0].trains;
 						if (nearestTrain != null) {
+							//var TrainCircle = (GradientDrawable)button.Background.Mutate ();
+							var TrainColor = GetTrainColor (nearestTrain.route_id);
+							//TrainCircle.SetColor (TrainColor);
+
 							button.Text = nearestTrain.route_id;
-							button.SetBackgroundResource (GetTrainColor (nearestTrain.route_id));
+							button.SetBackgroundResource (GetTrainColorDrawable (nearestTrain.route_id));
 							button.SetTextColor (Color.White);
+
 							time.Text = Train.time (nearestTrain.ts);
 
 							EventHandler GetDetails = null;
 							GetDetails = delegate(object sender, EventArgs args) {
-								Report ("Click Event " + index, 0);
+								Report ("Click Event: " + index, 0);
 								//StartActivity (typeof(Detail));
 								//Animation hyperspaceJump = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
 								ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (button, 0, 0, 60, 60);
@@ -364,11 +369,11 @@ namespace Nearest.Droid
 
 								var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject (nearestTrain);
 								pendingIntent.PutExtra ("nearestTrain", toJsonNearestTrain);
+								pendingIntent.PutExtra ("nearestTrainColor", TrainColor);
 
 								var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject (fartherTrains);
 								pendingIntent.PutExtra ("fartherTrains", toJsonFartherTrains);
 
-								pendingIntent.PutExtra ("direction", dirString);
 								StartActivity (pendingIntent, options.ToBundle ());
 
 								button.Click -= GetDetails;
@@ -393,7 +398,7 @@ namespace Nearest.Droid
 		{
 			button.Text = "!";
 			button.SetBackgroundResource (
-				GetTrainColor ("")
+				GetTrainColorDrawable ("")
 			);
 			time.Text = "Problem";
 		}
@@ -403,9 +408,64 @@ namespace Nearest.Droid
 		/// </summary>
 		/// <returns>The train color.</returns>
 		/// <param name="StopId">Stop identifier.</param>
-		public int GetTrainColor (String StopId)
+		public static int GetTrainColor (String StopId)
 		{
 			int resourceDrawable;
+
+			switch (StopId) {
+			case "1":
+			case "2":
+			case "3":
+				resourceDrawable = Resource.Color.red;
+				break;
+			case "A":
+			case "C":
+			case "E":
+				resourceDrawable = Resource.Color.blue;
+				break;
+			case "N":
+			case "Q":
+			case "R":
+				resourceDrawable = Resource.Color.yellow;
+				break;
+			case "4":
+			case "5":
+			case "6":
+				resourceDrawable = Resource.Color.green;
+				break;
+			case "G": /** TODO: This is alternate green */
+				resourceDrawable = Resource.Color.green;
+				break;
+			case "B":
+			case "D":
+			case "F":
+			case "M":
+				resourceDrawable = Resource.Color.orange;
+				break;
+			case "7":
+				resourceDrawable = Resource.Color.purple;
+				break;
+			case "J":
+			case "Z":
+				resourceDrawable = Resource.Color.brown;
+				break;
+			case "L":
+			default: 
+				resourceDrawable = Resource.Color.gray;
+				break;
+			}
+			return resourceDrawable;
+		}
+
+		/// <summary>
+		/// Gets the color of the train.
+		/// </summary>
+		/// <returns>The train color.</returns>
+		/// <param name="StopId">Stop identifier.</param>
+		public int GetTrainColorDrawable (String StopId)
+		{
+			int resourceDrawable;
+
 			switch (StopId) {
 			case "1":
 			case "2":

@@ -34,24 +34,30 @@ namespace Nearest.Models
 		 */
 		public int ts { get; set; }
 
+		public String GetTimeInMinutes ()
+		{
+			return time (ts);
+		}
+
 		/**
 		 * Return formatted time string
 		 */
-		public static String time (long unixTime) {
+		public static String time (long unixTime)
+		{
 			var unixDate = FromUnixTime (unixTime);
 			var newDate = (unixDate.TimeOfDay - DateTime.UtcNow.TimeOfDay).TotalMinutes;
-			var min = Math.Floor(newDate);
-			var timeStr = (min < 1 ? "< 1 Min" : min.ToString() + " Mins" );
+			var min = Math.Floor (newDate);
+			var timeStr = (min < 1 ? "< 1 Min" : min.ToString () + " Mins");
 			return timeStr;
 		}
 
 		/**
 		 * Convert from unix time to DateTime
 		 */
-		public static DateTime FromUnixTime(long unixTime)
+		public static DateTime FromUnixTime (long unixTime)
 		{
-			var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-			return epoch.AddSeconds(unixTime);
+			var epoch = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+			return epoch.AddSeconds (unixTime);
 		}
 	}
 }

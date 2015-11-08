@@ -1,12 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:id="@+id/detailView"
+    android:id="@+id/DetailView"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    tools:actionBarNavMode="tabs">
+    <Button
+        android:id="@+id/DetailClose"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/detail_icon_close"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="30dip"
+        android:layout_marginRight="30dip" />
     <TextView
-        android:text="Text"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/textView1" />
-</LinearLayout>
+        android:id="@+id/DetailRouteId"
+        android:text="4"
+        android:layout_width="120dip"
+        android:layout_height="120dip"
+        android:background="@drawable/circle_outline"
+        android:textSize="80dip"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/DetailClose"
+        android:layout_marginTop="30dip"
+        android:fontFamily="sans-serif" />
+    <LinearLayout
+        android:id="@+id/DetailInfo"
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/DetailRouteId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/DetailHeadsign"
+            android:text="VAN CORTLANDT PARK - 242 ST"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14dip"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="50dip"
+            android:layout_marginLeft="20dip"
+            android:paddingRight="20dip"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-condensed" />
+        <TextView
+            android:id="@+id/DetailStopName"
+            android:text="Your Location - 145th"
+            android:layout_width="match_parent"
+            android:layout_height="30dip"
+            android:textSize="18dip"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="20dip"
+            android:layout_marginLeft="20dip"
+            android:paddingRight="20dip"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif" />
+        <TextView
+            android:id="@+id/DetailStopTime1"
+            android:text="1 Min"
+            android:layout_width="match_parent"
+            android:layout_height="30dip"
+            android:textSize="16dip"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="20dip"
+            android:layout_marginLeft="20dip"
+            android:textStyle="normal"
+            android:fontFamily="sans-serif" />
+        <TextView
+            android:id="@+id/DetailStopTime2"
+            android:text="2 Min"
+            android:layout_width="match_parent"
+            android:layout_height="30dip"
+            android:textSize="16dip"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="20dip"
+            android:layout_marginLeft="20dip"
+            android:textStyle="normal"
+            android:fontFamily="sans-serif" />
+        <TextView
+            android:id="@+id/DetailStopTime3"
+            android:text="3 Min"
+            android:layout_width="match_parent"
+            android:layout_height="30dip"
+            android:textSize="16dip"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="20dip"
+            android:layout_marginLeft="20dip"
+            android:textStyle="normal"
+            android:fontFamily="sans-serif" />
+        <TextView
+            android:id="@+id/DetailStopTime4"
+            android:text="4 Min"
+            android:layout_width="match_parent"
+            android:layout_height="30dip"
+            android:textSize="16dip"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="20dip"
+            android:layout_marginLeft="20dip"
+            android:textStyle="normal"
+            android:fontFamily="sans-serif" />
+    </LinearLayout>
+</RelativeLayout>

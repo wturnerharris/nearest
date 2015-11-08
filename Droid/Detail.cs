@@ -5,6 +5,7 @@ using System.Net.Http;
 
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
@@ -12,43 +13,91 @@ using Android.Widget;
 using Nearest.ViewModels;
 
 using Nearest.Models;
+using Android.Graphics;
 
 namespace Nearest.Droid
 {
-	[Activity (Label = "Detail")]			
+	[Activity (
+		Label = "Detail",
+		ScreenOrientation = ScreenOrientation.Portrait
+	)]			
 	public class Detail : Activity
 	{
 		protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate (bundle);
 
+			Window.SetFlags (WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
+
+			View decorView = Window.DecorView;
+			var uiOptions = (int)decorView.SystemUiVisibility;
+			var newUiOptions = (int)uiOptions;
+
+			newUiOptions |= (int)SystemUiFlags.LowProfile;
+			newUiOptions |= (int)SystemUiFlags.Fullscreen;
+			newUiOptions |= (int)SystemUiFlags.HideNavigation;
+			newUiOptions |= (int)SystemUiFlags.Immersive;
+
+			decorView.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
+
+			var nearestTrainColor = Intent.GetIntExtra ("nearestTrainColor", -1);
+			if (nearestTrainColor > 0) {
+				decorView.SetBackgroundResource (nearestTrainColor);
+			}
+
 			SetContentView (Resource.Layout.Detail);
-			TextView RouteView = FindViewById<TextView> (Resource.Id.textView1);
+
+			Button ButtonClose = FindViewById<Button> (Resource.Id.DetailClose);
+			ButtonClose.Click += delegate(object sender, EventArgs e) {
+				this.Finish ();
+			};
 
 			var nearestTrain = Intent.GetStringExtra ("nearestTrain");
-			var dir = Intent.GetStringExtra ("direction");
 			if (nearestTrain != null) {
 				var train = Newtonsoft.Json.JsonConvert.DeserializeObject<Train> (nearestTrain);
-				RouteView.Text = String.Format (
-					"Direction: {0}\nStation: {1}\nTime: {2}\nFarther Trains:\n", 
-					dir, 
-					train.stop_name,
-					train.GetTimeInMinutes ()
-				);
+
+				TextView DetailRouteId = FindViewById<TextView> (Resource.Id.DetailRouteId);
+				DetailRouteId.Text = train.route_id;
+
+				TextView DetailHeadsign = FindViewById<TextView> (Resource.Id.DetailHeadsign);
+				DetailHeadsign.Text = train.trip_headsign;
+
+				TextView DetailStopName = FindViewById<TextView> (Resource.Id.DetailStopName);
+				DetailStopName.Text = train.stop_name;
+
+				TextView DetailStopTime1 = FindViewById<TextView> (Resource.Id.DetailStopTime1);
+				DetailStopTime1.Text = train.GetTimeInMinutes ();
 			} else {
-				RouteView.Text = "Json error!!";
+				System.Console.WriteLine ("Detail: Json error!!");
 			}
+
 			var fartherTrains = Intent.GetStringExtra ("fartherTrains");
 			if (fartherTrains != null) {
 				System.Console.WriteLine ("has Farther Trains");
 				var trains = Newtonsoft.Json.JsonConvert.DeserializeObject <List<Train>> (fartherTrains);
+				TextView DetailStopTime2 = FindViewById<TextView> (Resource.Id.DetailStopTime2);
+				TextView DetailStopTime3 = FindViewById<TextView> (Resource.Id.DetailStopTime3);
+				TextView DetailStopTime4 = FindViewById<TextView> (Resource.Id.DetailStopTime4);
+				var i = 2;
 				foreach (var fartherTrain in trains) {
-					RouteView.Text += String.Format ("{0}\n", fartherTrain.GetTimeInMinutes ());
+					var TimeInMinutes = String.Format ("{0}\n", fartherTrain.GetTimeInMinutes ());
+					switch (i) {
+					case 2:
+						DetailStopTime2.Text = TimeInMinutes;
+						break;
+					case 3:
+						DetailStopTime3.Text = TimeInMinutes;
+						break;
+					case 4:
+						DetailStopTime4.Text = TimeInMinutes;
+						break;
+					}
+					i++;
 				}
 			} else {
 				System.Console.WriteLine ("has not Farther Trains");
-
 			}
+
 		}
 	}
 }
