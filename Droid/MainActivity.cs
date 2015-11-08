@@ -483,6 +483,8 @@ namespace Nearest.Droid
 			case "4":
 			case "5":
 			case "6":
+				resourceDrawable = Resource.Drawable.Green;
+				break;
 			case "G": /** TODO: This is alternate green */
 				resourceDrawable = Resource.Drawable.Green;
 				break;
