@@ -349,9 +349,7 @@ namespace Nearest.Droid
 						var nearestTrain = trainLVM.stopList [i] [0].next_train;
 						var fartherTrains = trainLVM.stopList [i] [0].trains;
 						if (nearestTrain != null) {
-							//var TrainCircle = (GradientDrawable)button.Background.Mutate ();
 							var TrainColor = GetTrainColor (nearestTrain.route_id);
-							//TrainCircle.SetColor (TrainColor);
 
 							button.Text = nearestTrain.route_id;
 							button.SetBackgroundResource (GetTrainColorDrawable (nearestTrain.route_id));

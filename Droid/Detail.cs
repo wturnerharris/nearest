@@ -27,21 +27,28 @@ namespace Nearest.Droid
 		{
 			base.OnCreate (bundle);
 
-			Window.SetFlags (WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
-
-			View decorView = Window.DecorView;
-			var uiOptions = (int)decorView.SystemUiVisibility;
-			var newUiOptions = (int)uiOptions;
-
-			newUiOptions |= (int)SystemUiFlags.LowProfile;
-			newUiOptions |= (int)SystemUiFlags.Fullscreen;
-			newUiOptions |= (int)SystemUiFlags.HideNavigation;
-			newUiOptions |= (int)SystemUiFlags.Immersive;
-
-			decorView.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
-
 			var nearestTrainColor = Intent.GetIntExtra ("nearestTrainColor", -1);
 			if (nearestTrainColor > 0) {
+				Window window = this.Window;
+				View decorView = Window.DecorView;
+
+				var uiOptions = (int)decorView.SystemUiVisibility;
+				var newUiOptions = (int)uiOptions;
+
+				newUiOptions |= (int)SystemUiFlags.LowProfile;
+				newUiOptions |= (int)SystemUiFlags.HideNavigation;
+				newUiOptions |= (int)SystemUiFlags.Immersive;
+
+				var isFullscreen = false;
+				if (isFullscreen) {
+					//window.AddFlags (WindowManagerFlags.Fullscreen);
+					//window.SetFlags (WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
+					newUiOptions |= (int)SystemUiFlags.Fullscreen;
+				}
+
+				window.AddFlags (WindowManagerFlags.DrawsSystemBarBackgrounds);
+				window.SetStatusBarColor (Color.ParseColor (Resources.GetString (nearestTrainColor)));
+				decorView.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
 				decorView.SetBackgroundResource (nearestTrainColor);
 			}
 
