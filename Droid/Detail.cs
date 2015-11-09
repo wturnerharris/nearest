@@ -86,20 +86,22 @@ namespace Nearest.Droid
 				TextView DetailStopTime3 = FindViewById<TextView> (Resource.Id.DetailStopTime3);
 				TextView DetailStopTime4 = FindViewById<TextView> (Resource.Id.DetailStopTime4);
 				var i = 2;
-				foreach (var fartherTrain in trains) {
-					var TimeInMinutes = String.Format ("{0}\n", fartherTrain.GetTimeInMinutes ());
-					switch (i) {
-					case 2:
-						DetailStopTime2.Text = TimeInMinutes;
-						break;
-					case 3:
-						DetailStopTime3.Text = TimeInMinutes;
-						break;
-					case 4:
-						DetailStopTime4.Text = TimeInMinutes;
-						break;
+				if (trains.Count > 0) {
+					foreach (var fartherTrain in trains) {
+						var TimeInMinutes = fartherTrain.GetTimeInMinutes ();
+						switch (i) {
+						case 2:
+							DetailStopTime2.Text = TimeInMinutes;
+							break;
+						case 3:
+							DetailStopTime3.Text = TimeInMinutes;
+							break;
+						case 4:
+							DetailStopTime4.Text = TimeInMinutes;
+							break;
+						}
+						i++;
 					}
-					i++;
 				}
 			} else {
 				System.Console.WriteLine ("has not Farther Trains");
