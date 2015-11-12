@@ -14,5 +14,6 @@
 		<item name="android:colorPrimaryDark">@color/app_bar</item>
 		<item name="android:windowBackground">@color/app_bg</item>
 		<item name="android:windowLightStatusBar">true</item>
+		<item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 </resources>
