@@ -49,6 +49,8 @@ namespace Nearest.Droid
 
 		public RelativeLayout mainLayout;
 		public LinearLayout northLayout, southLayout;
+		public View coordinatorView;
+
 		public bool isFullscreen = false;
 		TimeSpan lastUpdated;
 
@@ -78,6 +80,7 @@ namespace Nearest.Droid
 			Typeface HnMd = Typeface.CreateFromAsset (Assets, "fonts/HelveticaNeueLTCom-Roman.ttf");
 
 			mainLayout = FindViewById<RelativeLayout> (Resource.Id.mainLayout);
+			coordinatorView = (View)FindViewById (Resource.Id.CoordinatorView);
 			int childCount = mainLayout.ChildCount;
 
 			// Main app title and tagline
@@ -170,20 +173,19 @@ namespace Nearest.Droid
 					}
 				} else {
 					Report ("Google Play Services is not installed", 0);
-					Snackbar.Make (FindViewById (Resource.Id.CoordinatorView), 
-						"Google Play Services is required to get your location.", Snackbar.LengthIndefinite)
-						.SetAction ("OK", v => HandleConnections ())
-						.Show ();
-					Finish ();
+					Snackbar.Make (coordinatorView, 
+						"Google Play Services is required to get your location.", 
+						Snackbar.LengthIndefinite)
+					.SetAction ("OK", v => HandleConnections ())
+					.Show ();
 				}
-
 			} else {
 				Report ("No internet is available", 0);
-				Snackbar.Make (FindViewById (Resource.Id.CoordinatorView), 
-					"Internet access is required to get train times.", Snackbar.LengthIndefinite)
-					.SetAction ("Try Again", v => HandleConnections ())
-					.Show ();
-				Finish ();
+				Snackbar.Make (coordinatorView, 
+					"Internet access is required to get train times.", 
+					Snackbar.LengthIndefinite)
+				.SetAction ("Try Again", v => HandleConnections ())
+				.Show ();
 			}
 			return;
 		}
@@ -232,7 +234,7 @@ namespace Nearest.Droid
 			if (ShouldShowRequestPermissionRationale (permission)) {
 				Report ("Should show reason for permission.", 0);
 				//Explain to the user why we need to read the contacts
-				Snackbar.Make (FindViewById (Resource.Id.CoordinatorView), 
+				Snackbar.Make (coordinatorView, 
 					"Location access is required to show trains nearest you.", Snackbar.LengthIndefinite)
 					.SetAction ("OK", v => RequestPermissions (PermissionsLocation, RequestLocationId))
 					.Show ();
@@ -263,7 +265,7 @@ namespace Nearest.Droid
 						//Permission Denied :(
 						//Disabling location functionality
 						Report ("Location permission is denied.", 0);
-						Snackbar.Make (FindViewById (Resource.Id.CoordinatorView), 
+						Snackbar.Make (coordinatorView, 
 							"Location permission is denied.", Snackbar.LengthIndefinite)
 							.SetAction ("Try again?", v => RequestPermissions (PermissionsLocation, RequestLocationId))
 							.Show ();
@@ -321,7 +323,7 @@ namespace Nearest.Droid
 			if (GoogleApiAvailability.Instance.IsUserResolvableError (queryResult)) {
 				string errorString = GoogleApiAvailability.Instance.GetErrorString (queryResult);
 				Report (String.Format ("There is a problem with Google Play Services: {0} - {1}", 
-					queryResult, errorString), 2);
+					queryResult, errorString), 0);
 
 				// Show error dialog to let user debug google play services
 			}
@@ -523,7 +525,9 @@ namespace Nearest.Droid
 				);
 
 				try {
-					trainLVM = new TrainListViewModel (locationData.Latitude, locationData.Longitude);
+					if (trainLVM == null) {
+						trainLVM = new TrainListViewModel (locationData.Latitude, locationData.Longitude);
+					}
 					Task.Run (
 						() => trainLVM.GetTrainsAsync ()
 					).ContinueWith (
@@ -578,9 +582,8 @@ namespace Nearest.Droid
 		{
 			var alertString = str == null ? "Unknown Issue" : str;
 
-			View coordinatorLayoutView = FindViewById<CoordinatorLayout> (Resource.Id.CoordinatorView);
-			if (coordinatorLayoutView != null) {
-				Snackbar.Make (coordinatorLayoutView, alertString, Snackbar.LengthShort).Show ();
+			if (coordinatorView != null) {
+				Snackbar.Make (coordinatorView, alertString, Snackbar.LengthShort).Show ();
 			} else {
 				ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (mainLayout, 0, 0, 60, 60);
 				Intent pendingIntent = new Intent (this, typeof(Alert));

@@ -2,6 +2,7 @@
 <resources>
     <style name="Theme.Nearest" parent="Theme.AppCompat.Light">
         <!-- Your customizations go here -->
+		<item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@color/app_bars</item>
 		<item name="android:navigationBarColor">@color/app_bars</item>
         <item name="android:textColorPrimary">@color/textblack</item>
