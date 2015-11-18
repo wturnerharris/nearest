@@ -86,7 +86,7 @@ namespace Nearest.Droid
 				TextView DetailStopTime3 = FindViewById<TextView> (Resource.Id.DetailStopTime3);
 				TextView DetailStopTime4 = FindViewById<TextView> (Resource.Id.DetailStopTime4);
 				var i = 2;
-				if (trains.Count > 0) {
+				if (trains != null && trains.Count > 0) {
 					foreach (var fartherTrain in trains) {
 						var TimeInMinutes = fartherTrain.GetTimeInMinutes ();
 						switch (i) {
