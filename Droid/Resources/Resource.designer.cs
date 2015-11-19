@@ -1971,20 +1971,20 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a006a
 			public const int AlertContent = 2131361898;
 			
-			// aapt resource value: 0x7f0a007f
-			public const int ButtonNorth = 2131361919;
+			// aapt resource value: 0x7f0a0080
+			public const int ButtonNorth = 2131361920;
 			
-			// aapt resource value: 0x7f0a007b
-			public const int ButtonSouth = 2131361915;
-			
-			// aapt resource value: 0x7f0a0090
-			public const int Circle = 2131361936;
+			// aapt resource value: 0x7f0a007c
+			public const int ButtonSouth = 2131361916;
 			
 			// aapt resource value: 0x7f0a0091
-			public const int CircleOutline = 2131361937;
+			public const int Circle = 2131361937;
 			
-			// aapt resource value: 0x7f0a0082
-			public const int CoordinatorView = 2131361922;
+			// aapt resource value: 0x7f0a0092
+			public const int CircleOutline = 2131361938;
+			
+			// aapt resource value: 0x7f0a0083
+			public const int CoordinatorView = 2131361923;
 			
 			// aapt resource value: 0x7f0a006e
 			public const int DetailClose = 2131361902;
@@ -2016,32 +2016,32 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a006d
 			public const int DetailView = 2131361901;
 			
-			// aapt resource value: 0x7f0a007a
-			public const int LayoutDowntown = 2131361914;
+			// aapt resource value: 0x7f0a007b
+			public const int LayoutDowntown = 2131361915;
+			
+			// aapt resource value: 0x7f0a007f
+			public const int LayoutUptown = 2131361919;
+			
+			// aapt resource value: 0x7f0a0082
+			public const int TextDestNorth = 2131361922;
 			
 			// aapt resource value: 0x7f0a007e
-			public const int LayoutUptown = 2131361918;
+			public const int TextDestSouth = 2131361918;
 			
 			// aapt resource value: 0x7f0a0081
-			public const int TextDestNorth = 2131361921;
+			public const int TextTimeNorth = 2131361921;
 			
 			// aapt resource value: 0x7f0a007d
-			public const int TextDestSouth = 2131361917;
+			public const int TextTimeSouth = 2131361917;
 			
-			// aapt resource value: 0x7f0a0080
-			public const int TextTimeNorth = 2131361920;
-			
-			// aapt resource value: 0x7f0a007c
-			public const int TextTimeSouth = 2131361916;
+			// aapt resource value: 0x7f0a007a
+			public const int TextViewTagline = 2131361914;
 			
 			// aapt resource value: 0x7f0a0079
-			public const int TextViewTagline = 2131361913;
+			public const int TextViewTitle = 2131361913;
 			
-			// aapt resource value: 0x7f0a0078
-			public const int TextViewTitle = 2131361912;
-			
-			// aapt resource value: 0x7f0a0083
-			public const int action0 = 2131361923;
+			// aapt resource value: 0x7f0a0084
+			public const int action0 = 2131361924;
 			
 			// aapt resource value: 0x7f0a005a
 			public const int action_bar = 2131361882;
@@ -2067,8 +2067,8 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a005b
 			public const int action_context_bar = 2131361883;
 			
-			// aapt resource value: 0x7f0a0087
-			public const int action_divider = 2131361927;
+			// aapt resource value: 0x7f0a0088
+			public const int action_divider = 2131361928;
 			
 			// aapt resource value: 0x7f0a0003
 			public const int action_menu_divider = 2131361795;
@@ -2109,8 +2109,8 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a0050
 			public const int buttonPanel = 2131361872;
 			
-			// aapt resource value: 0x7f0a0084
-			public const int cancel_action = 2131361924;
+			// aapt resource value: 0x7f0a0085
+			public const int cancel_action = 2131361925;
 			
 			// aapt resource value: 0x7f0a0018
 			public const int center = 2131361816;
@@ -2124,8 +2124,8 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a0052
 			public const int checkbox = 2131361874;
 			
-			// aapt resource value: 0x7f0a008a
-			public const int chronometer = 2131361930;
+			// aapt resource value: 0x7f0a008b
+			public const int chronometer = 2131361931;
 			
 			// aapt resource value: 0x7f0a0021
 			public const int clip_horizontal = 2131361825;
@@ -2160,8 +2160,8 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a001b
 			public const int end = 2131361819;
 			
-			// aapt resource value: 0x7f0a008f
-			public const int end_padder = 2131361935;
+			// aapt resource value: 0x7f0a0090
+			public const int end_padder = 2131361936;
 			
 			// aapt resource value: 0x7f0a0011
 			public const int enterAlways = 2131361809;
@@ -2208,17 +2208,17 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a0042
 			public const int image = 2131361858;
 			
-			// aapt resource value: 0x7f0a008e
-			public const int info = 2131361934;
+			// aapt resource value: 0x7f0a008f
+			public const int info = 2131361935;
 			
 			// aapt resource value: 0x7f0a001d
 			public const int left = 2131361821;
 			
-			// aapt resource value: 0x7f0a0088
-			public const int line1 = 2131361928;
+			// aapt resource value: 0x7f0a0089
+			public const int line1 = 2131361929;
 			
-			// aapt resource value: 0x7f0a008c
-			public const int line3 = 2131361932;
+			// aapt resource value: 0x7f0a008d
+			public const int line3 = 2131361933;
 			
 			// aapt resource value: 0x7f0a0028
 			public const int listMode = 2131361832;
@@ -2226,11 +2226,11 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a0044
 			public const int list_item = 2131361860;
 			
-			// aapt resource value: 0x7f0a0077
-			public const int mainLayout = 2131361911;
+			// aapt resource value: 0x7f0a0078
+			public const int mainLayout = 2131361912;
 			
-			// aapt resource value: 0x7f0a0086
-			public const int media_actions = 2131361926;
+			// aapt resource value: 0x7f0a0087
+			public const int media_actions = 2131361927;
 			
 			// aapt resource value: 0x7f0a0036
 			public const int middle = 2131361846;
@@ -2355,11 +2355,14 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a001f
 			public const int start = 2131361823;
 			
-			// aapt resource value: 0x7f0a0085
-			public const int status_bar_latest_event_content = 2131361925;
+			// aapt resource value: 0x7f0a0086
+			public const int status_bar_latest_event_content = 2131361926;
 			
 			// aapt resource value: 0x7f0a0065
 			public const int submit_area = 2131361893;
+			
+			// aapt resource value: 0x7f0a0077
+			public const int swipeContainer = 2131361911;
 			
 			// aapt resource value: 0x7f0a0029
 			public const int tabMode = 2131361833;
@@ -2367,17 +2370,17 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a000e
 			public const int terrain = 2131361806;
 			
-			// aapt resource value: 0x7f0a008d
-			public const int text = 2131361933;
+			// aapt resource value: 0x7f0a008e
+			public const int text = 2131361934;
 			
-			// aapt resource value: 0x7f0a008b
-			public const int text2 = 2131361931;
+			// aapt resource value: 0x7f0a008c
+			public const int text2 = 2131361932;
 			
 			// aapt resource value: 0x7f0a004d
 			public const int textSpacerNoButtons = 2131361869;
 			
-			// aapt resource value: 0x7f0a0089
-			public const int time = 2131361929;
+			// aapt resource value: 0x7f0a008a
+			public const int time = 2131361930;
 			
 			// aapt resource value: 0x7f0a0046
 			public const int title = 2131361862;

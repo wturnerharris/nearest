@@ -19,6 +19,7 @@ using Android.Net;
 using Android.Support.Design;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
+using Android.Support.V4.Widget;
 using Android.Gms.Location;
 using Android.Gms.Common;
 using Android.Gms.Common.Apis;
@@ -41,7 +42,8 @@ namespace Nearest.Droid
 	public class MainActivity : AppCompatActivity, 
 	GoogleApiClient.IConnectionCallbacks, 
 	GoogleApiClient.IOnConnectionFailedListener, 
-	Android.Gms.Location.ILocationListener
+	Android.Gms.Location.ILocationListener,
+	SwipeRefreshLayout.IOnRefreshListener
 	{
 		public TrainListViewModel trainLVM;
 		public Location CurrentLocation;
@@ -50,6 +52,7 @@ namespace Nearest.Droid
 		public RelativeLayout mainLayout;
 		public LinearLayout northLayout, southLayout;
 		public View coordinatorView;
+		public SwipeRefreshLayout swipeLayout;
 
 		public bool isFullscreen = false;
 		TimeSpan lastUpdated;
@@ -80,7 +83,13 @@ namespace Nearest.Droid
 			Typeface HnMd = Typeface.CreateFromAsset (Assets, "fonts/HelveticaNeueLTCom-Roman.ttf");
 
 			mainLayout = FindViewById<RelativeLayout> (Resource.Id.mainLayout);
+
 			coordinatorView = (View)FindViewById (Resource.Id.CoordinatorView);
+
+			swipeLayout = FindViewById<SwipeRefreshLayout> (Resource.Id.swipeContainer);
+			swipeLayout.SetOnRefreshListener (this);
+			swipeLayout.SetColorSchemeResources (Resource.Color.red);
+			
 			int childCount = mainLayout.ChildCount;
 
 			// Main app title and tagline
@@ -109,7 +118,7 @@ namespace Nearest.Droid
 			 * Define UI actions
 			 * 
 			 */
-			mainLayout.Click += delegate(object sender, EventArgs e) {
+			/*mainLayout.Click += delegate(object sender, EventArgs e) {
 				if (isFullscreen) {
 					Window.ClearFlags (WindowManagerFlags.Fullscreen);
 					isFullscreen = false;
@@ -118,7 +127,7 @@ namespace Nearest.Droid
 					isFullscreen = true;
 				}
 				ShowAlert (isFullscreen ? "Fullscreen enabled" : "Fullscreen disabled");
-			};
+			};*/
 			for (var i = 0; i < 2; i++) {
 				var direction = i == 0 ? southLayout : northLayout;
 
@@ -129,6 +138,14 @@ namespace Nearest.Droid
 
 				Button button = (Button)direction.FindViewWithTag (tag: "button");
 				SetTrainsNotice (button, times);
+			}
+		}
+
+		public void OnRefresh ()
+		{
+			if (swipeLayout.Refreshing) {
+				HandleConnections ();
+				swipeLayout.Refreshing = false;
 			}
 		}
 
@@ -341,7 +358,8 @@ namespace Nearest.Droid
 				Report ("Setting next trains...", 0);
 				// Loop throuh south and north view groups 
 				for (var i = 0; i < 2; i++) {
-					var index = (i + 1).ToString ();
+					var idx = i;
+					var index = (idx + 1).ToString ();
 					Report ("SetNextTrain " + index, 0);
 					var path = i == 0 ? southLayout : northLayout;
 					var button = (Button)path.FindViewWithTag (tag: "button");
@@ -380,12 +398,15 @@ namespace Nearest.Droid
 							};
 							if (!button.HasOnClickListeners) {
 								button.Click += GetDetails;
+							} else {
+								button.Click -= GetDetails;
 							}
 						} else {
 							SetTrainsNotice (button, time);
 						}
 					}
 				}
+				swipeLayout.Refreshing = false;
 			}
 		}
 
@@ -527,14 +548,16 @@ namespace Nearest.Droid
 				try {
 					if (trainLVM == null) {
 						trainLVM = new TrainListViewModel (locationData.Latitude, locationData.Longitude);
+						trainLVM.PropertyChanged += delegate {
+							SetNextTrains ();
+						};
 					}
+					
 					Task.Run (
 						() => trainLVM.GetTrainsAsync ()
 					).ContinueWith (
-						task => RunOnUiThread (
-							() => SetNextTrains ()
-						)
-					).Wait ();
+						task => SetNextTrains ()
+					);
 				} catch (Exception ex) {
 					Report ("Exception: " + ex.Message.ToString (), 0);
 				} finally {
