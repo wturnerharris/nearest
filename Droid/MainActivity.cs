@@ -352,62 +352,64 @@ namespace Nearest.Droid
 		/// </summary>
 		public void SetNextTrains ()
 		{
-			if (trainLVM.IsBusy) {
-				Report ("Still getting trains...", 0);
-			} else {
-				Report ("Setting next trains...", 0);
-				// Loop throuh south and north view groups 
-				for (var i = 0; i < 2; i++) {
-					var idx = i;
-					var index = (idx + 1).ToString ();
-					Report ("SetNextTrain " + index, 0);
-					var path = i == 0 ? southLayout : northLayout;
-					var button = (Button)path.FindViewWithTag (tag: "button");
-					var time = (TextView)path.FindViewWithTag (tag: "time");
+			RunOnUiThread (() => {
+				if (trainLVM.IsBusy) {
+					Report ("Still getting trains...", 0);
+				} else {
+					Report ("Setting next trains...", 0);
+					// Loop throuh south and north view groups 
+					for (var i = 0; i < 2; i++) {
+						var idx = i;
+						var index = (idx + 1).ToString ();
+						Report ("SetNextTrain " + index, 0);
+						var path = i == 0 ? southLayout : northLayout;
+						var button = (Button)path.FindViewWithTag (tag: "button");
+						var time = (TextView)path.FindViewWithTag (tag: "time");
 
-					if (trainLVM.stopList.Count > 0) {
-						var nearestTrain = trainLVM.stopList [i] [0].next_train;
-						var fartherTrains = trainLVM.stopList [i] [0].trains;
-						if (nearestTrain != null) {
-							var TrainColor = GetTrainColor (nearestTrain.route_id);
+						if (trainLVM.stopList.Count > 0) {
+							var nearestTrain = trainLVM.stopList [i] [0].next_train;
+							var fartherTrains = trainLVM.stopList [i] [0].trains;
+							if (nearestTrain != null) {
+								var TrainColor = GetTrainColor (nearestTrain.route_id);
 
-							button.Text = nearestTrain.route_id;
-							button.SetBackgroundResource (GetTrainColorDrawable (nearestTrain.route_id));
-							button.SetTextColor (Color.White);
+								button.Text = nearestTrain.route_id;
+								button.SetBackgroundResource (GetTrainColorDrawable (nearestTrain.route_id));
+								button.SetTextColor (Color.White);
 
-							time.Text = Train.time (nearestTrain.ts);
+								time.Text = Train.time (nearestTrain.ts);
 
-							EventHandler GetDetails = null;
-							GetDetails = delegate(object sender, EventArgs args) {
-								Report ("Click Event: " + index, 0);
-								//StartActivity (typeof(Detail));
-								//Animation hyperspaceJump = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
-								ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (button, 0, 0, 60, 60);
-								Intent pendingIntent = new Intent (this, typeof(Detail));
+								EventHandler GetDetails = null;
+								GetDetails = delegate(object sender, EventArgs args) {
+									Report ("Click Event: " + index, 0);
+									//StartActivity (typeof(Detail));
+									//Animation hyperspaceJump = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
+									ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (button, 0, 0, 60, 60);
+									Intent pendingIntent = new Intent (this, typeof(Detail));
 
-								var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject (nearestTrain);
-								pendingIntent.PutExtra ("nearestTrain", toJsonNearestTrain);
-								pendingIntent.PutExtra ("nearestTrainColor", TrainColor);
+									var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject (nearestTrain);
+									pendingIntent.PutExtra ("nearestTrain", toJsonNearestTrain);
+									pendingIntent.PutExtra ("nearestTrainColor", TrainColor);
 
-								var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject (fartherTrains);
-								pendingIntent.PutExtra ("fartherTrains", toJsonFartherTrains);
+									var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject (fartherTrains);
+									pendingIntent.PutExtra ("fartherTrains", toJsonFartherTrains);
 
-								StartActivity (pendingIntent, options.ToBundle ());
+									StartActivity (pendingIntent, options.ToBundle ());
 
-								button.Click -= GetDetails;
-							};
-							if (!button.HasOnClickListeners) {
-								button.Click += GetDetails;
+									button.Click -= GetDetails;
+								};
+								if (!button.HasOnClickListeners) {
+									button.Click += GetDetails;
+								} else {
+									button.Click -= GetDetails;
+								}
 							} else {
-								button.Click -= GetDetails;
+								SetTrainsNotice (button, time);
 							}
-						} else {
-							SetTrainsNotice (button, time);
 						}
 					}
+					swipeLayout.Refreshing = false;
 				}
-				swipeLayout.Refreshing = false;
-			}
+			});
 		}
 
 		/// <summary>
@@ -542,7 +544,7 @@ namespace Nearest.Droid
 				Report (
 					"Lat: " + locationData.Latitude +
 					"\nLong: " + locationData.Longitude,
-					2
+					0
 				);
 
 				try {
@@ -553,11 +555,7 @@ namespace Nearest.Droid
 						};
 					}
 					
-					Task.Run (
-						() => trainLVM.GetTrainsAsync ()
-					).ContinueWith (
-						task => SetNextTrains ()
-					);
+					Task.Run (() => trainLVM.GetTrainsAsync ());
 				} catch (Exception ex) {
 					Report ("Exception: " + ex.Message.ToString (), 0);
 				} finally {
