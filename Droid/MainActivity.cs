@@ -28,9 +28,6 @@ using Android.Util;
 using Nearest.ViewModels;
 using Nearest.Models;
 
-using Runnable = Java.Lang.Runnable;
-using Android.Graphics.Drawables;
-
 namespace Nearest.Droid
 {
 	[Activity (
@@ -156,11 +153,11 @@ namespace Nearest.Droid
 		{
 			base.OnResume ();
 			var lastUpdate = (DateTime.Now.TimeOfDay - lastUpdated).TotalSeconds;
-			Report (String.Format ("Last updated: {0} seconds ago.", lastUpdate.ToString ()), 0);
+			Report (String.Format (GetString (Resource.String.info_last_updated), lastUpdate.ToString ()), 0);
 			if (lastUpdated.TotalSeconds == 0 || lastUpdate > 30) {
 				HandleConnections ();
 			} else {
-				SetNextTrains ();
+				SetNextTrains ("Resuming.");
 			}
 		}
 
@@ -185,23 +182,22 @@ namespace Nearest.Droid
 					try {
 						Task.Run (() => TryGetLocation ());
 					} catch (Exception ex) {
-						Report ("Exception (HandleConnections):\n" +
-						ex.Message.ToString (), 0);
+						Report (GetString (Resource.String.error_exception) + ex.Message.ToString (), 0);
 					}
 				} else {
-					Report ("Google Play Services is not installed", 0);
+					Report (GetString (Resource.String.common_google_play_services_api_unavailable_text), 0);
 					Snackbar.Make (coordinatorView, 
-						"Google Play Services is required to get your location.", 
+						Resource.String.error_play_missing, 
 						Snackbar.LengthIndefinite)
-					.SetAction ("OK", v => HandleConnections ())
+					.SetAction (Resource.String.snackbar_button_ok, v => HandleConnections ())
 					.Show ();
 				}
 			} else {
-				Report ("No internet is available", 0);
+				Report (GetString (Resource.String.error_no_internet), 0);
 				Snackbar.Make (coordinatorView, 
-					"Internet access is required to get train times.", 
+					Resource.String.error_no_internet, 
 					Snackbar.LengthIndefinite)
-				.SetAction ("Try Again", v => HandleConnections ())
+				.SetAction (Resource.String.snackbar_button_try_again, v => HandleConnections ())
 				.Show ();
 			}
 			return;
@@ -252,9 +248,11 @@ namespace Nearest.Droid
 				Report ("Should show reason for permission.", 0);
 				//Explain to the user why we need to read the contacts
 				Snackbar.Make (coordinatorView, 
-					"Location access is required to show trains nearest you.", Snackbar.LengthIndefinite)
-					.SetAction ("OK", v => RequestPermissions (PermissionsLocation, RequestLocationId))
-					.Show ();
+					Resource.String.error_location_required, 
+					Snackbar.LengthIndefinite)
+				.SetAction (Resource.String.snackbar_button_ok, 
+					v => RequestPermissions (PermissionsLocation, RequestLocationId))
+				.Show ();
 				return;
 			}
 			//Finally request permissions with the list of permissions and Id
@@ -275,16 +273,17 @@ namespace Nearest.Droid
 			case RequestLocationId:
 				{
 					if (grantResults [0] == Permission.Granted) {
-						Report ("Permission granted.", 0);
 						//Permission granted
+						Report ("Permission granted.", 0);
 						await GetLocationAsync ();
 					} else {
 						//Permission Denied :(
-						//Disabling location functionality
-						Report ("Location permission is denied.", 0);
+						Report (GetString (Resource.String.error_location_permission), 0);
 						Snackbar.Make (coordinatorView, 
-							"Location permission is denied.", Snackbar.LengthIndefinite)
-							.SetAction ("Try again?", v => RequestPermissions (PermissionsLocation, RequestLocationId))
+							Resource.String.error_location_permission, 
+							Snackbar.LengthIndefinite)
+						.SetAction (Resource.String.snackbar_button_try_again, 
+							v => RequestPermissions (PermissionsLocation, RequestLocationId))
 							.Show ();
 					}
 				}
@@ -333,7 +332,6 @@ namespace Nearest.Droid
 		{
 			int queryResult = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable (this);
 			if (queryResult == ConnectionResult.Success) {
-				Report ("Google Play Services is installed.", 0);
 				return true;
 			}
 
@@ -341,8 +339,6 @@ namespace Nearest.Droid
 				string errorString = GoogleApiAvailability.Instance.GetErrorString (queryResult);
 				Report (String.Format ("There is a problem with Google Play Services: {0} - {1}", 
 					queryResult, errorString), 0);
-
-				// Show error dialog to let user debug google play services
 			}
 			return false;
 		}
@@ -350,22 +346,26 @@ namespace Nearest.Droid
 		/// <summary>
 		/// Sets the next trains.
 		/// </summary>
-		public void SetNextTrains ()
+		public void SetNextTrains (String origin)
 		{
 			RunOnUiThread (() => {
+				if (trainLVM == null) {
+					Report (origin + " TrainLVM not setup yet.", 0);
+					return;
+				}
 				if (trainLVM.IsBusy) {
-					Report ("Still getting trains...", 0);
+					Report (origin + " Still getting trains.", 0);
 				} else {
-					Report ("Setting next trains...", 0);
+					Report (origin + " Setting next trains.", 0);
 					// Loop throuh south and north view groups 
 					for (var i = 0; i < 2; i++) {
 						var idx = i;
 						var index = (idx + 1).ToString ();
-						Report ("SetNextTrain " + index, 0);
 						var path = i == 0 ? southLayout : northLayout;
 						var button = (Button)path.FindViewWithTag (tag: "button");
 						var time = (TextView)path.FindViewWithTag (tag: "time");
 
+						Report ("SetNextTrain " + index, 0);
 						if (trainLVM.stopList.Count > 0) {
 							var nearestTrain = trainLVM.stopList [i] [0].next_train;
 							var fartherTrains = trainLVM.stopList [i] [0].trains;
@@ -419,11 +419,11 @@ namespace Nearest.Droid
 		/// <param name="time">Time.</param>
 		public void SetTrainsNotice (Button button, TextView time)
 		{
-			button.Text = "!";
+			button.Text = GetString (Resource.String.error_train_line);
 			button.SetBackgroundResource (
 				GetTrainColorDrawable ("")
 			);
-			time.Text = "Problem";
+			time.Text = GetString (Resource.String.error_train_time);
 		}
 
 		/// <summary>
@@ -541,20 +541,18 @@ namespace Nearest.Droid
 		public void GetTrainModels (Location locationData)
 		{
 			if (locationData != null) {
-				Report (
-					"Lat: " + locationData.Latitude +
-					"\nLong: " + locationData.Longitude,
-					0
-				);
+				Report ("Latitude: " + locationData.Latitude, 0);
+				Report ("Longitude: " + locationData.Longitude, 0);
 
 				try {
 					if (trainLVM == null) {
 						trainLVM = new TrainListViewModel (locationData.Latitude, locationData.Longitude);
 						trainLVM.PropertyChanged += delegate {
-							SetNextTrains ();
+							Report ("Schedule updated", 0);
+							SetNextTrains ("Property changed.");
 						};
 					}
-					
+					// Get trains asynchonously
 					Task.Run (() => trainLVM.GetTrainsAsync ());
 				} catch (Exception ex) {
 					Report ("Exception: " + ex.Message.ToString (), 0);
@@ -625,8 +623,8 @@ namespace Nearest.Droid
 			// Show latest location
 			var l = DescribeLocation (NewLocation);
 			Report ("OnLocationChanged:\n" + l, 0);
-			EndLocationUpdates ();
 			GetTrainModels (NewLocation);
+			EndLocationUpdates ();
 		}
 
 		/// <summary>
@@ -687,7 +685,7 @@ namespace Nearest.Droid
 				if (locationSettingsResult.Status.StatusCode == LocationSettingsStatusCodes.ResolutionRequired)
 					locationSettingsResult.Status.StartResolutionForResult (this, 101);
 				else
-					Toast.MakeText (this, "Location Services Not Available for the given request.", ToastLength.Long).Show ();
+					Toast.MakeText (this, Resource.String.error_location_unavailable, ToastLength.Long).Show ();
 
 				return false;
 			}
@@ -701,7 +699,7 @@ namespace Nearest.Droid
 		/// <param name="cause">Cause.</param>
 		public void OnConnectionSuspended (int cause)
 		{
-			Console.WriteLine ("GooglePlayServices Connection Suspended: {0}", cause);
+			Report (String.Format ("GooglePlayServices Connection Suspended: {0}", cause), 0);
 		}
 
 		/// <summary>
@@ -710,7 +708,7 @@ namespace Nearest.Droid
 		/// <param name="result">Result.</param>
 		public void OnConnectionFailed (Android.Gms.Common.ConnectionResult result)
 		{
-			Console.WriteLine ("GooglePlayServices Connection Failed: {0}", result);
+			Report (String.Format ("GooglePlayServices Connection Failed: {0}", result), 0);
 		}
 
 		/// <Docs>The integer request code originally supplied to

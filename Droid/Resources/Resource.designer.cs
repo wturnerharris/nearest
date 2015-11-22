@@ -2769,8 +2769,41 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f050001
 			public const int common_signin_button_text_long = 2131034113;
 			
+			// aapt resource value: 0x7f05003b
+			public const int error_exception = 2131034171;
+			
+			// aapt resource value: 0x7f05003d
+			public const int error_location_permission = 2131034173;
+			
+			// aapt resource value: 0x7f05003c
+			public const int error_location_required = 2131034172;
+			
+			// aapt resource value: 0x7f05003e
+			public const int error_location_unavailable = 2131034174;
+			
+			// aapt resource value: 0x7f05003a
+			public const int error_no_internet = 2131034170;
+			
+			// aapt resource value: 0x7f050039
+			public const int error_play_missing = 2131034169;
+			
+			// aapt resource value: 0x7f050040
+			public const int error_train_line = 2131034176;
+			
+			// aapt resource value: 0x7f05003f
+			public const int error_train_time = 2131034175;
+			
+			// aapt resource value: 0x7f050038
+			public const int info_last_updated = 2131034168;
+			
 			// aapt resource value: 0x7f050035
 			public const int library_name = 2131034165;
+			
+			// aapt resource value: 0x7f050041
+			public const int snackbar_button_ok = 2131034177;
+			
+			// aapt resource value: 0x7f050042
+			public const int snackbar_button_try_again = 2131034178;
 			
 			// aapt resource value: 0x7f050034
 			public const int status_bar_notification_info_overflow = 2131034164;
