@@ -43,7 +43,6 @@ namespace Nearest.Droid
 	SwipeRefreshLayout.IOnRefreshListener
 	{
 		public TrainListViewModel trainLVM;
-		public Location CurrentLocation;
 		GoogleApiClient googleApiClient;
 
 		public RelativeLayout mainLayout;
@@ -558,13 +557,11 @@ namespace Nearest.Droid
 					Report ("Exception: " + ex.Message.ToString (), 0);
 				} finally {
 					if (!this.trainLVM.IsBusy) {
-						Report ("Train schedule received", 0);
-					} else {
-						EndLocationUpdates ();
+						Report ("Train schedule requested", 0);
 					}
 				}
 			} else {
-				Report ("Problem with GetTrainModels", 2);
+				Report ("Location missing", 2);
 			}
 		}
 
@@ -621,8 +618,8 @@ namespace Nearest.Droid
 		public void OnLocationChanged (Location NewLocation)
 		{
 			// Show latest location
-			var l = DescribeLocation (NewLocation);
-			Report ("OnLocationChanged:\n" + l, 0);
+			var LocationDescription = DescribeLocation (NewLocation);
+			Report ("OnLocationChanged: " + LocationDescription, 0);
 			GetTrainModels (NewLocation);
 			EndLocationUpdates ();
 		}
@@ -743,7 +740,6 @@ namespace Nearest.Droid
 		/// <param name="location">Location.</param>
 		public string DescribeLocation (Location location)
 		{
-			CurrentLocation = location;
 			return string.Format ("{0}: {1}, {2} @ {3}",
 				location.Provider,
 				location.Latitude,
