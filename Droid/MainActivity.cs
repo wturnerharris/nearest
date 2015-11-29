@@ -444,10 +444,10 @@ namespace Nearest.Droid
 							var button = (Button)path.FindViewWithTag (tag: "button");
 							var buttons = GetViewsByTag (path, "button");
 							var time = (TextView)path.FindViewWithTag (tag: "time");
-							int _idx = idx - 1;
+							int subIdx = idx - 1;
 
-							if (idx > 0 && buttons.Count > 0 && _idx < buttons.Count) {
-								button = (Button)buttons [_idx];
+							if (idx > 0 && buttons.Count > 0 && subIdx < buttons.Count) {
+								button = (Button)buttons [subIdx];
 							}
 
 							Report ("SetNextTrain " + dir + " " + idx, 0);
