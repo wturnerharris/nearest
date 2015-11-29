@@ -506,8 +506,8 @@ namespace Nearest.Droid
 			case "6":
 				resourceDrawable = Resource.Color.green;
 				break;
-			case "G": /** TODO: This is alternate green */
-				resourceDrawable = Resource.Color.green;
+			case "G": 
+				resourceDrawable = Resource.Color.green_alt;
 				break;
 			case "B":
 			case "D":
