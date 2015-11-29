@@ -142,6 +142,11 @@ namespace Nearest.Droid
 			}
 		}
 
+		/// <summary>
+		/// Raises the touch event.
+		/// </summary>
+		/// <param name="v">View.</param>
+		/// <param name="e">MotionEvent.</param>
 		public bool OnTouch (View v, MotionEvent e)
 		{
 			int direction = -15;
@@ -386,6 +391,26 @@ namespace Nearest.Droid
 			return false;
 		}
 
+		private List<View> GetViewsByTag (ViewGroup root, String tag)
+		{
+			List<View> views = new List<View> ();
+			int childCount = root.ChildCount;
+			for (int i = 0; i < childCount; i++) {
+				View child = root.GetChildAt (i);
+				if (child is ViewGroup) {
+					views.AddRange (GetViewsByTag ((ViewGroup)child, tag));
+				} 
+
+				Object tagObj = child.Tag;
+				if (tagObj != null && tagObj.ToString () == tag) {
+					Report (tagObj.ToString (), 0);
+					views.Add (child);
+				}
+
+			}
+			return views;
+		}
+
 		/// <summary>
 		/// Sets the next trains.
 		/// </summary>
@@ -405,6 +430,7 @@ namespace Nearest.Droid
 					foreach (List<Stop> stops in trainLVM.stopList) {
 						int idx = 0;
 						foreach (Stop stop in stops) {
+							//no more than 5, including the main
 							if (idx > 4) {
 								continue;
 							}
@@ -417,10 +443,12 @@ namespace Nearest.Droid
 								swipeButton.Visibility = ViewStates.Visible;
 							}
 							var button = (Button)path.FindViewWithTag (tag: "button");
+							var buttons = GetViewsByTag (path, "button");
 							var time = (TextView)path.FindViewWithTag (tag: "time");
+							int _idx = idx - 1;
 
-							if (idx > 0) {
-								button = (Button)path.GetChildAt (idx);
+							if (idx > 0 && buttons.Count > 0 && _idx < buttons.Count) {
+								button = (Button)buttons [_idx];
 							}
 
 							Report ("SetNextTrain " + dir + " " + idx, 0);
@@ -480,9 +508,7 @@ namespace Nearest.Droid
 		public void SetTrainsNotice (Button button, TextView time)
 		{
 			button.Text = GetString (Resource.String.error_train_line);
-			button.SetBackgroundResource (
-				GetTrainColorDrawable ("")
-			);
+			button.SetBackgroundResource (GetTrainColorDrawable (""));
 			time.Text = GetString (Resource.String.error_train_time);
 		}
 
