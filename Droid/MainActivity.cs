@@ -37,6 +37,7 @@ namespace Nearest.Droid
 		ScreenOrientation = ScreenOrientation.Portrait
 	)]
 	public class MainActivity : AppCompatActivity, 
+	View.IOnTouchListener,
 	GoogleApiClient.IConnectionCallbacks, 
 	GoogleApiClient.IOnConnectionFailedListener, 
 	Android.Gms.Location.ILocationListener,
@@ -45,12 +46,15 @@ namespace Nearest.Droid
 		public TrainListViewModel trainLVM;
 		GoogleApiClient googleApiClient;
 
-		public RelativeLayout mainLayout;
+		public RelativeLayout mainLayout, subLayout;
 		public LinearLayout northLayout, southLayout;
 		public View coordinatorView;
 		public SwipeRefreshLayout swipeLayout;
+		public ScrollView scrollView;
+		public ImageButton swipeButton;
 
 		public bool isFullscreen = false;
+		public bool isAtTop = true;
 		TimeSpan lastUpdated;
 
 		readonly string[] PermissionsLocation = {
@@ -58,6 +62,7 @@ namespace Nearest.Droid
 			Manifest.Permission.AccessFineLocation
 		};
 
+		public int startY = 0;
 		const int RequestLocationId = 0;
 
 		/// <summary>
@@ -79,6 +84,7 @@ namespace Nearest.Droid
 			Typeface HnMd = Typeface.CreateFromAsset (Assets, "fonts/HelveticaNeueLTCom-Roman.ttf");
 
 			mainLayout = FindViewById<RelativeLayout> (Resource.Id.mainLayout);
+			subLayout = FindViewById<RelativeLayout> (Resource.Id.subLayout);
 
 			coordinatorView = (View)FindViewById (Resource.Id.CoordinatorView);
 
@@ -110,11 +116,17 @@ namespace Nearest.Droid
 				}
 			}
 
+			scrollView = FindViewById<ScrollView> (Resource.Id.scrollView);
+			scrollView.SetOnTouchListener (this);
+
+			swipeButton = FindViewById<ImageButton> (Resource.Id.swipeButton);
+			swipeButton.SetOnTouchListener (this);
+
 			/**
 			 * Define UI actions
 			 * 
 			 */
-			/*mainLayout.Click += delegate(object sender, EventArgs e) {
+			/*swipeButton.Click += delegate(object sender, EventArgs e) {
 				if (isFullscreen) {
 					Window.ClearFlags (WindowManagerFlags.Fullscreen);
 					isFullscreen = false;
@@ -137,11 +149,50 @@ namespace Nearest.Droid
 			}
 		}
 
+		public bool OnTouch (View v, MotionEvent e)
+		{
+			int direction = -15;
+			if (v.Equals (scrollView)) {
+				return true;
+			}
+			if (startY == 0) {
+				startY = (int)e.RawY;
+			} else {
+				direction = startY - (int)e.RawY;
+			}
+			switch (e.Action) {
+			case MotionEventActions.Down:
+			//finger down
+				break;
+			case MotionEventActions.Move:
+			//still moving
+				break;
+			case MotionEventActions.Up:
+			//finger up
+				break;
+			case MotionEventActions.Cancel:
+				if (direction > 15) {
+					scrollView.SmoothScrollTo (0, swipeButton.Top);
+					int[] state = new int[] { Android.Resource.Attribute.StateExpanded };
+					swipeButton.SetImageState (state, false);
+				} else if (direction < -15) {
+					scrollView.SmoothScrollTo (0, mainLayout.Top);
+					swipeButton.SetImageState (new int[] { }, false);
+				}
+				startY = 0;
+				break;
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Raises the refresh event.
+		/// </summary>
 		public void OnRefresh ()
 		{
 			if (swipeLayout.Refreshing) {
 				HandleConnections ();
-				swipeLayout.Refreshing = false;
 			}
 		}
 
