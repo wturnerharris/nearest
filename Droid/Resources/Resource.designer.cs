@@ -1827,13 +1827,13 @@ namespace Nearest.Droid
 			public const int abc_textfield_search_material = 2130837565;
 			
 			// aapt resource value: 0x7f02003e
-			public const int Blue = 2130837566;
+			public const int blue = 2130837566;
 			
 			// aapt resource value: 0x7f02003f
-			public const int Brown = 2130837567;
+			public const int brown = 2130837567;
 			
 			// aapt resource value: 0x7f020040
-			public const int Circle = 2130837568;
+			public const int circle = 2130837568;
 			
 			// aapt resource value: 0x7f020041
 			public const int circle_outline = 2130837569;
@@ -1926,34 +1926,46 @@ namespace Nearest.Droid
 			public const int detail_icon_close = 2130837598;
 			
 			// aapt resource value: 0x7f02005f
-			public const int Gray = 2130837599;
+			public const int expander_close_mtrl_alpha = 2130837599;
 			
 			// aapt resource value: 0x7f020060
-			public const int Green = 2130837600;
+			public const int expander_group_material = 2130837600;
 			
 			// aapt resource value: 0x7f020061
-			public const int Icon = 2130837601;
-			
-			// aapt resource value: 0x7f020068
-			public const int notification_template_icon_bg = 2130837608;
+			public const int expander_open_mtrl_alpha = 2130837601;
 			
 			// aapt resource value: 0x7f020062
-			public const int Orange = 2130837602;
+			public const int gray = 2130837602;
 			
 			// aapt resource value: 0x7f020063
-			public const int powered_by_google_dark = 2130837603;
+			public const int green = 2130837603;
 			
 			// aapt resource value: 0x7f020064
-			public const int powered_by_google_light = 2130837604;
+			public const int green_alt = 2130837604;
 			
 			// aapt resource value: 0x7f020065
-			public const int Purple = 2130837605;
+			public const int Icon = 2130837605;
+			
+			// aapt resource value: 0x7f02006c
+			public const int notification_template_icon_bg = 2130837612;
 			
 			// aapt resource value: 0x7f020066
-			public const int Red = 2130837606;
+			public const int orange = 2130837606;
 			
 			// aapt resource value: 0x7f020067
-			public const int Yellow = 2130837607;
+			public const int powered_by_google_dark = 2130837607;
+			
+			// aapt resource value: 0x7f020068
+			public const int powered_by_google_light = 2130837608;
+			
+			// aapt resource value: 0x7f020069
+			public const int purple = 2130837609;
+			
+			// aapt resource value: 0x7f02006a
+			public const int red = 2130837610;
+			
+			// aapt resource value: 0x7f02006b
+			public const int yellow = 2130837611;
 			
 			static Drawable()
 			{
@@ -1971,11 +1983,11 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a006a
 			public const int AlertContent = 2131361898;
 			
-			// aapt resource value: 0x7f0a0089
-			public const int Circle = 2131361929;
+			// aapt resource value: 0x7f0a008b
+			public const int Circle = 2131361931;
 			
-			// aapt resource value: 0x7f0a008a
-			public const int CircleOutline = 2131361930;
+			// aapt resource value: 0x7f0a008c
+			public const int CircleOutline = 2131361932;
 			
 			// aapt resource value: 0x7f0a007b
 			public const int CoordinatorView = 2131361915;
@@ -2016,8 +2028,8 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a0079
 			public const int TextViewTitle = 2131361913;
 			
-			// aapt resource value: 0x7f0a007c
-			public const int action0 = 2131361916;
+			// aapt resource value: 0x7f0a007e
+			public const int action0 = 2131361918;
 			
 			// aapt resource value: 0x7f0a005a
 			public const int action_bar = 2131361882;
@@ -2043,8 +2055,8 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a005b
 			public const int action_context_bar = 2131361883;
 			
-			// aapt resource value: 0x7f0a0080
-			public const int action_divider = 2131361920;
+			// aapt resource value: 0x7f0a0082
+			public const int action_divider = 2131361922;
 			
 			// aapt resource value: 0x7f0a0003
 			public const int action_menu_divider = 2131361795;
@@ -2085,8 +2097,8 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a0050
 			public const int buttonPanel = 2131361872;
 			
-			// aapt resource value: 0x7f0a007d
-			public const int cancel_action = 2131361917;
+			// aapt resource value: 0x7f0a007f
+			public const int cancel_action = 2131361919;
 			
 			// aapt resource value: 0x7f0a0018
 			public const int center = 2131361816;
@@ -2100,8 +2112,8 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a0052
 			public const int checkbox = 2131361874;
 			
-			// aapt resource value: 0x7f0a0083
-			public const int chronometer = 2131361923;
+			// aapt resource value: 0x7f0a0085
+			public const int chronometer = 2131361925;
 			
 			// aapt resource value: 0x7f0a0021
 			public const int clip_horizontal = 2131361825;
@@ -2136,8 +2148,8 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a001b
 			public const int end = 2131361819;
 			
-			// aapt resource value: 0x7f0a0088
-			public const int end_padder = 2131361928;
+			// aapt resource value: 0x7f0a008a
+			public const int end_padder = 2131361930;
 			
 			// aapt resource value: 0x7f0a0011
 			public const int enterAlways = 2131361809;
@@ -2184,17 +2196,17 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a0042
 			public const int image = 2131361858;
 			
-			// aapt resource value: 0x7f0a0087
-			public const int info = 2131361927;
+			// aapt resource value: 0x7f0a0089
+			public const int info = 2131361929;
 			
 			// aapt resource value: 0x7f0a001d
 			public const int left = 2131361821;
 			
-			// aapt resource value: 0x7f0a0081
-			public const int line1 = 2131361921;
+			// aapt resource value: 0x7f0a0083
+			public const int line1 = 2131361923;
 			
-			// aapt resource value: 0x7f0a0085
-			public const int line3 = 2131361925;
+			// aapt resource value: 0x7f0a0087
+			public const int line3 = 2131361927;
 			
 			// aapt resource value: 0x7f0a0028
 			public const int listMode = 2131361832;
@@ -2205,8 +2217,8 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a0078
 			public const int mainLayout = 2131361912;
 			
-			// aapt resource value: 0x7f0a007f
-			public const int media_actions = 2131361919;
+			// aapt resource value: 0x7f0a0081
+			public const int media_actions = 2131361921;
 			
 			// aapt resource value: 0x7f0a0036
 			public const int middle = 2131361846;
@@ -2331,11 +2343,17 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a001f
 			public const int start = 2131361823;
 			
-			// aapt resource value: 0x7f0a007e
-			public const int status_bar_latest_event_content = 2131361918;
+			// aapt resource value: 0x7f0a0080
+			public const int status_bar_latest_event_content = 2131361920;
+			
+			// aapt resource value: 0x7f0a007d
+			public const int subLayout = 2131361917;
 			
 			// aapt resource value: 0x7f0a0065
 			public const int submit_area = 2131361893;
+			
+			// aapt resource value: 0x7f0a007c
+			public const int swipeButton = 2131361916;
 			
 			// aapt resource value: 0x7f0a0077
 			public const int swipeContainer = 2131361911;
@@ -2346,17 +2364,17 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a000e
 			public const int terrain = 2131361806;
 			
-			// aapt resource value: 0x7f0a0086
-			public const int text = 2131361926;
+			// aapt resource value: 0x7f0a0088
+			public const int text = 2131361928;
 			
-			// aapt resource value: 0x7f0a0084
-			public const int text2 = 2131361924;
+			// aapt resource value: 0x7f0a0086
+			public const int text2 = 2131361926;
 			
 			// aapt resource value: 0x7f0a004d
 			public const int textSpacerNoButtons = 2131361869;
 			
-			// aapt resource value: 0x7f0a0082
-			public const int time = 2131361922;
+			// aapt resource value: 0x7f0a0084
+			public const int time = 2131361924;
 			
 			// aapt resource value: 0x7f0a0046
 			public const int title = 2131361862;

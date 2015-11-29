@@ -102,7 +102,6 @@
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Main.axml" />
     <AndroidResource Include="Resources\values\Strings.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\Icon.png" />
     <AndroidResource Include="Resources\drawable-mdpi\Icon.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\Icon.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\Icon.png" />
@@ -112,22 +111,27 @@
     <AndroidResource Include="Resources\layout\Detail.axml" />
     <AndroidResource Include="Resources\values\Styles.xml" />
     <AndroidResource Include="Resources\values-v21\Styles.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\Blue.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\Brown.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\Gray.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\Green.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\Orange.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\Purple.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\Red.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\Yellow.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\Circle.xml" />
     <AndroidResource Include="Resources\values-v23\Styles.xml" />
     <AndroidResource Include="Resources\layout\Alert.axml" />
     <AndroidResource Include="Resources\drawable-hdpi\detail_icon_close.png" />
     <AndroidResource Include="Resources\drawable-hdpi\circle_outline.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\expander_group_material.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\expander_close_mtrl_alpha.9.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\expander_open_mtrl_alpha.9.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\blue.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\brown.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\circle.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\red.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\yellow.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\orange.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\gray.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\green.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\purple.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\icon.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\green_alt.xml" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Assets\fonts\" />
     <Folder Include="Resources\anim\" />

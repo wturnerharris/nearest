@@ -492,42 +492,42 @@ namespace Nearest.Droid
 			case "1":
 			case "2":
 			case "3":
-				resourceDrawable = Resource.Drawable.Red;
+				resourceDrawable = Resource.Drawable.red;
 				break;
 			case "A":
 			case "C":
 			case "E":
-				resourceDrawable = Resource.Drawable.Blue;
+				resourceDrawable = Resource.Drawable.blue;
 				break;
 			case "N":
 			case "Q":
 			case "R":
-				resourceDrawable = Resource.Drawable.Yellow;
+				resourceDrawable = Resource.Drawable.yellow;
 				break;
 			case "4":
 			case "5":
 			case "6":
-				resourceDrawable = Resource.Drawable.Green;
+				resourceDrawable = Resource.Drawable.green;
 				break;
-			case "G": /** TODO: This is alternate green */
-				resourceDrawable = Resource.Drawable.Green;
+			case "G": 
+				resourceDrawable = Resource.Drawable.green_alt;
 				break;
 			case "B":
 			case "D":
 			case "F":
 			case "M":
-				resourceDrawable = Resource.Drawable.Orange;
+				resourceDrawable = Resource.Drawable.orange;
 				break;
 			case "7":
-				resourceDrawable = Resource.Drawable.Purple;
+				resourceDrawable = Resource.Drawable.purple;
 				break;
 			case "J":
 			case "Z":
-				resourceDrawable = Resource.Drawable.Brown;
+				resourceDrawable = Resource.Drawable.brown;
 				break;
 			case "L":
 			default: 
-				resourceDrawable = Resource.Drawable.Gray;
+				resourceDrawable = Resource.Drawable.gray;
 				break;
 			}
 			return resourceDrawable;
