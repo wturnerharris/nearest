@@ -36,7 +36,6 @@
         android:orientation="vertical"
         android:gravity="center">
         <TextView
-            android:id="@+id/DetailHeadsign"
             android:text="VAN CORTLANDT PARK - 242 ST"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,9 +45,9 @@
             android:layout_marginLeft="20dip"
             android:paddingRight="20dip"
             android:textStyle="bold"
-            android:fontFamily="sans-serif-condensed" />
+            android:fontFamily="sans-serif-condensed"
+            android:tag="detail" />
         <TextView
-            android:id="@+id/DetailStopName"
             android:text="Your Location - 145th"
             android:layout_width="match_parent"
             android:layout_height="30dip"
@@ -58,10 +57,9 @@
             android:layout_marginLeft="20dip"
             android:paddingRight="20dip"
             android:textStyle="bold"
-            android:fontFamily="sans-serif" />
+            android:fontFamily="sans-serif"
+            android:tag="detail" />
         <TextView
-            android:id="@+id/DetailStopTime1"
-            android:text="1 Min"
             android:layout_width="match_parent"
             android:layout_height="30dip"
             android:textSize="16dip"
@@ -69,10 +67,9 @@
             android:layout_marginTop="20dip"
             android:layout_marginLeft="20dip"
             android:textStyle="normal"
-            android:fontFamily="sans-serif" />
+            android:fontFamily="sans-serif"
+            android:tag="detail" />
         <TextView
-            android:id="@+id/DetailStopTime2"
-            android:text="2 Min"
             android:layout_width="match_parent"
             android:layout_height="30dip"
             android:textSize="16dip"
@@ -80,10 +77,9 @@
             android:layout_marginTop="20dip"
             android:layout_marginLeft="20dip"
             android:textStyle="normal"
-            android:fontFamily="sans-serif" />
+            android:fontFamily="sans-serif"
+            android:tag="time" />
         <TextView
-            android:id="@+id/DetailStopTime3"
-            android:text="3 Min"
             android:layout_width="match_parent"
             android:layout_height="30dip"
             android:textSize="16dip"
@@ -91,10 +87,9 @@
             android:layout_marginTop="20dip"
             android:layout_marginLeft="20dip"
             android:textStyle="normal"
-            android:fontFamily="sans-serif" />
+            android:fontFamily="sans-serif"
+            android:tag="time" />
         <TextView
-            android:id="@+id/DetailStopTime4"
-            android:text="4 Min"
             android:layout_width="match_parent"
             android:layout_height="30dip"
             android:textSize="16dip"
@@ -102,6 +97,7 @@
             android:layout_marginTop="20dip"
             android:layout_marginLeft="20dip"
             android:textStyle="normal"
-            android:fontFamily="sans-serif" />
+            android:fontFamily="sans-serif"
+            android:tag="time" />
     </LinearLayout>
 </RelativeLayout>

@@ -59,21 +59,32 @@ namespace Nearest.Droid
 				this.Finish ();
 			};
 
+			LinearLayout detailView = FindViewById<LinearLayout> (Resource.Id.DetailInfo);
+			List<View> detailLabels = MainActivity.GetViewsByTag (detailView, "detail");
+			List<View> timeLabels = MainActivity.GetViewsByTag (detailView, "time");
+
 			var nearestTrain = Intent.GetStringExtra ("nearestTrain");
 			if (nearestTrain != null) {
 				var train = Newtonsoft.Json.JsonConvert.DeserializeObject<Train> (nearestTrain);
-
-				TextView DetailRouteId = FindViewById<TextView> (Resource.Id.DetailRouteId);
-				DetailRouteId.Text = train.route_id;
-
-				TextView DetailHeadsign = FindViewById<TextView> (Resource.Id.DetailHeadsign);
-				DetailHeadsign.Text = train.trip_headsign;
-
-				TextView DetailStopName = FindViewById<TextView> (Resource.Id.DetailStopName);
-				DetailStopName.Text = train.stop_name;
-
-				TextView DetailStopTime1 = FindViewById<TextView> (Resource.Id.DetailStopTime1);
-				DetailStopTime1.Text = train.GetTimeInMinutes ();
+				if (detailLabels.Count > 0 && train != null) {
+					TextView DetailRouteId = FindViewById<TextView> (Resource.Id.DetailRouteId);
+					DetailRouteId.Text = train.route_id;
+					var t = 0;
+					foreach (TextView detailLabel in detailLabels) {
+						switch (t) {
+						case 0:
+							detailLabel.Text = train.trip_headsign;
+							break;
+						case 1:
+							detailLabel.Text = train.stop_name;
+							break;
+						case 2:
+							detailLabel.Text = train.GetTimeInMinutes ();
+							break;
+						}
+						t++;
+					}
+				}
 			} else {
 				System.Console.WriteLine ("Detail: Json error!!");
 			}
@@ -82,23 +93,15 @@ namespace Nearest.Droid
 			if (fartherTrains != null) {
 				System.Console.WriteLine ("has Farther Trains");
 				var trains = Newtonsoft.Json.JsonConvert.DeserializeObject <List<Train>> (fartherTrains);
-				TextView DetailStopTime2 = FindViewById<TextView> (Resource.Id.DetailStopTime2);
-				TextView DetailStopTime3 = FindViewById<TextView> (Resource.Id.DetailStopTime3);
-				TextView DetailStopTime4 = FindViewById<TextView> (Resource.Id.DetailStopTime4);
-				var i = 2;
-				if (trains != null && trains.Count > 0) {
-					foreach (var fartherTrain in trains) {
-						var TimeInMinutes = fartherTrain.GetTimeInMinutes ();
-						switch (i) {
-						case 2:
-							DetailStopTime2.Text = TimeInMinutes;
-							break;
-						case 3:
-							DetailStopTime3.Text = TimeInMinutes;
-							break;
-						case 4:
-							DetailStopTime4.Text = TimeInMinutes;
-							break;
+				var i = 0;
+				if (timeLabels.Count > 0 && trains != null && trains.Count > 0) {
+					foreach (TextView timeLabel in timeLabels) {
+						if (i < trains.Count) {
+							var fartherTrain = trains [i];
+							var TimeInMinutes = fartherTrain.GetTimeInMinutes ();
+							timeLabel.Text = TimeInMinutes;
+						} else {
+							timeLabel.Text = "";
 						}
 						i++;
 					}
