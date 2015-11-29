@@ -993,32 +993,32 @@ namespace Nearest.Droid
 		public partial class Color
 		{
 			
-			// aapt resource value: 0x7f06005f
-			public const int abc_background_cache_hint_selector_material_dark = 2131099743;
-			
 			// aapt resource value: 0x7f060060
-			public const int abc_background_cache_hint_selector_material_light = 2131099744;
+			public const int abc_background_cache_hint_selector_material_dark = 2131099744;
 			
 			// aapt resource value: 0x7f060061
-			public const int abc_color_highlight_material = 2131099745;
+			public const int abc_background_cache_hint_selector_material_light = 2131099745;
+			
+			// aapt resource value: 0x7f060062
+			public const int abc_color_highlight_material = 2131099746;
 			
 			// aapt resource value: 0x7f060013
 			public const int abc_input_method_navigation_guard = 2131099667;
 			
-			// aapt resource value: 0x7f060062
-			public const int abc_primary_text_disable_only_material_dark = 2131099746;
-			
 			// aapt resource value: 0x7f060063
-			public const int abc_primary_text_disable_only_material_light = 2131099747;
+			public const int abc_primary_text_disable_only_material_dark = 2131099747;
 			
 			// aapt resource value: 0x7f060064
-			public const int abc_primary_text_material_dark = 2131099748;
+			public const int abc_primary_text_disable_only_material_light = 2131099748;
 			
 			// aapt resource value: 0x7f060065
-			public const int abc_primary_text_material_light = 2131099749;
+			public const int abc_primary_text_material_dark = 2131099749;
 			
 			// aapt resource value: 0x7f060066
-			public const int abc_search_url_text = 2131099750;
+			public const int abc_primary_text_material_light = 2131099750;
+			
+			// aapt resource value: 0x7f060067
+			public const int abc_search_url_text = 2131099751;
 			
 			// aapt resource value: 0x7f060014
 			public const int abc_search_url_text_normal = 2131099668;
@@ -1029,11 +1029,11 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f060016
 			public const int abc_search_url_text_selected = 2131099670;
 			
-			// aapt resource value: 0x7f060067
-			public const int abc_secondary_text_material_dark = 2131099751;
-			
 			// aapt resource value: 0x7f060068
-			public const int abc_secondary_text_material_light = 2131099752;
+			public const int abc_secondary_text_material_dark = 2131099752;
+			
+			// aapt resource value: 0x7f060069
+			public const int abc_secondary_text_material_light = 2131099753;
 			
 			// aapt resource value: 0x7f060017
 			public const int accent_material_dark = 2131099671;
@@ -1122,26 +1122,26 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f060005
 			public const int common_signin_btn_light_text_pressed = 2131099653;
 			
-			// aapt resource value: 0x7f060069
-			public const int common_signin_btn_text_dark = 2131099753;
-			
 			// aapt resource value: 0x7f06006a
-			public const int common_signin_btn_text_light = 2131099754;
+			public const int common_signin_btn_text_dark = 2131099754;
 			
-			// aapt resource value: 0x7f06005a
-			public const int darkblue = 2131099738;
-			
-			// aapt resource value: 0x7f06005c
-			public const int darkgreen = 2131099740;
-			
-			// aapt resource value: 0x7f06005d
-			public const int darkorange = 2131099741;
+			// aapt resource value: 0x7f06006b
+			public const int common_signin_btn_text_light = 2131099755;
 			
 			// aapt resource value: 0x7f06005b
-			public const int darkpurple = 2131099739;
+			public const int darkblue = 2131099739;
+			
+			// aapt resource value: 0x7f06005d
+			public const int darkgreen = 2131099741;
 			
 			// aapt resource value: 0x7f06005e
-			public const int darkred = 2131099742;
+			public const int darkorange = 2131099742;
+			
+			// aapt resource value: 0x7f06005c
+			public const int darkpurple = 2131099740;
+			
+			// aapt resource value: 0x7f06005f
+			public const int darkred = 2131099743;
 			
 			// aapt resource value: 0x7f06000a
 			public const int design_fab_shadow_end_color = 2131099658;
@@ -1188,11 +1188,14 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f06002a
 			public const int foreground_material_light = 2131099690;
 			
-			// aapt resource value: 0x7f060056
-			public const int gray = 2131099734;
+			// aapt resource value: 0x7f060057
+			public const int gray = 2131099735;
 			
 			// aapt resource value: 0x7f060055
 			public const int green = 2131099733;
+			
+			// aapt resource value: 0x7f060056
+			public const int green_alt = 2131099734;
 			
 			// aapt resource value: 0x7f06002b
 			public const int highlighted_text_material_dark = 2131099691;
@@ -1242,8 +1245,8 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f06003a
 			public const int material_grey_900 = 2131099706;
 			
-			// aapt resource value: 0x7f060057
-			public const int orange = 2131099735;
+			// aapt resource value: 0x7f060058
+			public const int orange = 2131099736;
 			
 			// aapt resource value: 0x7f06003b
 			public const int primary_dark_material_dark = 2131099707;
@@ -1269,11 +1272,11 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f060042
 			public const int primary_text_disabled_material_light = 2131099714;
 			
-			// aapt resource value: 0x7f060059
-			public const int purple = 2131099737;
+			// aapt resource value: 0x7f06005a
+			public const int purple = 2131099738;
 			
-			// aapt resource value: 0x7f060058
-			public const int red = 2131099736;
+			// aapt resource value: 0x7f060059
+			public const int red = 2131099737;
 			
 			// aapt resource value: 0x7f060043
 			public const int ripple_material_dark = 2131099715;
@@ -1299,11 +1302,11 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f06004a
 			public const int switch_thumb_disabled_material_light = 2131099722;
 			
-			// aapt resource value: 0x7f06006b
-			public const int switch_thumb_material_dark = 2131099755;
-			
 			// aapt resource value: 0x7f06006c
-			public const int switch_thumb_material_light = 2131099756;
+			public const int switch_thumb_material_dark = 2131099756;
+			
+			// aapt resource value: 0x7f06006d
+			public const int switch_thumb_material_light = 2131099757;
 			
 			// aapt resource value: 0x7f06004b
 			public const int switch_thumb_normal_material_dark = 2131099723;
