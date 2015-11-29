@@ -47,7 +47,6 @@ namespace Nearest.Droid
 		GoogleApiClient googleApiClient;
 
 		public RelativeLayout mainLayout, subLayout;
-		public LinearLayout northLayout, southLayout;
 		public View coordinatorView;
 		public SwipeRefreshLayout swipeLayout;
 		public ScrollView scrollView;
@@ -105,12 +104,6 @@ namespace Nearest.Droid
 					TextView tagLine = (TextView)mainLayout.GetChildAt (i);
 					tagLine.SetTypeface (HnLt, tfs);
 					break;
-				case 2:
-					southLayout = (LinearLayout)mainLayout.GetChildAt (i);
-					break;
-				case 3:
-					northLayout = (LinearLayout)mainLayout.GetChildAt (i);
-					break;
 				default:
 					break;
 				}
@@ -137,7 +130,7 @@ namespace Nearest.Droid
 				ShowAlert (isFullscreen ? "Fullscreen enabled" : "Fullscreen disabled");
 			};*/
 			for (var i = 0; i < 2; i++) {
-				var direction = i == 0 ? southLayout : northLayout;
+				LinearLayout direction = (LinearLayout)mainLayout.GetChildAt (i + 2);
 
 				TextView times = (TextView)direction.FindViewWithTag (tag: "time");
 				TextView label = (TextView)direction.FindViewWithTag (tag: "label");
@@ -407,18 +400,32 @@ namespace Nearest.Droid
 					Report (origin + " Still getting trains.", 0);
 				} else {
 					Report (origin + " Setting next trains.", 0);
+					int dir = 0;
 					// Loop throuh south and north view groups 
-					for (var i = 0; i < 2; i++) {
-						var idx = i;
-						var index = (idx + 1).ToString ();
-						var path = i == 0 ? southLayout : northLayout;
-						var button = (Button)path.FindViewWithTag (tag: "button");
-						var time = (TextView)path.FindViewWithTag (tag: "time");
+					foreach (List<Stop> stops in trainLVM.stopList) {
+						int idx = 0;
+						foreach (Stop stop in stops) {
+							if (idx > 4) {
+								continue;
+							}
+							LinearLayout path;
+							if (idx < 1) {
+								path = (LinearLayout)mainLayout.GetChildAt (dir + 2);
+							} else {
+								path = (LinearLayout)subLayout.GetChildAt (dir);
+								subLayout.Visibility = ViewStates.Visible;
+								swipeButton.Visibility = ViewStates.Visible;
+							}
+							var button = (Button)path.FindViewWithTag (tag: "button");
+							var time = (TextView)path.FindViewWithTag (tag: "time");
 
-						Report ("SetNextTrain " + index, 0);
-						if (trainLVM.stopList.Count > 0) {
-							var nearestTrain = trainLVM.stopList [i] [0].next_train;
-							var fartherTrains = trainLVM.stopList [i] [0].trains;
+							if (idx > 0) {
+								button = (Button)path.GetChildAt (idx);
+							}
+
+							Report ("SetNextTrain " + dir + " " + idx, 0);
+							var nearestTrain = stop.next_train;
+							var fartherTrains = stop.trains;
 							if (nearestTrain != null) {
 								var TrainColor = GetTrainColor (nearestTrain.route_id);
 
@@ -426,11 +433,12 @@ namespace Nearest.Droid
 								button.SetBackgroundResource (GetTrainColorDrawable (nearestTrain.route_id));
 								button.SetTextColor (Color.White);
 
-								time.Text = Train.time (nearestTrain.ts);
-
+								if (time != null) {
+									time.Text = Train.time (nearestTrain.ts);
+								}
 								EventHandler GetDetails = null;
 								GetDetails = delegate(object sender, EventArgs args) {
-									Report ("Click Event: " + index, 0);
+									Report ("Click Event: " + idx, 0);
 									//StartActivity (typeof(Detail));
 									//Animation hyperspaceJump = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
 									ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (button, 0, 0, 60, 60);
@@ -452,10 +460,12 @@ namespace Nearest.Droid
 								} else {
 									button.Click -= GetDetails;
 								}
-							} else {
+							} else if (idx < 2) {
 								SetTrainsNotice (button, time);
 							}
+							idx++;
 						}
+						dir++;
 					}
 					swipeLayout.Refreshing = false;
 				}
