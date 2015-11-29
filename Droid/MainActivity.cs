@@ -391,7 +391,7 @@ namespace Nearest.Droid
 			return false;
 		}
 
-		private List<View> GetViewsByTag (ViewGroup root, String tag)
+		public static List<View> GetViewsByTag (ViewGroup root, String tag)
 		{
 			List<View> views = new List<View> ();
 			int childCount = root.ChildCount;
@@ -403,7 +403,6 @@ namespace Nearest.Droid
 
 				Object tagObj = child.Tag;
 				if (tagObj != null && tagObj.ToString () == tag) {
-					Report (tagObj.ToString (), 0);
 					views.Add (child);
 				}
 
