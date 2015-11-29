@@ -112,6 +112,11 @@ namespace Nearest.Droid
 			scrollView = FindViewById<ScrollView> (Resource.Id.scrollView);
 			scrollView.SetOnTouchListener (this);
 
+			var allButtons = GetViewsByTag (scrollView, "button");
+			foreach (Button button in allButtons) {
+				button.SetTypeface (HnLt, tfs);
+			}
+
 			swipeButton = FindViewById<ImageButton> (Resource.Id.swipeButton);
 			swipeButton.SetOnTouchListener (this);
 

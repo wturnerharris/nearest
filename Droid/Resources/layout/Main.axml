@@ -62,6 +62,7 @@
                         android:fontFamily="sans-serif-light"
                         android:textSize="60dip"
                         android:textStyle="normal"
+                        android:shadowColor="@android:color/transparent"
                         android:tag="button" />
                     <TextView
                         android:layout_width="match_parent"
