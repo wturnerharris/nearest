@@ -463,42 +463,63 @@ namespace Nearest.Droid
 
 							Report ("SetNextTrain " + dir + " " + idx, 0);
 							var nearestTrain = stop.next_train;
-							var fartherTrains = stop.trains;
+
 							if (nearestTrain != null) {
-								var TrainColor = GetTrainColor (nearestTrain.route_id);
+								TimeSpan TrainTimeSpan = Train.FromUnixTime (nearestTrain.ts).TimeOfDay;
+								TimeSpan NowTimeSpan = DateTime.UtcNow.TimeOfDay;
+								double TotalSeconds = (TrainTimeSpan - NowTimeSpan).TotalSeconds;
+
+								if (TotalSeconds < 0) {
+									// refresh these if the first time is stale
+									this.HandleConnections ();
+									return;
+								}
 
 								button.Text = nearestTrain.route_id;
 								button.SetBackgroundResource (GetTrainColorDrawable (nearestTrain.route_id));
 								button.SetTextColor (Color.White);
+								button.Click -= stop.clickHandler;
+								//Animation anim = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
 
 								if (time != null) {
 									time.Text = Train.time (nearestTrain.ts);
 								}
-								EventHandler GetDetails = null;
-								GetDetails = delegate(object sender, EventArgs args) {
-									Report ("Click Event: " + idx, 0);
-									//StartActivity (typeof(Detail));
-									//Animation hyperspaceJump = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
-									ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (button, 0, 0, 60, 60);
-									Intent pendingIntent = new Intent (this, typeof(Detail));
 
-									var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject (nearestTrain);
-									pendingIntent.PutExtra ("nearestTrain", toJsonNearestTrain);
-									pendingIntent.PutExtra ("nearestTrainColor", TrainColor);
-
-									var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject (fartherTrains);
-									pendingIntent.PutExtra ("fartherTrains", toJsonFartherTrains);
-
-									StartActivity (pendingIntent, options.ToBundle ());
-
-									button.Click -= GetDetails;
-								};
 								if (!button.HasOnClickListeners) {
-									button.Click += GetDetails;
-								} else {
-									button.Click -= GetDetails;
+									stop.clickHandler = delegate(object sender, EventArgs args) {
+										Report ("Click Event: " + sender.ToString () + "\n" + args.ToString (), 0);
+										ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (button, 0, 0, 60, 60);
+										Intent pendingIntent = new Intent (this, typeof(Detail));
+
+										Train nearest = nearestTrain;
+										List<Train> next = stop.trains;
+
+										var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject (nearest);
+										pendingIntent.PutExtra ("nearestTrain", toJsonNearestTrain);
+										pendingIntent.PutExtra ("nearestTrainColor", GetTrainColor (nearestTrain.route_id));
+
+										var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject (next);
+										pendingIntent.PutExtra ("fartherTrains", toJsonFartherTrains);
+
+										StartActivity (pendingIntent, options.ToBundle ());
+										button.Click -= stop.clickHandler;
+
+									};
+
+									// event needed to clear click handlers after update
+									EventHandler<AfterTextChangedEventArgs> removeHandlers = null;
+									removeHandlers = delegate(object sender, AfterTextChangedEventArgs e) {
+										if (stop.clickHandler != null) {
+											Report ("after text change called", 0);
+											button.Click -= stop.clickHandler;
+											button.AfterTextChanged -= removeHandlers;
+										}
+									};
+									button.AfterTextChanged += removeHandlers;
+
+									button.Click += stop.clickHandler;
 								}
-							} else if (idx < 2) {
+							} else {
 								SetTrainsNotice (button, time);
 							}
 							idx++;
@@ -519,7 +540,9 @@ namespace Nearest.Droid
 		{
 			button.Text = GetString (Resource.String.error_train_line);
 			button.SetBackgroundResource (GetTrainColorDrawable (""));
-			time.Text = GetString (Resource.String.error_train_time);
+			if (time != null) {
+				time.Text = GetString (Resource.String.error_train_time);
+			}
 		}
 
 		/// <summary>
@@ -647,6 +670,8 @@ namespace Nearest.Droid
 							Report ("Schedule updated", 0);
 							SetNextTrains ("Property changed.");
 						};
+					} else {
+						trainLVM.SetLocation (locationData.Latitude, locationData.Longitude);
 					}
 					// Get trains asynchonously
 					Task.Run (() => trainLVM.GetTrainsAsync ());
