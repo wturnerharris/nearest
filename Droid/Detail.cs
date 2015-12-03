@@ -23,6 +23,8 @@ namespace Nearest.Droid
 	)]			
 	public class Detail : Activity
 	{
+		bool isFullscreen = false;
+
 		protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate (bundle);
@@ -39,7 +41,6 @@ namespace Nearest.Droid
 				newUiOptions |= (int)SystemUiFlags.HideNavigation;
 				newUiOptions |= (int)SystemUiFlags.Immersive;
 
-				var isFullscreen = false;
 				if (isFullscreen) {
 					//window.AddFlags (WindowManagerFlags.Fullscreen);
 					//window.SetFlags (WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
@@ -65,11 +66,11 @@ namespace Nearest.Droid
 
 			var nearestTrain = Intent.GetStringExtra ("nearestTrain");
 			if (nearestTrain != null) {
-				var train = Newtonsoft.Json.JsonConvert.DeserializeObject<Train> (nearestTrain);
+				Train train = Newtonsoft.Json.JsonConvert.DeserializeObject<Train> (nearestTrain);
 				if (detailLabels.Count > 0 && train != null) {
 					TextView DetailRouteId = FindViewById<TextView> (Resource.Id.DetailRouteId);
 					DetailRouteId.Text = train.route_id;
-					var t = 0;
+					int t = 0;
 					foreach (TextView detailLabel in detailLabels) {
 						switch (t) {
 						case 0:
@@ -92,12 +93,12 @@ namespace Nearest.Droid
 			var fartherTrains = Intent.GetStringExtra ("fartherTrains");
 			if (fartherTrains != null) {
 				System.Console.WriteLine ("has Farther Trains");
-				var trains = Newtonsoft.Json.JsonConvert.DeserializeObject <List<Train>> (fartherTrains);
-				var i = 0;
+				List<Train> trains = Newtonsoft.Json.JsonConvert.DeserializeObject <List<Train>> (fartherTrains);
+				int i = 0;
 				if (timeLabels.Count > 0 && trains != null && trains.Count > 0) {
 					foreach (TextView timeLabel in timeLabels) {
 						if (i < trains.Count) {
-							var fartherTrain = trains [i];
+							Train fartherTrain = trains [i];
 							var TimeInMinutes = fartherTrain.GetTimeInMinutes ();
 							timeLabel.Text = TimeInMinutes;
 						} else {
