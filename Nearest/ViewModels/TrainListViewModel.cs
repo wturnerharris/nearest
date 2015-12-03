@@ -19,13 +19,17 @@ namespace Nearest.ViewModels
 
 		public TrainListViewModel (Double lat, Double lon)
 		{
-			latitude = lat.ToString ();
-			longitude = lon.ToString ();
+			SetLocation (lat, lon);
 			stopList = new ObservableCollection<List<Stop>> ();
 			stopList.Add (new List<Stop> ()); // down
 			stopList.Add (new List<Stop> ()); // up
 		}
 
+		public void SetLocation (Double lat, Double lon)
+		{
+			latitude = lat.ToString ();
+			longitude = lon.ToString ();
+		}
 
 		private bool busy = false;
 
