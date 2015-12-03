@@ -396,6 +396,12 @@ namespace Nearest.Droid
 			return false;
 		}
 
+		/// <summary>
+		/// Gets views by tag.
+		/// </summary>
+		/// <returns>The views by tag.</returns>
+		/// <param name="root">Root View.</param>
+		/// <param name="tag">Tag.</param>
 		public static List<View> GetViewsByTag (ViewGroup root, String tag)
 		{
 			List<View> views = new List<View> ();

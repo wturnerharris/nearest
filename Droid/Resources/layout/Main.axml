@@ -253,7 +253,6 @@
                         android:background="@drawable/circle"
                         android:fontFamily="sans-serif-light"
                         android:textSize="60dip"
-                        android:textColor="@android:color/white"
                         android:textStyle="normal"
                         android:tag="button" />
                     <Button
