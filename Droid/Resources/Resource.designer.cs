@@ -1992,8 +1992,8 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a0086
 			public const int CircleOutline = 2131361926;
 			
-			// aapt resource value: 0x7f0a0075
-			public const int CoordinatorView = 2131361909;
+			// aapt resource value: 0x7f0a0076
+			public const int CoordinatorView = 2131361910;
 			
 			// aapt resource value: 0x7f0a006e
 			public const int DetailClose = 2131361902;
@@ -2337,8 +2337,8 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0a0065
 			public const int submit_area = 2131361893;
 			
-			// aapt resource value: 0x7f0a0076
-			public const int swipeButton = 2131361910;
+			// aapt resource value: 0x7f0a0075
+			public const int swipeButton = 2131361909;
 			
 			// aapt resource value: 0x7f0a0071
 			public const int swipeContainer = 2131361905;

@@ -126,6 +126,18 @@
                         android:textStyle="normal"
                         android:tag="label" />
                 </LinearLayout>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/swipeButton"
+                    android:src="@drawable/expander_group_material"
+                    android:layout_marginTop="50dip"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dip"
+                    android:visibility="invisible"
+                    android:background="@android:color/transparent" />
                 <android.support.design.widget.CoordinatorLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -133,14 +145,6 @@
                     android:layout_centerHorizontal="true"
                     android:id="@+id/CoordinatorView" />
             </RelativeLayout>
-            <ImageButton
-                android:id="@+id/swipeButton"
-                android:src="@drawable/expander_group_material"
-                android:layout_marginTop="50dip"
-                android:layout_width="match_parent"
-                android:layout_height="100dip"
-                android:visibility="invisible"
-                android:background="@android:color/transparent" />
             <RelativeLayout
                 android:id="@+id/subLayout"
                 android:layout_width="match_parent"

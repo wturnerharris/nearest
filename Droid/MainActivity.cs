@@ -175,12 +175,14 @@ namespace Nearest.Droid
 				break;
 			case MotionEventActions.Cancel:
 				if (direction > 15) {
-					scrollView.SmoothScrollTo (0, swipeButton.Top);
+					scrollView.SmoothScrollTo (0, subLayout.Bottom);
 					int[] state = new int[] { Android.Resource.Attribute.StateExpanded };
 					swipeButton.SetImageState (state, false);
+					isAtTop = false;
 				} else if (direction < -15) {
 					scrollView.SmoothScrollTo (0, mainLayout.Top);
 					swipeButton.SetImageState (new int[] { }, false);
+					isAtTop = true;
 				}
 				startY = 0;
 				break;
