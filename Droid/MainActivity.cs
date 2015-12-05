@@ -240,6 +240,7 @@ namespace Nearest.Droid
 						Report (GetString (Resource.String.error_exception) + ex.Message.ToString (), 0);
 					}
 				} else {
+					swipeLayout.Refreshing = false;
 					Report (GetString (Resource.String.common_google_play_services_api_unavailable_text), 0);
 					Snackbar.Make (coordinatorView, 
 						Resource.String.error_play_missing, 
@@ -248,6 +249,7 @@ namespace Nearest.Droid
 					.Show ();
 				}
 			} else {
+				swipeLayout.Refreshing = false;
 				Report (GetString (Resource.String.error_no_internet), 0);
 				Snackbar.Make (coordinatorView, 
 					Resource.String.error_no_internet, 
@@ -481,6 +483,8 @@ namespace Nearest.Droid
 								button.SetBackgroundResource (GetTrainColorDrawable (nearestTrain.route_id));
 								button.SetTextColor (Color.White);
 								button.Click -= stop.clickHandler;
+								// TODO: animate in
+								button.Visibility = ViewStates.Visible;
 								//Animation anim = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
 
 								if (time != null) {
@@ -514,6 +518,8 @@ namespace Nearest.Droid
 										if (stop.clickHandler != null) {
 											Report ("after text change called", 0);
 											button.Click -= stop.clickHandler;
+											// TODO: animate out
+											button.Visibility = ViewStates.Invisible;
 											button.AfterTextChanged -= removeHandlers;
 										}
 									};
