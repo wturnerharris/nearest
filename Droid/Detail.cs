@@ -92,23 +92,22 @@ namespace Nearest.Droid
 
 			var fartherTrains = Intent.GetStringExtra ("fartherTrains");
 			if (fartherTrains != null) {
-				System.Console.WriteLine ("has Farther Trains");
+				System.Console.WriteLine ("Detail: has Farther Trains");
 				List<Train> trains = Newtonsoft.Json.JsonConvert.DeserializeObject <List<Train>> (fartherTrains);
 				int i = 0;
 				if (timeLabels.Count > 0 && trains != null && trains.Count > 0) {
 					foreach (TextView timeLabel in timeLabels) {
+						timeLabel.Text = "";
 						if (i < trains.Count) {
 							Train fartherTrain = trains [i];
 							var TimeInMinutes = fartherTrain.GetTimeInMinutes ();
 							timeLabel.Text = TimeInMinutes;
-						} else {
-							timeLabel.Text = "";
 						}
 						i++;
 					}
 				}
 			} else {
-				System.Console.WriteLine ("has not Farther Trains");
+				System.Console.WriteLine ("Detail: no Farther Trains");
 			}
 
 		}
