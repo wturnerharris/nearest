@@ -44,7 +44,7 @@ namespace Nearest.Droid
 	SwipeRefreshLayout.IOnRefreshListener
 	{
 		public TrainListViewModel trainLVM;
-		GoogleApiClient googleApiClient;
+		public GoogleApiClient googleApiClient;
 
 		public RelativeLayout mainLayout, subLayout;
 		public View coordinatorView;
@@ -52,9 +52,10 @@ namespace Nearest.Droid
 		public ScrollView scrollView;
 		public ImageButton swipeButton;
 
+		public TimeSpan lastUpdated;
+
 		public bool isFullscreen = false;
 		public bool isAtTop = true;
-		TimeSpan lastUpdated;
 
 		readonly string[] PermissionsLocation = {
 			Manifest.Permission.AccessCoarseLocation,
