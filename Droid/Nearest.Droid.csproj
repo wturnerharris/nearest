@@ -141,6 +141,7 @@
     <AndroidAsset Include="Assets\fonts\HelveticaNeueLTCom-Bd.ttf" />
     <AndroidAsset Include="Assets\fonts\HelveticaNeueLTCom-Lt.ttf" />
     <AndroidAsset Include="Assets\fonts\HelveticaNeueLTCom-Roman.ttf" />
+    <AndroidAsset Include="Assets\nearest.db3" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="googleplayservices-location">
