@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using Nearest.Models;
 using Newtonsoft.Json.Schema;
 
-using SQLite;
 using System.IO;
+using SQLite;
+using SQLite.Net;
 
 //using ProtoBuf;
 //using transit_realtime;
@@ -17,16 +18,31 @@ namespace Nearest
 	public class Nearest
 	{
 		public string ServiceCalendar;
-		const string DB_NAME = "nearest.db3";
 		public float latitude, longitude;
-		public SQLiteConnection database;
+		public SQLiteConnection db;
+		public SQLiteCommand command;
+		public string info;
 
-		public Nearest (string path)
+		public Nearest (SQLite.Net.Interop.ISQLitePlatform platform, string path)
 		{
 			ServiceCalendar = GetServiceCalendar ();
 
-			string dbPath = Path.Combine (path, DB_NAME);
-			database = new SQLiteConnection (dbPath);
+			string dbPath = path;
+			try {
+				using (var conn = new SQLiteConnection (platform, dbPath)) {
+					// Do stuff here...
+					var sql = "select * from calendar";
+					var query = conn.Query<MetroData.calendar> (sql);
+					var data = query.ToArray ();
+					//command = new SQLiteCommand (db);
+					//command.CommandText = sql;
+					//var r = command.ExecuteQuery<MetroData.calendar> ();
+					info = data.ToString ();
+				}
+				//db = new SQLiteConnection (dbPath);
+			} catch (SQLiteException Ex) {
+				info = Ex.Message;
+			}
 			//check if tables exist
 			//#if tables not exist
 			//download zip
@@ -81,7 +97,7 @@ namespace Nearest
 				WHERE location_type = 1 
 				ORDER BY distance ASC LIMIT 5;", lat, lon, factor);
 
-			var results = database.Query<MetroData.StopData> (sql);
+			var results = db.Query<MetroData.StopData> (sql);
 			var stops = new List<Stop> ();
 			foreach (MetroData.StopData stop in results) {
 				if (double.Parse (stop.distance) > distance_threshold)
@@ -130,7 +146,7 @@ namespace Nearest
 				          ServiceCalendar, 
 				          limit
 			          );
-			var results = database.Query<Train> (sql);
+			var results = db.Query<Train> (sql);
 			return results;
 		}
 

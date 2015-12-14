@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net.Http;
+using System.IO;
+using Path = System.IO.Path;
 
 using Android;
 using Android.App;
@@ -24,6 +26,7 @@ using Android.Gms.Location;
 using Android.Gms.Common;
 using Android.Gms.Common.Apis;
 using Android.Util;
+using Environment = Android.OS.Environment;
 
 using Nearest.ViewModels;
 using Nearest.Models;
@@ -43,6 +46,9 @@ namespace Nearest.Droid
 	Android.Gms.Location.ILocationListener,
 	SwipeRefreshLayout.IOnRefreshListener
 	{
+		const string DB_NAME = "nearest.db3";
+
+		public Nearest NearestApp;
 		public TrainListViewModel trainLVM;
 		public GoogleApiClient googleApiClient;
 
@@ -52,10 +58,9 @@ namespace Nearest.Droid
 		public ScrollView scrollView;
 		public ImageButton swipeButton;
 
-		public TimeSpan lastUpdated;
-
 		public bool isFullscreen = false;
 		public bool isAtTop = true;
+		TimeSpan lastUpdated;
 
 		readonly string[] PermissionsLocation = {
 			Manifest.Permission.AccessCoarseLocation,
@@ -76,6 +81,9 @@ namespace Nearest.Droid
 
 			// Set our view from the "main" layout resource
 			SetContentView (Resource.Layout.Main);
+
+			// Start the app logic
+			StartApplication ();
 
 			// Set Typeface and Styles
 			TypefaceStyle tfs = TypefaceStyle.Normal;
@@ -226,6 +234,33 @@ namespace Nearest.Droid
 		{
 			base.OnPause ();
 			EndLocationUpdates ();
+		}
+
+		public void StartApplication ()
+		{
+			var appDataPath = this.GetExternalFilesDir (null).Path;
+			string dbName = DB_NAME;
+			string dbPath = Path.Combine (appDataPath, dbName);
+			// Check if your DB has already been extracted.
+			if (!File.Exists (dbPath)) {
+				if (!Directory.Exists (appDataPath)) {
+					Directory.CreateDirectory (appDataPath);
+				}
+				using (BinaryReader br = new BinaryReader (Assets.Open (dbName))) {
+					using (BinaryWriter bw = new BinaryWriter (new FileStream (dbPath, FileMode.Create))) {
+						byte[] buffer = new byte[2048];
+						int len = 0;
+						while ((len = br.Read (buffer, 0, buffer.Length)) > 0) {
+							bw.Write (buffer, 0, len);
+						}
+					}
+				}
+			}
+
+			SQLite.Net.Interop.ISQLitePlatform platform;
+			platform = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid ();
+			NearestApp = new Nearest (platform, dbPath);
+			Report (NearestApp.info, 0);
 		}
 
 		/// <summary>
@@ -470,17 +505,13 @@ namespace Nearest.Droid
 							var nearestTrain = stop.next_train;
 
 							if (nearestTrain != null) {
-								TimeSpan TrainTimeSpan = Train.FromUnixTime (nearestTrain.ts).TimeOfDay;
-								TimeSpan NowTimeSpan = DateTime.UtcNow.TimeOfDay;
-								double TotalSeconds = (TrainTimeSpan - NowTimeSpan).TotalSeconds;
-
-								if (TotalSeconds < 0) {
+								if (nearestTrain.ExpiredUnder (15)) {
 									// refresh these if the first time is stale
 									this.HandleConnections ();
 									return;
 								}
 
-								button.Text = nearestTrain.route_id;
+								button.Text = nearestTrain.route_id.Substring (0, 1);
 								button.SetBackgroundResource (GetTrainColorDrawable (nearestTrain.route_id));
 								button.SetTextColor (Color.White);
 								button.Click -= stop.clickHandler;
@@ -581,7 +612,9 @@ namespace Nearest.Droid
 				break;
 			case "4":
 			case "5":
+			case "5X":
 			case "6":
+			case "6X":
 				resourceDrawable = Resource.Color.green;
 				break;
 			case "G": 
@@ -594,6 +627,7 @@ namespace Nearest.Droid
 				resourceDrawable = Resource.Color.orange;
 				break;
 			case "7":
+			case "7X":
 				resourceDrawable = Resource.Color.purple;
 				break;
 			case "J":
@@ -635,7 +669,9 @@ namespace Nearest.Droid
 				break;
 			case "4":
 			case "5":
+			case "5X":
 			case "6":
+			case "6X":
 				resourceDrawable = Resource.Drawable.green;
 				break;
 			case "G": 
@@ -648,6 +684,7 @@ namespace Nearest.Droid
 				resourceDrawable = Resource.Drawable.orange;
 				break;
 			case "7":
+			case "7X":
 				resourceDrawable = Resource.Drawable.purple;
 				break;
 			case "J":

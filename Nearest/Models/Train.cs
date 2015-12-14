@@ -34,6 +34,14 @@ namespace Nearest.Models
 		 */
 		public int ts { get; set; }
 
+		public bool ExpiredUnder (int seconds)
+		{
+			TimeSpan TrainTimeSpan = FromUnixTime (this.ts).TimeOfDay;
+			TimeSpan NowTimeSpan = DateTime.UtcNow.TimeOfDay;
+			double TotalSeconds = (TrainTimeSpan - NowTimeSpan).TotalSeconds;
+			return (TotalSeconds < seconds);
+		}
+
 		public String GetTimeInMinutes ()
 		{
 			return time (ts);
