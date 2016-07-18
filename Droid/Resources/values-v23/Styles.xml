@@ -1,19 +1,16 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <style name="Theme.Nearest" parent="@style/Theme.AppCompat.Light">
-        <!-- Your customizations go here -->
-		<item name="windowNoTitle">true</item>
-		<item name="windowActionBar">false</item>
+	<style name="Theme.Nearest" parent="@style/Theme.AppCompat.Light.NoActionBar">
+		<!-- Your customizations go here -->
 		<item name="android:windowFullscreen">false</item>
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:statusBarColor">@color/app_bg</item>
-
 		<item name="android:navigationBarColor">@color/app_bars</item>
-        <item name="android:textColorPrimary">@color/textblack</item>
+		<item name="android:textColorPrimary">@color/textblack</item>
 		<item name="android:colorPrimary">@color/app_bar</item>
 		<item name="android:colorPrimaryDark">@color/app_bar</item>
 		<item name="android:windowBackground">@color/app_bg</item>
 		<item name="android:windowLightStatusBar">true</item>
 		<item name="android:windowDrawsSystemBarBackgrounds">true</item>
-    </style>
+	</style>
 </resources>
