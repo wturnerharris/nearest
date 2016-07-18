@@ -1,17 +1,10 @@
 ﻿using System;
-
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Nearest.Models
 {
 	public class Stop
 	{
-
-		public Stop ()
-		{
-			
-		}
 
 		public string stop_id { get; set; }
 

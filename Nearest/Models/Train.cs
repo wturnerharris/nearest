@@ -4,10 +4,6 @@ namespace Nearest.Models
 {
 	public class Train
 	{
-		public Train ()
-		{
-			
-		}
 
 		/**
 		 * Train Route ID / Label
@@ -34,38 +30,38 @@ namespace Nearest.Models
 		 */
 		public int ts { get; set; }
 
-		public bool ExpiredUnder (int seconds)
+		public bool ExpiredUnder(int seconds)
 		{
-			TimeSpan TrainTimeSpan = FromUnixTime (this.ts).TimeOfDay;
+			TimeSpan TrainTimeSpan = FromUnixTime(ts).TimeOfDay;
 			TimeSpan NowTimeSpan = DateTime.UtcNow.TimeOfDay;
 			double TotalSeconds = (TrainTimeSpan - NowTimeSpan).TotalSeconds;
 			return (TotalSeconds < seconds);
 		}
 
-		public String GetTimeInMinutes ()
+		public string GetTimeInMinutes()
 		{
-			return time (ts);
+			return time(ts);
 		}
 
 		/**
 		 * Return formatted time string
 		 */
-		public static String time (long unixTime)
+		public static string time(long unixTime)
 		{
-			var unixDate = FromUnixTime (unixTime);
+			var unixDate = FromUnixTime(unixTime);
 			var newDate = (unixDate.TimeOfDay - DateTime.UtcNow.TimeOfDay).TotalMinutes;
-			var min = Math.Floor (newDate);
-			var timeStr = (min < 1 ? "< 1 Min" : min.ToString () + " Mins");
+			var min = Math.Floor(newDate);
+			var timeStr = (min < 1 ? "< 1 Min" : min + " Mins");
 			return timeStr;
 		}
 
 		/**
 		 * Convert from unix time to DateTime
 		 */
-		public static DateTime FromUnixTime (long unixTime)
+		public static DateTime FromUnixTime(long unixTime)
 		{
-			var epoch = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-			return epoch.AddSeconds (unixTime);
+			var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+			return epoch.AddSeconds(unixTime);
 		}
 	}
 }

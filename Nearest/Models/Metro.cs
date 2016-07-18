@@ -1,20 +1,9 @@
-﻿using System;
-
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-
-using SQLite;
-using SQLite.Net.Attributes;
+﻿using SQLite.Net.Attributes;
 
 namespace Nearest.Models
 {
-	public class MetroData
+	public class Metro
 	{
-
-		public MetroData ()
-		{
-			
-		}
 
 		/*
 		CREATE TABLE `calendar` (
@@ -33,35 +22,33 @@ namespace Nearest.Models
 		*/
 		public class calendar
 		{
-			[PrimaryKey, AutoIncrement, Column ("service_id")]
-			public string ServiceId { get; set; }
+			[PrimaryKey]
+			public string service_id { get; set; }
 
-			[MaxLength (11), Column ("monday")]
-			public int Monday { get; set; }
+			[MaxLength(11)]
+			public int monday { get; set; }
 
-			[MaxLength (11), Column ("tuesday")]
-			public int Tuesday { get; set; }
+			[MaxLength(11)]
+			public int tuesday { get; set; }
 
-			[MaxLength (11), Column ("wednesday")]
-			public int Wednesday { get; set; }
+			[MaxLength(11)]
+			public int wednesday { get; set; }
 
-			[MaxLength (11), Column ("thursday")]
-			public int Thursday { get; set; }
+			[MaxLength(11)]
+			public int thursday { get; set; }
 
-			[MaxLength (11), Column ("friday")]
-			public int Friday { get; set; }
+			[MaxLength(11)]
+			public int friday { get; set; }
 
-			[MaxLength (11), Column ("saturday")]
-			public int Saturday { get; set; }
+			[MaxLength(11)]
+			public int saturday { get; set; }
 
-			[MaxLength (11), Column ("sunday")]
-			public int Sunday { get; set; }
+			[MaxLength(11)]
+			public int sunday { get; set; }
 
-			[Column ("start_date")]
-			public DateTime StartDate { get; set; }
+			public string start_date { get; set; }
 
-			[Column ("end_date")]
-			public DateTime endDate { get; set; }
+			public string end_date { get; set; }
 		}
 
 		/*
@@ -80,19 +67,15 @@ namespace Nearest.Models
 		*/
 		public class stop_times
 		{
-			public string trip_id{ get; set; }
+			public string trip_id { get; set; }
 
-			public string stop_id{ get; set; }
+			public string arrival_time { get; set; }
 
-			public string stop_headsign{ get; set; }
+			public string departure_time { get; set; }
 
-			public string shape_dist_traveled{ get; set; }
+			public string stop_id { get; set; }
 
-			public int stop_sequence{ get; set; }
-
-			public int pickup_type{ get; set; }
-
-			public int drop_off_type{ get; set; }
+			public int stop_sequence { get; set; }
 		}
 
 		/*
@@ -112,32 +95,15 @@ namespace Nearest.Models
 		*/
 		public class stops
 		{
-			public string stop_id{ get; set; }
+			public string stop_id { get; set; }
 
-			public string stop_code{ get; set; }
+			public string stop_name { get; set; }
 
-			public string stop_name{ get; set; }
+			public double stop_lat { get; set; }
 
-			public string stop_desc{ get; set; }
+			public double stop_lon { get; set; }
 
-			public string zone_id{ get; set; }
-
-			public string stop_url{ get; set; }
-
-			public string parent_station{ get; set; }
-
-			public int? location_type{ get; set; }
-		}
-
-		public class StopData
-		{
-			public string stop_id  { get; set; }
-
-			public double stop_lat  { get; set; }
-
-			public double stop_lon  { get; set; }
-
-			public string distance  { get; set; }
+			public int? location_type { get; set; }
 		}
 
 		/*
@@ -154,19 +120,15 @@ namespace Nearest.Models
 		*/
 		public class trips
 		{
-			public string route_id{ get; set; }
+			public string route_id { get; set; }
 
-			public string service_id{ get; set; }
+			public string service_id { get; set; }
 
-			public string trip_id{ get; set; }
+			public string trip_id { get; set; }
 
-			public string trip_headsign{ get; set; }
+			public string trip_headsign { get; set; }
 
-			public string block_id{ get; set; }
-
-			public string shape_id{ get; set; }
-
-			public int? direction_id{ get; set; }
+			public int? direction_id { get; set; }
 		}
 
 	}
