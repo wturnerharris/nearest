@@ -11,59 +11,80 @@ namespace Nearest.ViewModels
 {
 	public class TrainListViewModel : INotifyPropertyChanged
 	{
-		String latitude;
-		String longitude;
-		public String requestString;
+		string latitude;
+		string longitude;
+		public string requestString;
 
 		public ObservableCollection<List<Stop>> stopList { get; set; }
 
-		public TrainListViewModel (Double lat, Double lon)
+		public TrainListViewModel(double lat, double lon)
 		{
-			SetLocation (lat, lon);
-			stopList = new ObservableCollection<List<Stop>> ();
-			stopList.Add (new List<Stop> ()); // down
-			stopList.Add (new List<Stop> ()); // up
+			SetLocation(lat, lon);
+			stopList = new ObservableCollection<List<Stop>>();
+			stopList.Add(new List<Stop>()); // down
+			stopList.Add(new List<Stop>()); // up
 		}
 
-		public void SetLocation (Double lat, Double lon)
+		public void SetLocation(double lat, double lon)
 		{
-			latitude = lat.ToString ();
-			longitude = lon.ToString ();
+			latitude = lat.ToString();
+			longitude = lon.ToString();
 		}
 
-		private bool busy = false;
+		bool busy;
 
-		public bool IsBusy {
+		public bool IsBusy
+		{
 			get { return busy; }
-			set {
+			set
+			{
 				if (busy == value)
 					return;
 
 				busy = value;
-				OnPropertyChanged ("IsBusy");
+				OnPropertyChanged("IsBusy");
 			}
 		}
 
-		public async Task GetTrainsAsync ()
+		public void Update(int i, List<Stop> stops)
 		{
-			try {
+			try
+			{
+				// empty current list data
+				stopList[i].Clear();
+
+				// overwrite stop list
+				foreach (var stop in stops)
+				{
+					stopList[i].Add(stop);
+				}
+			}
+			catch (Exception ex)
+			{
+			}
+		}
+
+		public async Task GetTrainsAsync()
+		{
+			try
+			{
 				IsBusy = true;
 
-				var client = new HttpClient ();
+				var client = new HttpClient();
 
 				requestString = "http://turnerharris.com/nearest/" +
 				"next.php?action=getTrains&lat=" + latitude + "&lon=" + longitude;
 
-				for (int i = 0; i < 2; i++) {
-					var json = await client.GetStringAsync (requestString + "&dir=" + i.ToString ());
-					var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Stop>> (json);
+				for (int i = 0; i < 2; i++)
+				{
+					var json = await client.GetStringAsync(requestString + "&dir=" + i);
+					var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Stop>>(json);
 
-					stopList [i].Clear (); // empty current list data
-					foreach (var item in items) {
-						stopList [i].Add (item);
-					}
+					Update(i, items);
 				}
-			} finally {
+			}
+			finally
+			{
 				IsBusy = false;
 			}
 		}
@@ -76,13 +97,13 @@ namespace Nearest.ViewModels
 		#endregion
 
 
-		public void OnPropertyChanged (string name)
+		public void OnPropertyChanged(string name)
 		{
 			var changed = PropertyChanged;
 			if (changed == null)
 				return;
 
-			changed (this, new PropertyChangedEventArgs (name));
+			changed(this, new PropertyChangedEventArgs(name));
 
 
 		}
