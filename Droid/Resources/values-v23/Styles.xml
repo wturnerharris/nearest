@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <resources>
-	<style name="Theme.Nearest" parent="@style/Theme.AppCompat.Light.NoActionBar">
+	<style name="Theme.Nearest" parent="@style/Theme.AppCompat.Light">
 		<!-- Your customizations go here -->
 		<item name="android:windowFullscreen">false</item>
 		<item name="android:windowContentOverlay">@null</item>
