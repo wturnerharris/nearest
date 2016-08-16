@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.turnerharris.nearest">
-	<uses-sdk android:minSdkVersion="15" android:targetSdkVersion="23" />
+	<uses-sdk android:minSdkVersion="23" />
 	<application android:label="Nearest" android:configChanges="orientation" android:screenOrientation="portrait" android:icon="@drawable/icon" android:theme="@style/Theme.Nearest">
 		<activity android:name=".MainActivity" android:configChanges="orientation" android:screenOrientation="portrait" />
 		<activity android:name=".Detail" android:configChanges="orientation" android:screenOrientation="portrait" />
