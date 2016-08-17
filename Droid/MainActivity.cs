@@ -1,53 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Net.Http;
-using System.IO;
-using Path = System.IO.Path;
 
 using Android;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
-using Android.Runtime;
 using Android.Views;
-using Android.Views.Animations;
 using Android.Widget;
 using Android.OS;
 using Android.Text;
 using Android.Graphics;
 using Android.Locations;
 using Android.Net;
-using Android.Support.Design;
 using Android.Support.Design.Widget;
-using Android.Support.V7.App;
 using Android.Support.V4.Widget;
 using Android.Gms.Location;
 using Android.Gms.Common;
 using Android.Gms.Common.Apis;
 using Android.Util;
-using Environment = Android.OS.Environment;
 
 using Nearest.ViewModels;
 using Nearest.Models;
+using Android.Preferences;
 
 namespace Nearest.Droid
 {
-	[Activity (
-		Label = "Nearest", 
-		MainLauncher = true, 
-		Icon = "@drawable/icon", 
+	[Activity(
+		Label = "Nearest",
+		MainLauncher = true,
+		Icon = "@drawable/icon",
 		ScreenOrientation = ScreenOrientation.Portrait
 	)]
-	public class MainActivity : AppCompatActivity, 
+	[MetaData(
+		Android.Preferences.PreferenceManager.MetadataKeyPreferences,
+		Resource = "@xml/preferences"
+	)]
+	public class MainActivity : Activity,
 	View.IOnTouchListener,
-	GoogleApiClient.IConnectionCallbacks, 
-	GoogleApiClient.IOnConnectionFailedListener, 
+	Android.Locations.ILocationListener,
+	GoogleApiClient.IConnectionCallbacks,
+	GoogleApiClient.IOnConnectionFailedListener,
 	Android.Gms.Location.ILocationListener,
 	SwipeRefreshLayout.IOnRefreshListener
 	{
-		const string DB_NAME = "nearest.db3";
-
 		public Nearest NearestApp;
 		public TrainListViewModel trainLVM;
 		public GoogleApiClient googleApiClient;
@@ -58,9 +54,11 @@ namespace Nearest.Droid
 		public ScrollView scrollView;
 		public ImageButton swipeButton;
 
-		public bool isFullscreen = false;
-		public bool isAtTop = true;
+		bool UseGooglePlayLocations;
 		TimeSpan lastUpdated;
+		public Location lastKnown;
+		LocationManager LocationManager;
+		string LocationProvider;
 
 		readonly string[] PermissionsLocation = {
 			Manifest.Permission.AccessCoarseLocation,
