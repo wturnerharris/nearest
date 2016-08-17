@@ -106,7 +106,7 @@
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Detail.cs" />
-    <Compile Include="Alert.cs" />
+    <Compile Include="Resources\helpers\Utility.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -116,17 +116,13 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Main.axml" />
-    <AndroidResource Include="Resources\values\Strings.xml" />
     <AndroidResource Include="Resources\drawable-mdpi\Icon.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\Icon.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\Icon.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\Icon.png" />
-    <AndroidResource Include="Resources\values\Colors.xml" />
     <AndroidResource Include="Resources\anim\tada.xml" />
     <AndroidResource Include="Resources\layout\Detail.axml" />
-    <AndroidResource Include="Resources\values\Styles.xml" />
     <AndroidResource Include="Resources\values-v23\Styles.xml" />
-    <AndroidResource Include="Resources\layout\Alert.axml" />
     <AndroidResource Include="Resources\drawable-hdpi\detail_icon_close.png" />
     <AndroidResource Include="Resources\drawable-hdpi\circle_outline.xml" />
     <AndroidResource Include="Resources\drawable-hdpi\expander_group_material.xml" />
@@ -153,12 +149,13 @@
   <ItemGroup>
     <Folder Include="Assets\fonts\" />
     <Folder Include="Resources\anim\" />
+    <Folder Include="Resources\helpers\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\fonts\HelveticaNeueLTCom-Bd.ttf" />
     <AndroidAsset Include="Assets\fonts\HelveticaNeueLTCom-Lt.ttf" />
     <AndroidAsset Include="Assets\fonts\HelveticaNeueLTCom-Roman.ttf" />
-    <AndroidAsset Include="Assets\nearest.db3" />
+    <AndroidAsset Include="Assets\nearest.db.gz" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="googleplayservices-location">
