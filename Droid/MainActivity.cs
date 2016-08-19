@@ -65,17 +65,17 @@ namespace Nearest.Droid
 			Manifest.Permission.AccessFineLocation
 		};
 
-		public int startY = 0;
+		public int startY;
 		const int RequestLocationId = 0;
 
 		/// <summary>
 		/// Raises the create event.
 		/// </summary>
 		/// <param name="savedInstanceState">Saved instance state.</param>
-		protected override void OnCreate (Bundle savedInstanceState)
+		protected override void OnCreate(Bundle savedInstanceState)
 		{
-			RequestWindowFeature (WindowFeatures.NoTitle);
-			base.OnCreate (savedInstanceState);
+			RequestWindowFeature(WindowFeatures.NoTitle);
+			base.OnCreate(savedInstanceState);
 
 			// Set our view from the "main" layout resource
 			SetContentView (Resource.Layout.Main);
@@ -85,9 +85,9 @@ namespace Nearest.Droid
 
 			// Set Typeface and Styles
 			TypefaceStyle tfs = TypefaceStyle.Normal;
-			Typeface HnBd = Typeface.CreateFromAsset (Assets, "fonts/HelveticaNeueLTCom-Bd.ttf");
-			Typeface HnLt = Typeface.CreateFromAsset (Assets, "fonts/HelveticaNeueLTCom-Lt.ttf");
-			Typeface HnMd = Typeface.CreateFromAsset (Assets, "fonts/HelveticaNeueLTCom-Roman.ttf");
+			Typeface HnBd = Typeface.CreateFromAsset(Assets, "fonts/HelveticaNeueLTCom-Bd.ttf");
+			Typeface HnLt = Typeface.CreateFromAsset(Assets, "fonts/HelveticaNeueLTCom-Lt.ttf");
+			Typeface HnMd = Typeface.CreateFromAsset(Assets, "fonts/HelveticaNeueLTCom-Roman.ttf");
 
 			mainLayout = FindViewById<RelativeLayout> (Resource.Id.mainLayout);
 			subLayout = FindViewById<RelativeLayout> (Resource.Id.subLayout);
@@ -101,27 +101,28 @@ namespace Nearest.Droid
 			int childCount = mainLayout.ChildCount;
 
 			// Main app title and tagline
-			for (var i = 0; i < childCount; i++) {
-				switch (i) {
-				case 0:
-					TextView title = (TextView)mainLayout.GetChildAt (i);
-					title.SetTypeface (HnBd, tfs);
-					break;
-				case 1:
-					TextView tagLine = (TextView)mainLayout.GetChildAt (i);
-					tagLine.SetTypeface (HnLt, tfs);
-					break;
-				default:
-					break;
+			for (var i = 0; i < childCount; i++)
+			{
+				switch (i)
+				{
+					case 0:
+						var title = (TextView)mainLayout.GetChildAt(i);
+						title.SetTypeface(HnBd, tfs);
+						break;
+					case 1:
+						var tagLine = (TextView)mainLayout.GetChildAt(i);
+						tagLine.SetTypeface(HnLt, tfs);
+						break;
 				}
 			}
 
-			scrollView = FindViewById<ScrollView> (Resource.Id.scrollView);
-			scrollView.SetOnTouchListener (this);
+			scrollView = FindViewById<ScrollView>(Resource.Id.scrollView);
+			scrollView.SetOnTouchListener(this);
 
-			var allButtons = GetViewsByTag (scrollView, "button");
-			foreach (Button button in allButtons) {
-				button.SetTypeface (HnLt, tfs);
+			var allButtons = GetViewsByTag(scrollView, "button");
+			foreach (Button button in allButtons)
+			{
+				button.SetTypeface(HnLt, tfs);
 			}
 
 			swipeButton = FindViewById<ImageButton> (Resource.Id.swipeButton);
@@ -159,40 +160,45 @@ namespace Nearest.Droid
 		/// </summary>
 		/// <param name="v">View.</param>
 		/// <param name="e">MotionEvent.</param>
-		public bool OnTouch (View v, MotionEvent e)
+		public bool OnTouch(View v, MotionEvent e)
 		{
 			int direction = -15;
-			if (v.Equals (scrollView)) {
+			if (v.Equals(scrollView))
+			{
 				return true;
 			}
-			if (startY == 0) {
+			if (startY == 0)
+			{
 				startY = (int)e.RawY;
-			} else {
+			}
+			else {
 				direction = startY - (int)e.RawY;
 			}
-			switch (e.Action) {
-			case MotionEventActions.Down:
-			//finger down
-				break;
-			case MotionEventActions.Move:
-			//still moving
-				break;
-			case MotionEventActions.Up:
-			//finger up
-				break;
-			case MotionEventActions.Cancel:
-				if (direction > 15) {
-					scrollView.SmoothScrollTo (0, subLayout.Bottom);
-					int[] state = new int[] { Android.Resource.Attribute.StateExpanded };
-					swipeButton.SetImageState (state, false);
-					isAtTop = false;
-				} else if (direction < -15) {
-					scrollView.SmoothScrollTo (0, mainLayout.Top);
-					swipeButton.SetImageState (new int[] { }, false);
-					isAtTop = true;
-				}
-				startY = 0;
-				break;
+			switch (e.Action)
+			{
+				case MotionEventActions.Down:
+					//finger down
+					break;
+				case MotionEventActions.Move:
+					//still moving
+					break;
+				case MotionEventActions.Up:
+					//finger up
+					break;
+				case MotionEventActions.Cancel:
+					if (direction > 15)
+					{
+						scrollView.SmoothScrollTo(0, subLayout.Bottom);
+						var state = new int[] { Android.Resource.Attribute.StateExpanded };
+						swipeButton.SetImageState(state, false);
+					}
+					else if (direction < -15)
+					{
+						scrollView.SmoothScrollTo(0, mainLayout.Top);
+						swipeButton.SetImageState(new int[] { }, false);
+					}
+					startY = 0;
+					break;
 			}
 
 			return true;
@@ -201,17 +207,17 @@ namespace Nearest.Droid
 		/// <summary>
 		/// Raises the refresh event.
 		/// </summary>
-		public void OnRefresh ()
+		public void OnRefresh()
 		{
-			if (swipeLayout.Refreshing) {
-				HandleConnections ();
+			if (swipeLayout.Refreshing)
+			{
 			}
 		}
 
 		/// <summary>
 		/// Raises the resume event.
 		/// </summary>
-		protected override void OnResume ()
+		protected override void OnResume()
 		{
 			base.OnResume ();
 			var lastUpdate = (DateTime.Now.TimeOfDay - lastUpdated).TotalSeconds;
@@ -228,13 +234,13 @@ namespace Nearest.Droid
 		/// <summary>
 		/// Raises the pause event.
 		/// </summary>
-		protected override void OnPause ()
+		protected override void OnPause()
 		{
-			base.OnPause ();
-			EndLocationUpdates ();
+			base.OnPause();
+			EndLocationUpdates();
 		}
 
-		public void StartApplication ()
+		public void StartApplication()
 		{
 			var appDataPath = this.GetExternalFilesDir (null).Path;
 			string dbName = DB_NAME;
@@ -264,8 +270,6 @@ namespace Nearest.Droid
 		/// <summary>
 		/// Handles the connections.
 		/// </summary>
-		public void HandleConnections ()
-		{
 			if (IsConnected ()) {
 				if (IsGooglePlayServicesInstalled ()) {
 					try {
@@ -290,6 +294,8 @@ namespace Nearest.Droid
 					Snackbar.LengthIndefinite)
 				.SetAction (Resource.String.snackbar_button_try_again, v => HandleConnections ())
 				.Show ();
+		public void HandleConnections()
+		{
 			}
 			return;
 		}
@@ -298,7 +304,7 @@ namespace Nearest.Droid
 		/// Determines whether this instance is connected.
 		/// </summary>
 		/// <returns><c>true</c> if this instance is connected; otherwise, <c>false</c>.</returns>
-		public bool IsConnected ()
+		public bool IsConnected()
 		{
 			ConnectivityManager connectivityManager = (ConnectivityManager)GetSystemService (ConnectivityService);
 			NetworkInfo activeConnection = connectivityManager.ActiveNetworkInfo;
@@ -309,45 +315,47 @@ namespace Nearest.Droid
 		/// <summary>
 		/// Tries to get the location.
 		/// </summary>
-		async void TryGetLocation ()
+		async void TryGetLocation()
 		{
-			Report ("Getting location info", 0);
 			if ((int)Build.VERSION.SdkInt < 23) {
 				await GetLocationAsync ();
+			Report("Getting location info", 0);
 				return;
 			}
 
-			await GetLocationPermissionAsync ();
+			await GetLocationPermissionAsync();
 		}
 
 		/// <summary>
 		/// Gets the location permission async.
 		/// </summary>
 		/// <returns>The location permission async.</returns>
-		async Task GetLocationPermissionAsync ()
+		async Task GetLocationPermissionAsync()
 		{
 			//Check to see if any permission in our group is available, if one, then all are
 			const string permission = Manifest.Permission.AccessFineLocation;
-			if (CheckSelfPermission (permission) == (int)Permission.Granted) {
-				Report ("Location permission granted.", 0);
-				await GetLocationAsync ();
+			if (CheckSelfPermission(permission) == (int)Permission.Granted)
+			{
+				Report("Location permission granted.", 0);
+				await GetLocationAsync();
 				return;
 			}
 
 			//need to request permission
-			if (ShouldShowRequestPermissionRationale (permission)) {
-				Report ("Should show reason for permission.", 0);
+			if (ShouldShowRequestPermissionRationale(permission))
+			{
+				Report("Should show reason for permission.", 0);
 				//Explain to the user why we need to read the contacts
-				Snackbar.Make (coordinatorView, 
-					Resource.String.error_location_required, 
+				Snackbar.Make(coordinatorView,
+					Resource.String.error_location_required,
 					Snackbar.LengthIndefinite)
-				.SetAction (Resource.String.snackbar_button_ok, 
-					v => RequestPermissions (PermissionsLocation, RequestLocationId))
-				.Show ();
+				.SetAction(Resource.String.snackbar_button_ok,
+					v => RequestPermissions(PermissionsLocation, RequestLocationId))
+				.Show();
 				return;
 			}
 			//Finally request permissions with the list of permissions and Id
-			RequestPermissions (PermissionsLocation, RequestLocationId);
+			RequestPermissions(PermissionsLocation, RequestLocationId);
 		}
 
 		/// <summary>
@@ -356,29 +364,31 @@ namespace Nearest.Droid
 		/// <param name="requestCode">Request code.</param>
 		/// <param name="permissions">Permissions.</param>
 		/// <param name="grantResults">Grant results.</param>
-		public override async void OnRequestPermissionsResult 
+		public override async void OnRequestPermissionsResult
 		(int requestCode, string[] permissions, Permission[] grantResults)
 		{
-			Report ("Request Code:" + requestCode.ToString (), 0);
-			switch (requestCode) {
-			case RequestLocationId:
-				{
-					if (grantResults [0] == Permission.Granted) {
+			Report("Request Code:" + requestCode, 0);
+			switch (requestCode)
+			{
+				case RequestLocationId:
+					if (grantResults[0] == Permission.Granted)
+					{
 						//Permission granted
-						Report ("Permission granted.", 0);
-						await GetLocationAsync ();
-					} else {
-						//Permission Denied :(
-						Report (GetString (Resource.String.error_location_permission), 0);
-						Snackbar.Make (coordinatorView, 
-							Resource.String.error_location_permission, 
-							Snackbar.LengthIndefinite)
-						.SetAction (Resource.String.snackbar_button_try_again, 
-							v => RequestPermissions (PermissionsLocation, RequestLocationId))
-							.Show ();
+						Report("Permission granted.", 0);
+						await GetLocationAsync();
 					}
-				}
-				break;
+					else
+					{
+						//Permission Denied :(
+						Report(GetString(Resource.String.error_location_permission), 0);
+						Snackbar.Make(coordinatorView,
+							Resource.String.error_location_permission,
+							Snackbar.LengthIndefinite)
+						.SetAction(Resource.String.snackbar_button_try_again,
+							v => RequestPermissions(PermissionsLocation, RequestLocationId))
+							.Show();
+					}
+					break;
 			}
 		}
 
@@ -407,7 +417,7 @@ namespace Nearest.Droid
 		/// <summary>
 		/// Ends the location updates.
 		/// </summary>
-		public void EndLocationUpdates ()
+		public void EndLocationUpdates()
 		{
 			if (googleApiClient != null) {
 				LocationServices.FusedLocationApi.RemoveLocationUpdates (googleApiClient, this);
@@ -419,16 +429,18 @@ namespace Nearest.Droid
 		/// Determines whether this instance is google play services installed.
 		/// </summary>
 		/// <returns><c>true</c> if this instance is google play services installed; otherwise, <c>false</c>.</returns>
-		bool IsGooglePlayServicesInstalled ()
+		bool IsGooglePlayServicesInstalled()
 		{
-			int queryResult = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable (this);
-			if (queryResult == ConnectionResult.Success) {
+			int queryResult = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(this);
+			if (queryResult == ConnectionResult.Success)
+			{
 				return true;
 			}
 
-			if (GoogleApiAvailability.Instance.IsUserResolvableError (queryResult)) {
-				string errorString = GoogleApiAvailability.Instance.GetErrorString (queryResult);
-				Report (String.Format ("There is a problem with Google Play Services: {0} - {1}", 
+			if (GoogleApiAvailability.Instance.IsUserResolvableError(queryResult))
+			{
+				string errorString = GoogleApiAvailability.Instance.GetErrorString(queryResult);
+				Report(string.Format("There is a problem with Google Play Services: {0} - {1}",
 					queryResult, errorString), 0);
 			}
 			return false;
@@ -440,19 +452,22 @@ namespace Nearest.Droid
 		/// <returns>The views by tag.</returns>
 		/// <param name="root">Root View.</param>
 		/// <param name="tag">Tag.</param>
-		public static List<View> GetViewsByTag (ViewGroup root, String tag)
+		public static List<View> GetViewsByTag(ViewGroup root, string tag)
 		{
-			List<View> views = new List<View> ();
+			var views = new List<View>();
 			int childCount = root.ChildCount;
-			for (int i = 0; i < childCount; i++) {
-				View child = root.GetChildAt (i);
-				if (child is ViewGroup) {
-					views.AddRange (GetViewsByTag ((ViewGroup)child, tag));
-				} 
+			for (int i = 0; i < childCount; i++)
+			{
+				View child = root.GetChildAt(i);
+				if (child is ViewGroup)
+				{
+					views.AddRange(GetViewsByTag((ViewGroup)child, tag));
+				}
 
-				Object tagObj = child.Tag;
-				if (tagObj != null && tagObj.ToString () == tag) {
-					views.Add (child);
+				object tagObj = child.Tag;
+				if (tagObj != null && tagObj.ToString() == tag)
+				{
+					views.Add(child);
 				}
 
 			}
@@ -462,7 +477,7 @@ namespace Nearest.Droid
 		/// <summary>
 		/// Sets the next trains.
 		/// </summary>
-		public void SetNextTrains (String origin)
+		public void SetNextTrains(string origin)
 		{
 			RunOnUiThread (() => {
 				if (trainLVM == null) {
@@ -475,28 +490,35 @@ namespace Nearest.Droid
 					Report (origin + " Setting next trains.", 0);
 					int dir = 0;
 					// Loop throuh south and north view groups 
-					foreach (List<Stop> stops in trainLVM.stopList) {
+					foreach (var stops in trainLVM.stopList)
+					{
 						int idx = 0;
-						foreach (Stop stop in stops) {
+						foreach (var stop in stops)
+						{
 							//no more than 5, including the main
-							if (idx > 4) {
-								continue;
+							if (idx > 4)
+							{
+								break;
 							}
 							LinearLayout path;
-							if (idx < 1) {
-								path = (LinearLayout)mainLayout.GetChildAt (dir + 2);
-							} else {
-								path = (LinearLayout)subLayout.GetChildAt (dir);
+							if (idx < 1)
+							{
+								path = (LinearLayout)mainLayout.GetChildAt(dir + 2);
+							}
+							else
+							{
+								path = (LinearLayout)subLayout.GetChildAt(dir);
 								subLayout.Visibility = ViewStates.Visible;
 								swipeButton.Visibility = ViewStates.Visible;
 							}
-							var button = (Button)path.FindViewWithTag (tag: "button");
-							var buttons = GetViewsByTag (path, "button");
-							var time = (TextView)path.FindViewWithTag (tag: "time");
+							var button = (Button)path.FindViewWithTag("button");
+							var buttons = GetViewsByTag(path, "button");
+							var time = (TextView)path.FindViewWithTag("time");
 							int subIdx = idx - 1;
 
-							if (idx > 0 && buttons.Count > 0 && subIdx < buttons.Count) {
-								button = (Button)buttons [subIdx];
+							if (idx > 0 && buttons.Count > 0 && subIdx < buttons.Count)
+							{
+								button = (Button)buttons[subIdx];
 							}
 
 							Report ("SetNextTrain " + dir + " " + idx, 0);
@@ -509,43 +531,44 @@ namespace Nearest.Droid
 									return;
 								}
 
-								button.Text = nearestTrain.route_id.Substring (0, 1);
-								button.SetBackgroundResource (GetTrainColorDrawable (nearestTrain.route_id));
-								button.SetTextColor (Color.White);
+								button.Text = nearestTrain.route_id.Substring(0, 1);
+								button.SetBackgroundResource(GetTrainColorDrawable(nearestTrain.route_id));
+								button.SetTextColor(Color.White);
 								button.Click -= stop.clickHandler;
 								// TODO: animate in
 								button.Visibility = ViewStates.Visible;
 								//Animation anim = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
 
-								if (time != null) {
-									time.Text = Train.time (nearestTrain.ts);
+								if (time != null)
+								{
+									time.Text = Train.time(nearestTrain.ts);
 								}
 
-								if (!button.HasOnClickListeners) {
-									stop.clickHandler = delegate(object sender, EventArgs args) {
 										Report ("Click Event: " + sender.ToString () + "\n" + args.ToString (), 0);
 										ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (button, 0, 0, 60, 60);
 										Intent pendingIntent = new Intent (this, typeof(Detail));
+								if (!button.HasOnClickListeners)
+								{
+									stop.clickHandler = delegate (object sender, EventArgs args)
+									{
 
 										Train nearest = nearestTrain;
 										List<Train> next = stop.trains;
 
-										var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject (nearest);
-										pendingIntent.PutExtra ("nearestTrain", toJsonNearestTrain);
-										pendingIntent.PutExtra ("nearestTrainColor", GetTrainColor (nearestTrain.route_id));
+										var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject(nearest);
+										pendingIntent.PutExtra("nearestTrain", toJsonNearestTrain);
+										pendingIntent.PutExtra("nearestTrainColor", GetTrainColor(nearestTrain.route_id));
 
-										var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject (next);
-										pendingIntent.PutExtra ("fartherTrains", toJsonFartherTrains);
+										var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject(next);
+										pendingIntent.PutExtra("fartherTrains", toJsonFartherTrains);
 
-										StartActivity (pendingIntent, options.ToBundle ());
+										StartActivity(pendingIntent, options.ToBundle());
 										button.Click -= stop.clickHandler;
 
 									};
 
 									// event needed to clear click handlers after update
 									EventHandler<AfterTextChangedEventArgs> removeHandlers = null;
-									removeHandlers = delegate(object sender, AfterTextChangedEventArgs e) {
-										if (stop.clickHandler != null) {
 											Report ("after text change called", 0);
 											button.Click -= stop.clickHandler;
 											// TODO: animate out
@@ -557,16 +580,18 @@ namespace Nearest.Droid
 
 									button.Click += stop.clickHandler;
 								}
-							} else {
-								SetTrainsNotice (button, time);
+							}
+							else
+							{
+								SetTrainsNotice(button, time);
 							}
 							idx++;
 						}
 						dir++;
 					}
-					swipeLayout.Refreshing = false;
-				}
-			});
+				});
+				swipeLayout.Refreshing = false;
+			}
 		}
 
 		/// <summary>
@@ -574,12 +599,13 @@ namespace Nearest.Droid
 		/// </summary>
 		/// <param name="button">Button.</param>
 		/// <param name="time">Time.</param>
-		public void SetTrainsNotice (Button button, TextView time)
+		public void SetTrainsNotice(Button button, TextView time)
 		{
-			button.Text = GetString (Resource.String.error_train_line);
-			button.SetBackgroundResource (GetTrainColorDrawable (""));
-			if (time != null) {
-				time.Text = GetString (Resource.String.error_train_time);
+			button.Text = GetString(Resource.String.error_train_line);
+			button.SetBackgroundResource(GetTrainColorDrawable(""));
+			if (time != null)
+			{
+				time.Text = GetString(Resource.String.error_train_time);
 			}
 		}
 
@@ -588,54 +614,57 @@ namespace Nearest.Droid
 		/// </summary>
 		/// <returns>The train color.</returns>
 		/// <param name="StopId">Stop identifier.</param>
-		public static int GetTrainColor (String StopId)
+		public static int GetTrainColor(string StopId)
 		{
 			int resourceDrawable;
 
-			switch (StopId) {
-			case "1":
-			case "2":
-			case "3":
-				resourceDrawable = Resource.Color.red;
-				break;
-			case "A":
-			case "C":
-			case "E":
-				resourceDrawable = Resource.Color.blue;
-				break;
-			case "N":
-			case "Q":
-			case "R":
-				resourceDrawable = Resource.Color.yellow;
-				break;
-			case "4":
-			case "5":
-			case "5X":
-			case "6":
-			case "6X":
-				resourceDrawable = Resource.Color.green;
-				break;
-			case "G": 
-				resourceDrawable = Resource.Color.green_alt;
-				break;
-			case "B":
-			case "D":
-			case "F":
-			case "M":
-				resourceDrawable = Resource.Color.orange;
-				break;
-			case "7":
-			case "7X":
-				resourceDrawable = Resource.Color.purple;
-				break;
-			case "J":
-			case "Z":
-				resourceDrawable = Resource.Color.brown;
-				break;
-			case "L":
-			default: 
-				resourceDrawable = Resource.Color.gray;
-				break;
+			switch (StopId)
+			{
+				case "1":
+				case "2":
+				case "3":
+					resourceDrawable = Resource.Color.red;
+					break;
+				case "A":
+				case "C":
+				case "E":
+					resourceDrawable = Resource.Color.blue;
+					break;
+				case "N":
+				case "Q":
+				case "R":
+					resourceDrawable = Resource.Color.yellow;
+					break;
+				case "4":
+				case "5":
+				case "5X":
+				case "6":
+				case "6X":
+					resourceDrawable = Resource.Color.green;
+					break;
+				case "G":
+					resourceDrawable = Resource.Color.green_alt;
+					break;
+				case "B":
+				case "D":
+				case "F":
+				case "M":
+					resourceDrawable = Resource.Color.orange;
+					break;
+				case "7":
+				case "7X":
+					resourceDrawable = Resource.Color.purple;
+					break;
+				case "J":
+				case "Z":
+					resourceDrawable = Resource.Color.brown;
+					break;
+				case "L":
+					resourceDrawable = Resource.Color.gray;
+					break;
+				default:
+					resourceDrawable = Resource.Color.gray;
+					break;
 			}
 			return resourceDrawable;
 		}
@@ -645,54 +674,57 @@ namespace Nearest.Droid
 		/// </summary>
 		/// <returns>The train color.</returns>
 		/// <param name="StopId">Stop identifier.</param>
-		public int GetTrainColorDrawable (String StopId)
+		public int GetTrainColorDrawable(string StopId)
 		{
 			int resourceDrawable;
 
-			switch (StopId) {
-			case "1":
-			case "2":
-			case "3":
-				resourceDrawable = Resource.Drawable.red;
-				break;
-			case "A":
-			case "C":
-			case "E":
-				resourceDrawable = Resource.Drawable.blue;
-				break;
-			case "N":
-			case "Q":
-			case "R":
-				resourceDrawable = Resource.Drawable.yellow;
-				break;
-			case "4":
-			case "5":
-			case "5X":
-			case "6":
-			case "6X":
-				resourceDrawable = Resource.Drawable.green;
-				break;
-			case "G": 
-				resourceDrawable = Resource.Drawable.green_alt;
-				break;
-			case "B":
-			case "D":
-			case "F":
-			case "M":
-				resourceDrawable = Resource.Drawable.orange;
-				break;
-			case "7":
-			case "7X":
-				resourceDrawable = Resource.Drawable.purple;
-				break;
-			case "J":
-			case "Z":
-				resourceDrawable = Resource.Drawable.brown;
-				break;
-			case "L":
-			default: 
-				resourceDrawable = Resource.Drawable.gray;
-				break;
+			switch (StopId)
+			{
+				case "1":
+				case "2":
+				case "3":
+					resourceDrawable = Resource.Drawable.red;
+					break;
+				case "A":
+				case "C":
+				case "E":
+					resourceDrawable = Resource.Drawable.blue;
+					break;
+				case "N":
+				case "Q":
+				case "R":
+					resourceDrawable = Resource.Drawable.yellow;
+					break;
+				case "4":
+				case "5":
+				case "5X":
+				case "6":
+				case "6X":
+					resourceDrawable = Resource.Drawable.green;
+					break;
+				case "G":
+					resourceDrawable = Resource.Drawable.green_alt;
+					break;
+				case "B":
+				case "D":
+				case "F":
+				case "M":
+					resourceDrawable = Resource.Drawable.orange;
+					break;
+				case "7":
+				case "7X":
+					resourceDrawable = Resource.Drawable.purple;
+					break;
+				case "J":
+				case "Z":
+					resourceDrawable = Resource.Drawable.brown;
+					break;
+				case "L":
+					resourceDrawable = Resource.Drawable.gray;
+					break;
+				default:
+					resourceDrawable = Resource.Drawable.gray;
+					break;
 			}
 			return resourceDrawable;
 		}
@@ -701,11 +733,12 @@ namespace Nearest.Droid
 		/// Gets the train models.
 		/// </summary>
 		/// <param name="locationData">Location data.</param>
-		public void GetTrainModels (Location locationData)
+		public void GetTrainModels(Location locationData)
 		{
-			if (locationData != null) {
-				Report ("Latitude: " + locationData.Latitude, 0);
-				Report ("Longitude: " + locationData.Longitude, 0);
+			if (locationData != null)
+			{
+				Report("Latitude: " + locationData.Latitude, 0);
+				Report("Longitude: " + locationData.Longitude, 0);
 
 				try {
 					if (trainLVM == null) {
@@ -726,8 +759,9 @@ namespace Nearest.Droid
 						Report ("Train schedule requested", 0);
 					}
 				}
-			} else {
-				Report ("Location missing", 2);
+			}
+			else
+			{
 			}
 		}
 
@@ -736,21 +770,23 @@ namespace Nearest.Droid
 		/// </summary>
 		/// <param name="msg">Message.</param>
 		/// <param name="verbosity">Verbosity.</param>
-		public void Report (String msg, int verbosity)
+		public void Report(string msg, int verbosity)
 		{
-			RunOnUiThread (() => {
-				var appName = GetString (Resource.String.title) ?? "Nearest";
-				switch (verbosity) {
-				case 0:
-					Log.Debug (appName, "DBG: " + msg);
-					break;
-				case 1:
-					Toast.MakeText (this, msg, ToastLength.Short).Show ();
-					break;
-				case 2:
-					Report (msg, 0);
-					Report (msg, 1);
-					break;
+			RunOnUiThread(() =>
+			{
+				var appName = GetString(Resource.String.title) ?? "Nearest";
+				switch (verbosity)
+				{
+					case 0:
+						Log.Debug(appName, "DBG: " + msg);
+						break;
+					case 1:
+						Toast.MakeText(this, msg, ToastLength.Short).Show();
+						break;
+					case 2:
+						Report(msg, 0);
+						Report(msg, 1);
+						break;
 				}
 			});
 			return;
@@ -759,19 +795,20 @@ namespace Nearest.Droid
 		/// <summary>
 		/// Shows the alert.
 		/// </summary>
-		/// <param name="str">String.</param>
-		public void ShowAlert (String str)
+		/// <param name="str">string.</param>
+		public void ShowAlert(string str)
 		{
-			var alertString = str == null ? "Unknown Issue" : str;
+			var alertString = str ?? "Unknown Issue";
 
-			if (coordinatorView != null) {
-				Snackbar.Make (coordinatorView, alertString, Snackbar.LengthShort).Show ();
 			} else {
 				ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (mainLayout, 0, 0, 60, 60);
 				Intent pendingIntent = new Intent (this, typeof(Alert));
 				pendingIntent.PutExtra ("alertBoxText", alertString);
 				pendingIntent.PutExtra ("parentWidth", mainLayout.Width);
 				StartActivity (pendingIntent, options.ToBundle ());
+			if (coordinatorView != null)
+			{
+				Snackbar.Make(coordinatorView, alertString, Snackbar.LengthShort).Show();
 			}
 
 			return;
@@ -781,46 +818,47 @@ namespace Nearest.Droid
 		/// Raises the location changed event.
 		/// </summary>
 		/// <param name="NewLocation">New location.</param>
-		public void OnLocationChanged (Location NewLocation)
+		public void OnLocationChanged(Location NewLocation)
 		{
 			// Show latest location
-			var LocationDescription = DescribeLocation (NewLocation);
-			Report ("OnLocationChanged: " + LocationDescription, 0);
-			GetTrainModels (NewLocation);
-			EndLocationUpdates ();
+			var LocationDescription = DescribeLocation(NewLocation);
+			Report("OnLocationChanged: " + LocationDescription, 0);
+			GetTrainModels(NewLocation);
+			EndLocationUpdates();
 		}
 
 		/// <summary>
 		/// Raises the connected event.
 		/// </summary>
 		/// <param name="connectionHint">Connection hint.</param>
-		public async void OnConnected (Bundle connectionHint)
-		{           
+		public async void OnConnected(Bundle connectionHint)
+		{
 			// Get Last known location
-			var lastLocation = LocationServices.FusedLocationApi.GetLastLocation (googleApiClient);
-			Report (lastLocation == null ? "NULL" : DescribeLocation (lastLocation), 0);
+			var lastLocation = LocationServices.FusedLocationApi.GetLastLocation(googleApiClient);
+			Report(lastLocation == null ? "lastLocation is null" : DescribeLocation(lastLocation), 0);
 
-			await RequestLocationUpdates ();
+			await RequestLocationUpdates();
 		}
 
 		/// <summary>
 		/// Requests the location updates.
 		/// </summary>
 		/// <returns>The location updates.</returns>
-		async Task RequestLocationUpdates ()
+		async Task RequestLocationUpdates()
 		{
 			// Describe our location request
-			var locationRequest = new LocationRequest ()
-				.SetInterval (10000)
-				.SetFastestInterval (1000)
-				.SetPriority (LocationRequest.PriorityHighAccuracy);
+			var locationRequest = new LocationRequest()
+				.SetInterval(10000)
+				.SetFastestInterval(1000)
+				.SetPriority(LocationRequest.PriorityHighAccuracy);
 
 			// Check to see if we can request updates first
-			if (await CheckLocationAvailability (locationRequest)) {
+			if (await CheckLocationAvailability(locationRequest))
+			{
 
 				// Request updates
-				await LocationServices.FusedLocationApi.RequestLocationUpdates (googleApiClient,
-					locationRequest, 
+				await LocationServices.FusedLocationApi.RequestLocationUpdates(googleApiClient,
+					locationRequest,
 					this);
 			}
 		}
@@ -830,25 +868,26 @@ namespace Nearest.Droid
 		/// </summary>
 		/// <returns>The location availability.</returns>
 		/// <param name="locationRequest">Location request.</param>
-		async Task<bool> CheckLocationAvailability (LocationRequest locationRequest)
+		async Task<bool> CheckLocationAvailability(LocationRequest locationRequest)
 		{
 			// Build a new request with the given location request
-			var locationSettingsRequest = new LocationSettingsRequest.Builder ()
-				.AddLocationRequest (locationRequest)
-				.Build ();
+			var locationSettingsRequest = new LocationSettingsRequest.Builder()
+				.AddLocationRequest(locationRequest)
+				.Build();
 
 			// Ask the Settings API if we can fulfill this request
-			var locationSettingsResult = await LocationServices.SettingsApi.CheckLocationSettingsAsync (googleApiClient, locationSettingsRequest);
+			var locationSettingsResult = await LocationServices.SettingsApi.CheckLocationSettingsAsync(googleApiClient, locationSettingsRequest);
 
 
 			// If false, we might be able to resolve it by showing the location settings 
 			// to the user and allowing them to change the settings
-			if (!locationSettingsResult.Status.IsSuccess) {
+			if (!locationSettingsResult.Status.IsSuccess)
+			{
 
-				if (locationSettingsResult.Status.StatusCode == LocationSettingsStatusCodes.ResolutionRequired)
-					locationSettingsResult.Status.StartResolutionForResult (this, 101);
+				if (locationSettingsResult.Status.StatusCode == CommonStatusCodes.ResolutionRequired)
+					locationSettingsResult.Status.StartResolutionForResult(this, 101);
 				else
-					Toast.MakeText (this, Resource.String.error_location_unavailable, ToastLength.Long).Show ();
+					Toast.MakeText(this, Resource.String.error_location_unavailable, ToastLength.Long).Show();
 
 				return false;
 			}
@@ -860,18 +899,18 @@ namespace Nearest.Droid
 		/// Raises the connection suspended event.
 		/// </summary>
 		/// <param name="cause">Cause.</param>
-		public void OnConnectionSuspended (int cause)
+		public void OnConnectionSuspended(int cause)
 		{
-			Report (String.Format ("GooglePlayServices Connection Suspended: {0}", cause), 0);
+			Report(string.Format("GooglePlayServices Connection Suspended: {0}", cause), 0);
 		}
 
 		/// <summary>
 		/// Raises the connection failed event.
 		/// </summary>
 		/// <param name="result">Result.</param>
-		public void OnConnectionFailed (Android.Gms.Common.ConnectionResult result)
+		public void OnConnectionFailed(ConnectionResult result)
 		{
-			Report (String.Format ("GooglePlayServices Connection Failed: {0}", result), 0);
+			Report(string.Format("GooglePlayServices Connection Failed: {0}", result), 0);
 		}
 
 		/// <Docs>The integer request code originally supplied to
@@ -884,18 +923,19 @@ namespace Nearest.Droid
 		/// </summary>
 		/// <param name="requestCode">Request code.</param>
 		/// <param name="resultCode">Result code.</param>
-		protected override async void OnActivityResult 
+		protected override async void OnActivityResult
 		(int requestCode, Result resultCode, Intent data)
 		{
-			base.OnActivityResult (requestCode, resultCode, data);
+			base.OnActivityResult(requestCode, resultCode, data);
 
 			// See if we returned from a location settings dialog 
 			// and if succesfully, we can try location updates again
-			if (requestCode == 101) {
+			if (requestCode == 101)
+			{
 				if (resultCode == Result.Ok)
-					await RequestLocationUpdates ();
+					await RequestLocationUpdates();
 				else
-					Report ("Failed to resolve Location Settings changes", 1);
+					Report("Failed to resolve Location Settings changes", 1);
 			}
 		}
 
@@ -904,14 +944,15 @@ namespace Nearest.Droid
 		/// </summary>
 		/// <returns>The location.</returns>
 		/// <param name="location">Location.</param>
-		public string DescribeLocation (Location location)
+		public string DescribeLocation(Location location)
 		{
-			return string.Format ("{0}: {1}, {2} @ {3}",
+			return string.Format("{0}: {1}, {2} @ {3}",
 				location.Provider,
 				location.Latitude,
 				location.Longitude,
-				new DateTime (1970, 1, 1, 0, 0, 0).AddMilliseconds (location.Time));
+				new DateTime(1970, 1, 1, 0, 0, 0).AddMilliseconds(location.Time));
 		}
 
 	}
+
 }
