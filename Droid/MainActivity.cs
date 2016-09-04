@@ -553,15 +553,20 @@ namespace Nearest.Droid
 		/// </summary>
 		public void SetNextTrains(string origin)
 		{
-			RunOnUiThread (() => {
-				if (trainLVM == null) {
-					Report (origin + " TrainLVM not setup yet.", 0);
-					return;
-				}
-				if (trainLVM.IsBusy) {
-					Report (origin + " Still getting trains.", 0);
-				} else {
-					Report (origin + " Setting next trains.", 0);
+			if (trainLVM == null)
+			{
+				Report(origin + " TrainLVM not setup yet.", 0);
+				return;
+			}
+			if (trainLVM.IsBusy)
+			{
+				Report(origin + " Still getting trains.", 0);
+			}
+			else
+			{
+				Report(origin + " Setting next trains.", 0);
+				RunOnUiThread(() =>
+				{
 					int dir = 0;
 					// Loop throuh south and north view groups 
 					foreach (var stops in trainLVM.stopList)
@@ -595,15 +600,16 @@ namespace Nearest.Droid
 								button = (Button)buttons[subIdx];
 							}
 
-							Report ("SetNextTrain " + dir + " " + idx, 0);
-							var nearestTrain = stop.next_train;
-
-							if (nearestTrain != null) {
-								if (nearestTrain.ExpiredUnder (15)) {
+							var nearestTrain = stop != null ? stop.next_train : null;
+							if (nearestTrain != null)
+							{
+								/*if (nearestTrain.ExpiredUnder(15))
+								{
+									Report("===>ExpiredUnder", 0);
 									// refresh these if the first time is stale
-									this.HandleConnections ();
+									HandleConnections();
 									return;
-								}
+								}*/
 
 								button.Text = nearestTrain.route_id.Substring(0, 1);
 								button.SetBackgroundResource(GetTrainColorDrawable(nearestTrain.route_id));
@@ -618,7 +624,6 @@ namespace Nearest.Droid
 									time.Text = Train.time(nearestTrain.ts);
 								}
 
-										Report ("Click Event: " + sender.ToString () + "\n" + args.ToString (), 0);
 								if (!button.HasOnClickListeners)
 								{
 									stop.clickHandler = delegate (object sender, EventArgs args)
@@ -643,7 +648,10 @@ namespace Nearest.Droid
 
 									// event needed to clear click handlers after update
 									EventHandler<AfterTextChangedEventArgs> removeHandlers = null;
-											Report ("after text change called", 0);
+									removeHandlers = delegate (object sender, AfterTextChangedEventArgs e)
+									{
+										if (stop.clickHandler != null)
+										{
 											button.Click -= stop.clickHandler;
 											// TODO: animate out
 											button.Visibility = ViewStates.Invisible;
@@ -658,6 +666,7 @@ namespace Nearest.Droid
 							else
 							{
 								SetTrainsNotice(button, time);
+								Report("NearestTrain was null", 0);
 							}
 							idx++;
 						}
@@ -814,28 +823,56 @@ namespace Nearest.Droid
 				Report("Latitude: " + locationData.Latitude, 0);
 				Report("Longitude: " + locationData.Longitude, 0);
 
-				try {
-					if (trainLVM == null) {
-						trainLVM = new TrainListViewModel (locationData.Latitude, locationData.Longitude);
-						trainLVM.PropertyChanged += delegate {
-							Report ("Schedule updated", 0);
-							SetNextTrains ("Property changed.");
-						};
-					} else {
-						trainLVM.SetLocation (locationData.Latitude, locationData.Longitude);
-					}
-					// Get trains asynchonously
-					Task.Run (() => trainLVM.GetTrainsAsync ());
-				} catch (Exception ex) {
-					Report ("Exception: " + ex.Message.ToString (), 0);
-				} finally {
-					if (!this.trainLVM.IsBusy) {
-						Report ("Train schedule requested", 0);
-					}
+				if (trainLVM == null)
+				{
+					trainLVM = new TrainListViewModel(locationData.Latitude, locationData.Longitude);
+
+					// listen to property changes
+					trainLVM.PropertyChanged += delegate
+					{
+						Report("Schedule updated", 0);
+						SetNextTrains("Property changed.");
+					};
+				}
+				trainLVM.SetLocation(locationData.Latitude, locationData.Longitude);
+
+				if (!IsConnected())
+				{
+					// Get trains asynchonously from remote api
+					//TODO: get trains from transit api feed
+					Report("Getting trains async...", 0);
+					Task.Run(() => trainLVM.GetTrainsAsync());
+				}
+				else
+				{
+					// get the trains from schedule
+					Report("Getting train synchronously...", 0);
+					Task.Run(() => GetTrains());
+				}
+			}
+			else {
+				Report("Location missing", 2);
+			}
+		}
+
+		public void GetTrains()
+		{
+			if (lastKnown != null && NearestApp != null && trainLVM != null)
+			{
+				var i = 0;
+				foreach (var directionList in trainLVM.stopList)
+				{
+					List<Stop> stops = NearestApp.GetNearestStopsAll(
+						lastKnown.Latitude, lastKnown.Longitude, i
+					);
+					trainLVM.Update(i, stops);
+					SetNextTrains("Manually changed.");
+					i++;
 				}
 			}
 			else
 			{
+				Report("Ahh, no definitive location", 2);
 			}
 		}
 
@@ -874,12 +911,6 @@ namespace Nearest.Droid
 		{
 			var alertString = str ?? "Unknown Issue";
 
-			} else {
-				ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (mainLayout, 0, 0, 60, 60);
-				Intent pendingIntent = new Intent (this, typeof(Alert));
-				pendingIntent.PutExtra ("alertBoxText", alertString);
-				pendingIntent.PutExtra ("parentWidth", mainLayout.Width);
-				StartActivity (pendingIntent, options.ToBundle ());
 			if (coordinatorView != null)
 			{
 				Snackbar.Make(coordinatorView, alertString, Snackbar.LengthShort).Show();
@@ -897,6 +928,7 @@ namespace Nearest.Droid
 			// Show latest location
 			var LocationDescription = DescribeLocation(NewLocation);
 			Report("OnLocationChanged: " + LocationDescription, 0);
+			lastKnown = NewLocation;
 			GetTrainModels(NewLocation);
 			EndLocationUpdates();
 		}
