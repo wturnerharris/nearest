@@ -78,9 +78,6 @@ namespace Nearest.Droid
 			base.OnCreate(savedInstanceState);
 
 			// Set our view from the "main" layout resource
-
-			// Start the app logic
-			StartApplication ();
 			SetContentView(Resource.Layout.Main);
 			UseGooglePlayLocations = true;
 
@@ -218,6 +215,12 @@ namespace Nearest.Droid
 		{
 			if (swipeLayout.Refreshing)
 			{
+				HandleConnections();
+				SetNextTrains("refreshing...");
+			}
+			else
+			{
+				swipeLayout.Refreshing = false;
 			}
 		}
 
@@ -226,13 +229,20 @@ namespace Nearest.Droid
 		/// </summary>
 		protected override void OnResume()
 		{
-			var lastUpdate = (DateTime.Now.TimeOfDay - lastUpdated).TotalSeconds;
-			Report (String.Format (GetString (Resource.String.info_last_updated), lastUpdate.ToString ()), 0);
-			if (lastUpdated.TotalSeconds == 0 || lastUpdate > 30) {
-				HandleConnections ();
-			} else {
-				SetNextTrains ("Resuming.");
 			base.OnResume();
+			var lastUpdate = (DateTime.Now.TimeOfDay - lastUpdated).TotalMinutes;
+			var inMinutes = lastUpdate.ToString("0.00");
+			string type = "minutes";
+			Report(string.Format(GetString(Resource.String.info_last_updated), inMinutes, type), 2);
+			if (lastUpdate.CompareTo(30.0) > 0)
+			{
+				Report("Waking up, restarting app...", 0);
+				HandleConnections();
+				StartApplication();
+			}
+			else
+			{
+				SetNextTrains("Resuming...");
 			}
 		}
 
@@ -249,29 +259,23 @@ namespace Nearest.Droid
 
 		public void StartApplication()
 		{
-			var appDataPath = this.GetExternalFilesDir (null).Path;
-			string dbName = DB_NAME;
-			string dbPath = Path.Combine (appDataPath, dbName);
-			// Check if your DB has already been extracted.
-			if (!File.Exists (dbPath)) {
-				if (!Directory.Exists (appDataPath)) {
-					Directory.CreateDirectory (appDataPath);
-				}
-				using (BinaryReader br = new BinaryReader (Assets.Open (dbName))) {
-					using (BinaryWriter bw = new BinaryWriter (new FileStream (dbPath, FileMode.Create))) {
-						byte[] buffer = new byte[2048];
-						int len = 0;
-						while ((len = br.Read (buffer, 0, buffer.Length)) > 0) {
-							bw.Write (buffer, 0, len);
-						}
-					}
-				}
-			}
+			if (NearestApp == null)
+			{
+				Task.Run(() =>
+				{
+					var appDataPath = GetExternalFilesDir(null).Path;
 
-			SQLite.Net.Interop.ISQLitePlatform platform;
-			platform = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid ();
-			NearestApp = new Nearest (platform, dbPath);
-			Report (NearestApp.info, 0);
+					SQLite.Net.Interop.ISQLitePlatform platform;
+					platform = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid();
+					NearestApp = new Nearest(platform, appDataPath, new Utility());
+				});
+			}
+			if (lastKnown != null)
+			{
+				GetTrainModels(lastKnown);
+			}
+			Report("Using existing NearestApp instance. Setting next trains", 0);
+			SetNextTrains("Resuming...");
 		}
 
 		/// <summary>
