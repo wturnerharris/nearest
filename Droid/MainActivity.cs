@@ -128,20 +128,6 @@ namespace Nearest.Droid
 			swipeButton = FindViewById<ImageButton> (Resource.Id.swipeButton);
 			swipeButton.SetOnTouchListener (this);
 
-			/**
-			 * Define UI actions
-			 * 
-			 */
-			/*swipeButton.Click += delegate(object sender, EventArgs e) {
-				if (isFullscreen) {
-					Window.ClearFlags (WindowManagerFlags.Fullscreen);
-					isFullscreen = false;
-				} else {
-					Window.SetFlags (WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
-					isFullscreen = true;
-				}
-				ShowAlert (isFullscreen ? "Fullscreen enabled" : "Fullscreen disabled");
-			};*/
 			for (var i = 0; i < 2; i++) {
 				LinearLayout direction = (LinearLayout)mainLayout.GetChildAt (i + 2);
 
