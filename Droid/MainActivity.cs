@@ -151,6 +151,17 @@ namespace Nearest.Droid
 
 		}
 
+		public int GetStatusBarHeight()
+		{
+			int result = 0;
+			int resourceId = Resources.GetIdentifier("status_bar_height", "dimen", "android");
+			if (resourceId > 0)
+			{
+				result = Resources.GetDimensionPixelSize(resourceId);
+			}
+			return result;
+		}
+
 		/// <summary>
 		/// Raises the touch event.
 		/// </summary>
