@@ -82,6 +82,7 @@ namespace Nearest.Droid
 
 			// Start the app logic
 			StartApplication ();
+			UseGooglePlayLocations = true;
 
 			// Set Typeface and Styles
 			TypefaceStyle tfs = TypefaceStyle.Normal;
@@ -292,10 +293,25 @@ namespace Nearest.Droid
 		/// <returns><c>true</c> if this instance is connected; otherwise, <c>false</c>.</returns>
 		public bool IsConnected()
 		{
-			ConnectivityManager connectivityManager = (ConnectivityManager)GetSystemService (ConnectivityService);
+			var connectivityManager = (ConnectivityManager)GetSystemService(ConnectivityService);
 			NetworkInfo activeConnection = connectivityManager.ActiveNetworkInfo;
-			bool IsConnected = (activeConnection != null) && activeConnection.IsConnected;
-			return IsConnected;
+			bool conn = (activeConnection != null) && activeConnection.IsConnected;
+			return conn;
+		}
+
+		public void OnProviderDisabled(string provider)
+		{
+			Report("Disabled: " + provider + ".", 0);
+		}
+
+		public void OnProviderEnabled(string provider)
+		{
+			Report("Enabled:  " + provider + ".", 0);
+		}
+
+		public void OnStatusChanged(string provider, Availability status, Bundle extras)
+		{
+			Report("Changed:  " + provider + ".", 0);
 		}
 
 		/// <summary>
@@ -303,9 +319,12 @@ namespace Nearest.Droid
 		/// </summary>
 		async void TryGetLocation()
 		{
-			if ((int)Build.VERSION.SdkInt < 23) {
-				await GetLocationAsync ();
 			Report("Getting location info", 0);
+
+			// No need to request permission prior to api 23
+			if ((int)Build.VERSION.SdkInt < 23)
+			{
+				await GetLocationAsync();
 				return;
 			}
 
@@ -382,22 +401,69 @@ namespace Nearest.Droid
 		/// Gets the location async.
 		/// </summary>
 		/// <returns>The location async.</returns>
-		public async Task GetLocationAsync ()
-		{ 
-			try {
-				Report ("Getting location async...", 0);
-				// register for location updates
-				await Task.Run (() => {
-					googleApiClient = new GoogleApiClient.Builder (this)
-						.AddApi (Android.Gms.Location.LocationServices.API)
-						.AddConnectionCallbacks (this)
-						.AddOnConnectionFailedListener (this)
-						.Build ();
-					googleApiClient.Connect ();
-				});
-			} catch (Exception ex) {
-				Report ("Unable to get location\nDBG Exception: " + ex.ToString (), 2);
+		public async Task GetLocationAsync()
+		{
+			try
+			{
+				if (IsGooglePlayServicesInstalled() && UseGooglePlayLocations)
+				{
+					Report("Getting gplay services location async...", 0);
+					// register for location updates
+					await Task.Run(() =>
+					{
+						googleApiClient = new GoogleApiClient.Builder(this)
+							.AddApi(LocationServices.API)
+							.AddConnectionCallbacks(this)
+							.AddOnConnectionFailedListener(this)
+							.Build();
+						googleApiClient.Connect();
+					});
+				}
+				else
+				{
+					Report("Getting provider location async...", 0);
+					// try get location via gps directly
+					await Task.Run(() =>
+					{
+						RunOnUiThread(() =>
+						{
+							InitializeLocationManager();
+							LocationManager.RequestLocationUpdates(LocationProvider, 0, 0, this);
+						});
+					});
+				}
 			}
+			catch (Exception ex)
+			{
+				Report("Unable to get location\nDBG Exception: " + ex, 2);
+				Report(GetString(Resource.String.common_google_play_services_api_unavailable_text), 0);
+				Snackbar.Make(coordinatorView,
+					Resource.String.error_play_missing,
+					Snackbar.LengthIndefinite)
+				.SetAction(Resource.String.snackbar_button_ok, v => HandleConnections())
+				.Show();
+
+			}
+		}
+
+		void InitializeLocationManager()
+		{
+			LocationManager = (LocationManager)GetSystemService(LocationService);
+			var LocationCrtieria = new Criteria
+			{
+				Accuracy = Accuracy.Fine
+			};
+			var acceptableLocationProviders = LocationManager.GetProviders(LocationCrtieria, true);
+
+			if (acceptableLocationProviders.Count > 0)
+			{
+				LocationProvider = acceptableLocationProviders[0];
+			}
+			else
+			{
+				LocationProvider = string.Empty;
+			}
+			Report("Using " + LocationManager + " . " + LocationProvider, 0);
 		}
 
 		/// <summary>
@@ -405,10 +471,15 @@ namespace Nearest.Droid
 		/// </summary>
 		public void EndLocationUpdates()
 		{
-			if (googleApiClient != null) {
-				LocationServices.FusedLocationApi.RemoveLocationUpdates (googleApiClient, this);
-				lastUpdated = DateTime.Now.TimeOfDay;
+			if (googleApiClient != null && !googleApiClient.IsConnecting)
+			{
+				LocationServices.FusedLocationApi.RemoveLocationUpdates(googleApiClient, this);
 			}
+			if (LocationManager != null)
+			{
+				LocationManager.RemoveUpdates(this);
+			}
+			lastUpdated = DateTime.Now.TimeOfDay;
 		}
 
 		/// <summary>
