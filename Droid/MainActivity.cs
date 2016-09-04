@@ -78,10 +78,10 @@ namespace Nearest.Droid
 			base.OnCreate(savedInstanceState);
 
 			// Set our view from the "main" layout resource
-			SetContentView (Resource.Layout.Main);
 
 			// Start the app logic
 			StartApplication ();
+			SetContentView(Resource.Layout.Main);
 			UseGooglePlayLocations = true;
 
 			// Set Typeface and Styles
@@ -90,14 +90,14 @@ namespace Nearest.Droid
 			Typeface HnLt = Typeface.CreateFromAsset(Assets, "fonts/HelveticaNeueLTCom-Lt.ttf");
 			Typeface HnMd = Typeface.CreateFromAsset(Assets, "fonts/HelveticaNeueLTCom-Roman.ttf");
 
-			mainLayout = FindViewById<RelativeLayout> (Resource.Id.mainLayout);
-			subLayout = FindViewById<RelativeLayout> (Resource.Id.subLayout);
+			mainLayout = FindViewById<RelativeLayout>(Resource.Id.mainLayout);
+			subLayout = FindViewById<RelativeLayout>(Resource.Id.subLayout);
+			coordinatorView = FindViewById(Resource.Id.CoordinatorView);
 
-			coordinatorView = (View)FindViewById (Resource.Id.CoordinatorView);
+			swipeLayout = FindViewById<SwipeRefreshLayout>(Resource.Id.swipeContainer);
+			swipeLayout.SetOnRefreshListener(this);
+			swipeLayout.SetColorSchemeResources(Resource.Color.red);
 
-			swipeLayout = FindViewById<SwipeRefreshLayout> (Resource.Id.swipeContainer);
-			swipeLayout.SetOnRefreshListener (this);
-			swipeLayout.SetColorSchemeResources (Resource.Color.red);
 			
 			int childCount = mainLayout.ChildCount;
 
@@ -126,20 +126,22 @@ namespace Nearest.Droid
 				button.SetTypeface(HnLt, tfs);
 			}
 
-			swipeButton = FindViewById<ImageButton> (Resource.Id.swipeButton);
-			swipeButton.SetOnTouchListener (this);
+			swipeButton = FindViewById<ImageButton>(Resource.Id.swipeButton);
+			swipeButton.SetOnTouchListener(this);
 
-			for (var i = 0; i < 2; i++) {
-				LinearLayout direction = (LinearLayout)mainLayout.GetChildAt (i + 2);
+			for (var i = 0; i < 2; i++)
+			{
+				var direction = (LinearLayout)mainLayout.GetChildAt(i + 2);
+				var times = (TextView)direction.FindViewWithTag("time");
+				var label = (TextView)direction.FindViewWithTag("label");
+				times.SetTypeface(HnMd, tfs);
+				label.SetTypeface(HnLt, tfs);
 
-				TextView times = (TextView)direction.FindViewWithTag (tag: "time");
-				TextView label = (TextView)direction.FindViewWithTag (tag: "label");
-				times.SetTypeface (HnMd, tfs);
-				label.SetTypeface (HnLt, tfs);
-
-				Button button = (Button)direction.FindViewWithTag (tag: "button");
-				SetTrainsNotice (button, times);
+				var button = (Button)direction.FindViewWithTag("button");
+				SetTrainsNotice(button, times);
 			}
+
+
 		}
 
 		/// <summary>
@@ -206,13 +208,13 @@ namespace Nearest.Droid
 		/// </summary>
 		protected override void OnResume()
 		{
-			base.OnResume ();
 			var lastUpdate = (DateTime.Now.TimeOfDay - lastUpdated).TotalSeconds;
 			Report (String.Format (GetString (Resource.String.info_last_updated), lastUpdate.ToString ()), 0);
 			if (lastUpdated.TotalSeconds == 0 || lastUpdate > 30) {
 				HandleConnections ();
 			} else {
 				SetNextTrains ("Resuming.");
+			base.OnResume();
 			}
 		}
 
@@ -602,12 +604,12 @@ namespace Nearest.Droid
 								}
 
 										Report ("Click Event: " + sender.ToString () + "\n" + args.ToString (), 0);
-										ActivityOptions options = ActivityOptions.MakeScaleUpAnimation (button, 0, 0, 60, 60);
-										Intent pendingIntent = new Intent (this, typeof(Detail));
 								if (!button.HasOnClickListeners)
 								{
 									stop.clickHandler = delegate (object sender, EventArgs args)
 									{
+										ActivityOptions options = ActivityOptions.MakeScaleUpAnimation(button, 0, 0, 60, 60);
+										var pendingIntent = new Intent(this, typeof(Detail));
 
 										Train nearest = nearestTrain;
 										List<Train> next = stop.trains;
