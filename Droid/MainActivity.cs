@@ -281,33 +281,26 @@ namespace Nearest.Droid
 		/// <summary>
 		/// Handles the connections.
 		/// </summary>
-			if (IsConnected ()) {
-				if (IsGooglePlayServicesInstalled ()) {
-					try {
-						Task.Run (() => TryGetLocation ());
-					} catch (Exception ex) {
-						Report (GetString (Resource.String.error_exception) + ex.Message.ToString (), 0);
-					}
-				} else {
-					swipeLayout.Refreshing = false;
-					Report (GetString (Resource.String.common_google_play_services_api_unavailable_text), 0);
-					Snackbar.Make (coordinatorView, 
-						Resource.String.error_play_missing, 
-						Snackbar.LengthIndefinite)
-					.SetAction (Resource.String.snackbar_button_ok, v => HandleConnections ())
-					.Show ();
-				}
-			} else {
-				swipeLayout.Refreshing = false;
-				Report (GetString (Resource.String.error_no_internet), 0);
-				Snackbar.Make (coordinatorView, 
-					Resource.String.error_no_internet, 
-					Snackbar.LengthIndefinite)
-				.SetAction (Resource.String.snackbar_button_try_again, v => HandleConnections ())
-				.Show ();
 		public void HandleConnections()
 		{
+			if (!IsConnected())
+			{
+				Report(GetString(Resource.String.error_no_internet), 0);
+				Snackbar.Make(coordinatorView,
+					Resource.String.error_no_internet,
+					Snackbar.LengthLong)
+				.SetAction(Resource.String.snackbar_button_try_again, v => HandleConnections())
+				.Show();
 			}
+			try
+			{
+				Task.Run(() => TryGetLocation());
+			}
+			catch (Exception ex)
+			{
+				Report(GetString(Resource.String.error_exception) + ex.Message, 0);
+			}
+			swipeLayout.Refreshing = false;
 			return;
 		}
 
