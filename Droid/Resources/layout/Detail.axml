@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:id="@+id/DetailView"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:actionBarNavMode="tabs">
     <Button
         android:id="@+id/DetailClose"
@@ -31,73 +31,150 @@
         android:id="@+id/DetailInfo"
         android:layout_centerInParent="true"
         android:layout_below="@+id/DetailRouteId"
+        android:layout_toRightOf="@+id/LocationSpots"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:gravity="center">
-        <TextView
-            android:text="VAN CORTLANDT PARK - 242 ST"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/LocationSpots"
+            android:layout_below="@+id/DetailRouteId"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14dip"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="50dip"
-            android:layout_marginLeft="20dip"
-            android:paddingRight="20dip"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-condensed"
-            android:tag="detail" />
-        <TextView
-            android:text="Your Location - 145th"
-            android:layout_width="match_parent"
-            android:layout_height="30dip"
-            android:textSize="18dip"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="20dip"
-            android:layout_marginLeft="20dip"
-            android:paddingRight="20dip"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif"
-            android:tag="detail" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="30dip"
-            android:textSize="16dip"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="20dip"
-            android:layout_marginLeft="20dip"
-            android:textStyle="normal"
-            android:fontFamily="sans-serif"
-            android:tag="detail" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="30dip"
-            android:textSize="16dip"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="20dip"
-            android:layout_marginLeft="20dip"
-            android:textStyle="normal"
-            android:fontFamily="sans-serif"
-            android:tag="time" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="30dip"
-            android:textSize="16dip"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="20dip"
-            android:layout_marginLeft="20dip"
-            android:textStyle="normal"
-            android:fontFamily="sans-serif"
-            android:tag="time" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="30dip"
-            android:textSize="16dip"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="20dip"
-            android:layout_marginLeft="20dip"
-            android:textStyle="normal"
-            android:fontFamily="sans-serif"
-            android:tag="time" />
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageView
+                android:background="@drawable/circle"
+                android:layout_width="12dip"
+                android:layout_height="12dip"
+                android:layout_marginTop="54dip" />
+            <ImageView
+                android:background="@drawable/vertical_line"
+                android:layout_width="44dip"
+                android:layout_height="44dip"
+                android:layout_marginTop="-2dip" />
+            <ImageView
+                android:background="@drawable/circle_outline_thin"
+                android:layout_width="12dip"
+                android:layout_height="12dip"
+                android:layout_marginTop="-2dip" />
+            <ImageView
+                android:background="@drawable/vertical_line"
+                android:layout_width="44dip"
+                android:layout_height="44dip"
+                android:layout_marginTop="-2dip" />
+            <ImageView
+                android:background="@drawable/circle_outline_thin"
+                android:layout_width="12dip"
+                android:layout_height="12dip"
+                android:layout_marginTop="-2dip" />
+            <ImageView
+                android:tag="point"
+                android:background="@drawable/vertical_line"
+                android:layout_width="44dip"
+                android:layout_height="44dip"
+                android:layout_marginTop="-2dip" />
+            <ImageView
+                android:tag="point"
+                android:background="@drawable/circle_outline_thin"
+                android:layout_width="12dip"
+                android:layout_height="12dip"
+                android:layout_marginTop="-2dip" />
+            <ImageView
+                android:tag="point"
+                android:background="@drawable/vertical_line"
+                android:layout_width="44dip"
+                android:layout_height="44dip"
+                android:layout_marginTop="-2dip" />
+            <ImageView
+                android:tag="point"
+                android:background="@drawable/circle_outline_thin"
+                android:layout_width="12dip"
+                android:layout_height="12dip"
+                android:layout_marginTop="-2dip" />
+            <ImageView
+                android:tag="point"
+                android:background="@drawable/vertical_line"
+                android:layout_width="44dip"
+                android:layout_height="44dip"
+                android:layout_marginTop="-2dip" />
+            <ImageView
+                android:tag="point"
+                android:background="@drawable/circle_outline_thin"
+                android:layout_width="12dip"
+                android:layout_height="12dip"
+                android:layout_marginTop="-2dip" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/DetailInfo"
+            android:layout_centerInParent="true"
+            android:layout_below="@+id/DetailRouteId"
+            android:layout_toRightOf="@+id/LocationSpots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:text="TO: VAN CORTLANDT PARK - 242 ST"
+                android:layout_width="match_parent"
+                android:layout_height="16dip"
+                android:textSize="14dip"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="50dip"
+                android:paddingRight="20dip"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-condensed"
+                android:tag="detail" />
+            <TextView
+                android:text="137th St - City College"
+                android:layout_width="match_parent"
+                android:layout_height="24dip"
+                android:textSize="18dip"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="32dip"
+                android:paddingRight="20dip"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:tag="detail" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="20dip"
+                android:textSize="16dip"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="32dip"
+                android:textStyle="normal"
+                android:fontFamily="sans-serif"
+                android:tag="detail"
+                android:text="1 Min" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="20dip"
+                android:textSize="16dip"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="32dip"
+                android:textStyle="normal"
+                android:fontFamily="sans-serif"
+                android:tag="time"
+                android:text="2 Mins" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="20dip"
+                android:textSize="16dip"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="32dip"
+                android:textStyle="normal"
+                android:fontFamily="sans-serif"
+                android:tag="time"
+                android:text="3 Mins" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="20dip"
+                android:textSize="16dip"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="32dip"
+                android:textStyle="normal"
+                android:fontFamily="sans-serif"
+                android:tag="time"
+                android:text="4 Mins" />
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

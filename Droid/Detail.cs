@@ -62,6 +62,7 @@ namespace Nearest.Droid
 			LinearLayout detailView = FindViewById<LinearLayout>(Resource.Id.DetailInfo);
 			List<View> detailLabels = MainActivity.GetViewsByTag(detailView, "detail");
 			List<View> timeLabels = MainActivity.GetViewsByTag(detailView, "time");
+			List<View> points = MainActivity.GetViewsByTag(detailView, "point");
 
 			var nearestTrain = Intent.GetStringExtra("nearestTrain");
 			if (nearestTrain != null)
@@ -101,6 +102,7 @@ namespace Nearest.Droid
 				Console.WriteLine("Detail: has Farther Trains");
 				List<Train> trains = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Train>>(fartherTrains);
 				int i = 0;
+				int ce = 0;
 				if (timeLabels.Count > 0 && trains != null && trains.Count > 0)
 				{
 					foreach (TextView timeLabel in timeLabels)
@@ -111,8 +113,16 @@ namespace Nearest.Droid
 							Train fartherTrain = trains[i];
 							var TimeInMinutes = fartherTrain.GetTimeInMinutes();
 							timeLabel.Text = TimeInMinutes;
+							points[i + ce].Visibility = ViewStates.Visible;
+							points[i + ce + 1].Visibility = ViewStates.Visible;
+						}
+						else
+						{
+							points[i + ce].Visibility = ViewStates.Invisible;
+							points[i + ce + 1].Visibility = ViewStates.Invisible;
 						}
 						i++;
+						ce++;
 					}
 				}
 				else
