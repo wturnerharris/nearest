@@ -90,15 +90,21 @@ namespace Nearest.Droid
 			Typeface HnLt = Typeface.CreateFromAsset(Assets, "fonts/HelveticaNeueLTCom-Lt.ttf");
 			Typeface HnMd = Typeface.CreateFromAsset(Assets, "fonts/HelveticaNeueLTCom-Roman.ttf");
 
+			var metrics = new DisplayMetrics();
+			WindowManager.DefaultDisplay.GetMetrics(metrics);
+			int viewport = metrics.HeightPixels - GetStatusBarHeight();
+
 			mainLayout = FindViewById<RelativeLayout>(Resource.Id.mainLayout);
+			mainLayout.SetMinimumHeight(viewport * 70 / 100);
 			subLayout = FindViewById<RelativeLayout>(Resource.Id.subLayout);
+			subLayout.SetMinimumHeight(viewport * 70 / 100);
+
 			coordinatorView = FindViewById(Resource.Id.CoordinatorView);
 
 			swipeLayout = FindViewById<SwipeRefreshLayout>(Resource.Id.swipeContainer);
 			swipeLayout.SetOnRefreshListener(this);
 			swipeLayout.SetColorSchemeResources(Resource.Color.red);
 
-			
 			int childCount = mainLayout.ChildCount;
 
 			// Main app title and tagline
@@ -127,6 +133,7 @@ namespace Nearest.Droid
 			}
 
 			swipeButton = FindViewById<ImageButton>(Resource.Id.swipeButton);
+			swipeButton.SetMinimumHeight(viewport * 30 / 100);
 			swipeButton.SetOnTouchListener(this);
 
 			for (var i = 0; i < 2; i++)
