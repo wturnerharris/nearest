@@ -33,7 +33,7 @@ namespace Nearest.Droid
 		ScreenOrientation = ScreenOrientation.Portrait
 	)]
 	[MetaData(
-		Android.Preferences.PreferenceManager.MetadataKeyPreferences,
+		PreferenceManager.MetadataKeyPreferences,
 		Resource = "@xml/preferences"
 	)]
 	public class MainActivity : Activity,
@@ -230,12 +230,26 @@ namespace Nearest.Droid
 		protected override void OnResume()
 		{
 			base.OnResume();
-			var lastUpdate = (DateTime.Now.TimeOfDay - lastUpdated).TotalMinutes;
-			var inMinutes = lastUpdate.ToString("0.00");
-			string type = "minutes";
-			Report(string.Format(GetString(Resource.String.info_last_updated), inMinutes, type), 2);
-			if (lastUpdate.CompareTo(30.0) > 0)
+			var notUpdated = TimeSpan.Zero == lastUpdated;
+			var lastUpdate = (DateTime.Now.TimeOfDay - lastUpdated).TotalSeconds;
+			if (notUpdated || lastUpdate.CompareTo(30.0) > 0)
 			{
+				if (!notUpdated)
+				{
+					string type = "seconds";
+					if (lastUpdate.CompareTo(60.0) > 0)
+					{
+						type = "minutes";
+						lastUpdate /= 60;
+					}
+					if (lastUpdate.CompareTo(60.0) > 0)
+					{
+						type = "hours";
+						lastUpdate /= 60;
+					}
+					var final = lastUpdate.ToString("0.0");
+					Report(string.Format(GetString(Resource.String.info_last_updated), final, type), 2);
+				}
 				Report("Waking up, restarting app...", 0);
 				HandleConnections();
 				StartApplication();
