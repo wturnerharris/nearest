@@ -280,11 +280,14 @@ namespace Nearest.Droid
 					NearestApp = new Nearest(platform, appDataPath, new Utility());
 				});
 			}
-			if (lastKnown != null)
+			else
+			{
+				Report("Using existing NearestApp instance. Setting next trains", 0);
+			}
+			if (lastKnown != null && NearestApp != null)
 			{
 				GetTrainModels(lastKnown);
 			}
-			Report("Using existing NearestApp instance. Setting next trains", 0);
 			SetNextTrains("Resuming...");
 		}
 
@@ -870,19 +873,21 @@ namespace Nearest.Droid
 			if (lastKnown != null && NearestApp != null && trainLVM != null)
 			{
 				var i = 0;
+				Report("Total directions: " + trainLVM.stopList.Count, 0);
 				foreach (var directionList in trainLVM.stopList)
 				{
 					List<Stop> stops = NearestApp.GetNearestStopsAll(
 						lastKnown.Latitude, lastKnown.Longitude, i
 					);
 					trainLVM.Update(i, stops);
-					SetNextTrains("Manually changed.");
+					SetNextTrains("Manually changed: " + i + ", " + stops[i].next_train.stop_name);
 					i++;
 				}
 			}
 			else
 			{
-				Report("Ahh, no definitive location", 2);
+				string word = lastKnown == null ? "location" : (NearestApp == null ? "app" : "trainLVM");
+				Report("Ahh, no definitive " + word, 2);
 			}
 		}
 
