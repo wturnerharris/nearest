@@ -33,6 +33,8 @@ namespace Nearest.ViewModels
 
 		bool busy;
 
+		public string info;
+
 		public bool IsBusy
 		{
 			get { return busy; }
@@ -50,6 +52,8 @@ namespace Nearest.ViewModels
 		{
 			try
 			{
+				IsBusy = true;
+
 				// empty current list data
 				stopList[i].Clear();
 
@@ -59,8 +63,9 @@ namespace Nearest.ViewModels
 					stopList[i].Add(stop);
 				}
 			}
-			catch (Exception ex)
+			finally
 			{
+				IsBusy = false;
 			}
 		}
 
@@ -104,8 +109,6 @@ namespace Nearest.ViewModels
 				return;
 
 			changed(this, new PropertyChangedEventArgs(name));
-
-
 		}
 	}
 }
