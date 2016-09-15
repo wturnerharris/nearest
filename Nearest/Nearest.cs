@@ -200,14 +200,19 @@ namespace Nearest
 
 			var sql = string.Format(@"
 				SELECT stop_times.arrival_time, trips.route_id, trips.trip_headsign, stops.stop_name,
-				strftime('%s', strftime('%Y-%m-%d', 'now')||' '||stop_times.arrival_time, 'utc') AS ts
-				FROM stop_times, trips, stops WHERE arrival_time >= {0}
-				AND arrival_time <= {1}
+				ifnull(
+					strftime('%s', strftime('%Y-%m-%d', 'now')||' '||stop_times.arrival_time, 'utc'),
+					strftime('%s', strftime('%Y-%m-%d', 'now')||' '||
+						substr('0000'||(substr(stop_times.arrival_time, 0, 3)-24), -2, 2)||
+						substr(stop_times.arrival_time,3,6), 'utc')
+				) AS ts
+				FROM stop_times, trips, stops WHERE TIME(ts, 'unixepoch', 'localtime') >= {0}
+				AND TIME(ts, 'unixepoch', 'localtime') <= {1}
 				AND stop_times.stop_id = '{2}'
 				AND trips.service_id IN ( {3} )
 				AND stop_times.stop_id = stops.stop_id
 				AND stop_times.trip_id = trips.trip_id 
-				ORDER BY arrival_time ASC LIMIT {4};",
+				ORDER BY ts ASC LIMIT {4};",
 				string.Format(time_compare, 3),
 				string.Format(time_compare, 25),
 				stop_id,
