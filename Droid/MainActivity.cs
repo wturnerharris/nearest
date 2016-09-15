@@ -32,10 +32,6 @@ namespace Nearest.Droid
 		Icon = "@drawable/icon",
 		ScreenOrientation = ScreenOrientation.Portrait
 	)]
-	[MetaData(
-		PreferenceManager.MetadataKeyPreferences,
-		Resource = "@xml/preferences"
-	)]
 	public class MainActivity : Activity,
 	View.IOnTouchListener,
 	Android.Locations.ILocationListener,
