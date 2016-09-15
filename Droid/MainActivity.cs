@@ -22,7 +22,6 @@ using Android.Util;
 
 using Nearest.ViewModels;
 using Nearest.Models;
-using Android.Preferences;
 
 namespace Nearest.Droid
 {
