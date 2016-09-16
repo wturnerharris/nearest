@@ -832,8 +832,8 @@ namespace Nearest.Droid
 		{
 			if (locationData != null)
 			{
-				Report("Latitude: " + locationData.Latitude, 0);
-				Report("Longitude: " + locationData.Longitude, 0);
+				var LocationDescription = DescribeLocation(locationData);
+				Report("GetTrainModels: " + LocationDescription, 0);
 
 				if (trainLVM == null)
 				{
@@ -879,7 +879,8 @@ namespace Nearest.Droid
 						lastKnown.Latitude, lastKnown.Longitude, i
 					);
 					trainLVM.Update(i, stops);
-					SetNextTrains("Manually changed: " + i + ", " + stops[i].next_train.stop_name);
+					//since onchangeevent property is properly listening to changes to LVM...
+					//SetNextTrains("Manually changed: " + i + ", " + stops[i].next_train.stop_name);
 					i++;
 				}
 			}
