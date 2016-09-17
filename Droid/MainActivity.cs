@@ -50,6 +50,7 @@ namespace Nearest.Droid
 		public ImageButton swipeButton;
 
 		bool UseGooglePlayLocations;
+		bool UseNearestTrainAPI;
 		TimeSpan lastUpdated;
 		public Location lastKnown;
 		LocationManager LocationManager;
@@ -75,6 +76,7 @@ namespace Nearest.Droid
 			// Set our view from the "main" layout resource
 			SetContentView(Resource.Layout.Main);
 			UseGooglePlayLocations = true;
+			UseNearestTrainAPI = false;
 
 			// Set Typeface and Styles
 			TypefaceStyle tfs = TypefaceStyle.Normal;
@@ -272,11 +274,9 @@ namespace Nearest.Droid
 			{
 				Task.Run(() =>
 				{
-					var appDataPath = GetExternalFilesDir(null).Path;
-
 					SQLite.Net.Interop.ISQLitePlatform platform;
 					platform = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid();
-					NearestApp = new Nearest(platform, appDataPath, new Utility());
+					NearestApp = new Nearest(platform, new Utility());
 				});
 			}
 			else
@@ -848,7 +848,7 @@ namespace Nearest.Droid
 				}
 				trainLVM.SetLocation(locationData.Latitude, locationData.Longitude);
 
-				if (!IsConnected())
+				if (IsConnected() && UseNearestTrainAPI)
 				{
 					// Get trains asynchonously from remote api
 					//TODO: get trains from transit api feed

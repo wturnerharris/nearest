@@ -20,27 +20,28 @@ namespace Nearest
 		public float latitude, longitude;
 		public SQLiteConnection db;
 		public ISQLitePlatform platform;
-		public string dataPath;
 		public string dbPath;
 		IUtility utility;
 
-		public Nearest(ISQLitePlatform Platform, string DataPath, IUtility Utility)
+		public Nearest(ISQLitePlatform Platform, IUtility Utility)
 		{
 			platform = Platform;
 			utility = Utility;
-			dataPath = DataPath;
 			try
 			{
-				dbPath = utility.CombinePath(dataPath, DB_NAME);
+				dbPath = utility.CopyDatabaseFromAssets(DB_NAME);
+				//222d8a42e097fa050a3509a95aab41d1d69a9297
+				utility.WriteLine("DBPATH: "+dbPath);
+
 				//File does not seem to exist
 				if (!utility.FileExists(dbPath))
 				{
 					//Copy zip from assets
-					utility.CopyFromAssets(dbPath);
-					if (!utility.FileExists(dbPath))
-					{
+					//utility.CopyFromAssets(dbPath);
+					//if (!utility.FileExists(dbPath))
+					//{
 						utility.WriteLine("File copy failed.");
-					}
+					//}
 				}
 				db = new SQLiteConnection(platform, dbPath);
 				db.CreateTable<Metro.calendar>();

@@ -8,6 +8,34 @@ namespace Nearest.Droid
 {
 	public class Utility : IUtility
 	{
+		public string CopyDatabaseFromAssets(string dbFileName)
+		{
+			string dbFilePath = Application.Context.GetDatabasePath(dbFileName).AbsolutePath;
+			string databaseFolder = Path.GetDirectoryName(dbFilePath);
+
+			if (!File.Exists(dbFilePath))
+			{
+				if (!Directory.Exists(databaseFolder))
+				{
+					Directory.CreateDirectory(databaseFolder);
+				}
+				Stream fileStream = Application.Context.Assets.Open(dbFileName);
+				using (BinaryReader br = new BinaryReader(fileStream))
+				{
+					using (BinaryWriter bw = new BinaryWriter(new FileStream(dbFilePath, FileMode.Create)))
+					{
+						byte[] buffer = new byte[2048];
+						int len = 0;
+						while ((len = br.Read(buffer, 0, buffer.Length)) > 0)
+						{
+							bw.Write(buffer, 0, len);
+						}
+					}
+				}
+			}
+			return dbFilePath;
+		}
+
 		public void CopyFromAssets(string toPath)
 		{
 			var FileName = Path.GetFileName(toPath);
@@ -37,25 +65,6 @@ namespace Nearest.Droid
 						{
 							bw.Write(buffer, 0, len);
 						}
-					}
-				}
-			}
-			//Alternate method, TODO: can be removed later
-			if (!File.Exists(toPath))
-			{
-				if (!Directory.Exists(PathDir))
-				{
-					Directory.CreateDirectory(PathDir);
-				}
-				Stream fileStream = Application.Context.Assets.Open(FileName);
-				using (StreamReader Reader = new StreamReader(fileStream))
-				{
-					using (StreamWriter Writer = new StreamWriter(toPath))
-					{
-						string Content = Reader.ReadToEnd();
-						Writer.Write(Content);
-						Reader.Close();
-						Writer.Close();
 					}
 				}
 			}
@@ -144,6 +153,12 @@ namespace Nearest.Droid
 				return false;
 			}
 			return true;
+		}
+
+		public string GetDataPath()
+		{
+			var appDataPath = Application.Context.GetExternalFilesDir(null).Path;
+			return appDataPath;
 		}
 
 		public void WriteLine(string msg)
