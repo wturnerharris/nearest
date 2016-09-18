@@ -858,35 +858,11 @@ namespace Nearest.Droid
 				{
 					// get the trains from schedule
 					Report("Getting train synchronously...", 0);
-					Task.Run(() => GetTrains());
+					Task.Run(() => trainLVM.GetTrains(NearestApp));
 				}
 			}
 			else {
 				Report("Location missing", 2);
-			}
-		}
-
-		public void GetTrains()
-		{
-			if (lastKnown != null && NearestApp != null && trainLVM != null)
-			{
-				var i = 0;
-				Report("Total directions: " + trainLVM.stopList.Count, 0);
-				foreach (var directionList in trainLVM.stopList)
-				{
-					List<Stop> stops = NearestApp.GetNearestStopsAll(
-						lastKnown.Latitude, lastKnown.Longitude, i
-					);
-					trainLVM.Update(i, stops);
-					//since onchangeevent property is properly listening to changes to LVM...
-					//SetNextTrains("Manually changed: " + i + ", " + stops[i].next_train.stop_name);
-					i++;
-				}
-			}
-			else
-			{
-				string word = lastKnown == null ? "location" : (NearestApp == null ? "app" : "trainLVM");
-				Report("Ahh, no definitive " + word, 2);
 			}
 		}
 

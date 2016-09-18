@@ -68,6 +68,25 @@ namespace Nearest.ViewModels
 			}
 		}
 
+		public void GetTrains(Nearest NearestApp)
+		{
+			// TODO: compare operation if started from new Nearest object vs being passed by reference
+			if (latitude != null && longitude != null && NearestApp != null && stopList.Count > 0)
+			{
+				var i = 0;
+				foreach (var directionList in stopList)
+				{
+					List<Stop> stops = NearestApp.GetNearestStopsAll(
+						double.Parse(latitude), double.Parse(longitude), i
+					);
+					Update(i, stops);
+					i++;
+				}
+			}
+		}
+
+
+
 		public async Task GetTrainsAsync()
 		{
 			try
