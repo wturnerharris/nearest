@@ -31,17 +31,12 @@ namespace Nearest
 			{
 				dbPath = utility.CopyDatabaseFromAssets(DB_NAME);
 				//222d8a42e097fa050a3509a95aab41d1d69a9297
-				utility.WriteLine("DBPATH: "+dbPath);
+				utility.WriteLine("DBPATH: " + dbPath);
 
 				//File does not seem to exist
 				if (!utility.FileExists(dbPath))
 				{
-					//Copy zip from assets
-					//utility.CopyFromAssets(dbPath);
-					//if (!utility.FileExists(dbPath))
-					//{
-						utility.WriteLine("File copy failed.");
-					//}
+					utility.WriteLine("File copy failed.");
 				}
 				db = new SQLiteConnection(platform, dbPath);
 				db.CreateTable<Metro.calendar>();
@@ -200,28 +195,48 @@ namespace Nearest
 			var time_compare = "TIME('now', 'localtime', '+{0} minutes')";
 
 			var sql = string.Format(@"
-				SELECT stop_times.arrival_time, trips.route_id, trips.trip_headsign, stops.stop_name,
-				ifnull(
-					strftime('%s', strftime('%Y-%m-%d', 'now')||' '||stop_times.arrival_time, 'utc'),
-					strftime('%s', strftime('%Y-%m-%d', 'now')||' '||
-						substr('0000'||(substr(stop_times.arrival_time, 0, 3)-24), -2, 2)||
-						substr(stop_times.arrival_time,3,6), 'utc')
-				) AS ts
-				FROM stop_times, trips, stops WHERE TIME(ts, 'unixepoch', 'localtime') >= {0}
-				AND TIME(ts, 'unixepoch', 'localtime') <= {1}
-				AND stop_times.stop_id = '{2}'
-				AND trips.service_id IN ( {3} )
+				SELECT stop_times.arrival_time, trips.route_id, trips.trip_headsign, stops.stop_name, 1 as ts
+				FROM stop_times, trips, stops WHERE stop_times.arrival_time >= {0}
+				AND stop_times.stop_id = '{1}'
+				AND trips.service_id IN ( {2} )
 				AND stop_times.stop_id = stops.stop_id
 				AND stop_times.trip_id = trips.trip_id 
-				ORDER BY ts ASC LIMIT {4};",
+				ORDER BY stop_times.arrival_time;",
 				string.Format(time_compare, 3),
-				string.Format(time_compare, 25),
 				stop_id,
-				GetServiceCalendarQuery(),
-				limit
+				GetServiceCalendarQuery()
 			);
-			var results = db.Query<Train>(sql);
-			return results;
+
+			try
+			{
+				var results = db.Query<Train>(sql);
+				for (var i = 0; i < results.Count; i++)
+				{
+					var timeParts = results[i].arrival_time.Split(':');
+					var hours = int.Parse(timeParts[0]);
+					DateTime time;
+
+					if (hours >= 24)
+					{
+						var newTime = (hours - 24) + ":" + timeParts[1] + ":" + timeParts[2];
+						var date = Convert.ToDateTime(newTime);
+						var span = new TimeSpan(24, 0, 0);
+						time = date.Add(span);
+					}
+					else
+					{
+						time = Convert.ToDateTime(results[i].arrival_time);
+					}
+					results[i].ts = Train.ConvertToUnixTimestamp(time);
+				}
+				return results.OrderBy(result => result.ts).ToList().GetRange(0, limit);
+			}
+			catch (Exception Ex)
+			{
+				utility.WriteLine(sql);
+				utility.WriteLine(Ex.Message);
+			}
+			return new List<Train>();
 		}
 
 		public double GetDistance(double lat1, double lon1, double lat2, double lon2, string unit = "M")
