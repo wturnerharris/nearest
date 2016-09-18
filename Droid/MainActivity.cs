@@ -638,7 +638,7 @@ namespace Nearest.Droid
 
 								if (!button.HasOnClickListeners)
 								{
-									stop.clickHandler = delegate (object sender, EventArgs args)
+									stop.clickHandler = delegate
 									{
 										ActivityOptions options = ActivityOptions.MakeScaleUpAnimation(button, 0, 0, 60, 60);
 										var pendingIntent = new Intent(this, typeof(Detail));
@@ -660,7 +660,7 @@ namespace Nearest.Droid
 
 									// event needed to clear click handlers after update
 									EventHandler<AfterTextChangedEventArgs> removeHandlers = null;
-									removeHandlers = delegate (object sender, AfterTextChangedEventArgs e)
+									removeHandlers = delegate
 									{
 										if (stop.clickHandler != null)
 										{
@@ -842,7 +842,6 @@ namespace Nearest.Droid
 					// listen to property changes
 					trainLVM.PropertyChanged += delegate
 					{
-						Report("Schedule updated", 0);
 						SetNextTrains("Property changed.");
 					};
 				}
