@@ -141,8 +141,13 @@ namespace Nearest.Droid
 				var button = (Button)direction.FindViewWithTag("button");
 				SetTrainsNotice(button, times);
 			}
+		}
 
-
+		protected override void OnStop()
+		{
+			base.OnStop();
+			NearestApp?.DestroyDatabase();
+			NearestApp = null;
 		}
 
 		public int GetStatusBarHeight()
@@ -213,7 +218,7 @@ namespace Nearest.Droid
 			if (swipeLayout.Refreshing)
 			{
 				HandleConnections();
-				SetNextTrains("refreshing...");
+				SetNextTrains("Refreshing...");
 			}
 			else
 			{
@@ -286,8 +291,9 @@ namespace Nearest.Droid
 			if (lastKnown != null && NearestApp != null)
 			{
 				GetTrainModels(lastKnown);
+				Report("StartApplication => GetTrainModels", 0);
 			}
-			SetNextTrains("Resuming...");
+			SetNextTrains("Start Application...");
 		}
 
 		/// <summary>
@@ -561,7 +567,7 @@ namespace Nearest.Droid
 		}
 
 		/// <summary>
-		/// Sets the next trains.
+		/// Sets the next trains. This only sets trains and never gets them.
 		/// </summary>
 		public void SetNextTrains(string origin)
 		{
@@ -655,7 +661,6 @@ namespace Nearest.Droid
 
 										StartActivity(pendingIntent, options.ToBundle());
 										button.Click -= stop.clickHandler;
-
 									};
 
 									// event needed to clear click handlers after update
@@ -671,7 +676,6 @@ namespace Nearest.Droid
 										}
 									};
 									button.AfterTextChanged += removeHandlers;
-
 									button.Click += stop.clickHandler;
 								}
 							}

@@ -65,6 +65,13 @@ namespace Nearest
 
 		}
 
+		public void DestroyDatabase()
+		{
+			dbPath = null;
+			db.Dispose();
+			db = null;
+		}
+
 		bool DatabaseConnected()
 		{
 			return dbPath != null && db != null;
