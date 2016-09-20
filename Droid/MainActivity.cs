@@ -510,10 +510,7 @@ namespace Nearest.Droid
 			{
 				LocationServices.FusedLocationApi.RemoveLocationUpdates(googleApiClient, this);
 			}
-			if (LocationManager != null)
-			{
-				LocationManager.RemoveUpdates(this);
-			}
+			LocationManager?.RemoveUpdates(this);
 			lastUpdated = DateTime.Now.TimeOfDay;
 		}
 
@@ -557,7 +554,7 @@ namespace Nearest.Droid
 				}
 
 				object tagObj = child.Tag;
-				if (tagObj != null && tagObj.ToString() == tag)
+				if (tagObj?.ToString() == tag)
 				{
 					views.Add(child);
 				}
@@ -637,10 +634,7 @@ namespace Nearest.Droid
 								button.Visibility = ViewStates.Visible;
 								//Animation anim = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
 
-								if (time != null)
-								{
-									time.Text = Train.time(nearestTrain.ts);
-								}
+								time?.Text = Train.time(nearestTrain.ts);
 
 								if (!button.HasOnClickListeners)
 								{
