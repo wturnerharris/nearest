@@ -634,7 +634,10 @@ namespace Nearest.Droid
 								button.Visibility = ViewStates.Visible;
 								//Animation anim = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
 
-								time?.Text = Train.time(nearestTrain.ts);
+								if (time != null)
+								{
+									time.Text = Train.time(nearestTrain.ts);
+								}
 
 								if (!button.HasOnClickListeners)
 								{
