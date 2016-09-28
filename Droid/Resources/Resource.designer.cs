@@ -315,6 +315,21 @@ namespace Nearest.Droid
 			// aapt resource value: 0x7f0100df
 			public const int buttonTintMode = 2130772191;
 			
+			// aapt resource value: 0x7f010135
+			public const int cAngleEnd = 2130772277;
+			
+			// aapt resource value: 0x7f010134
+			public const int cAngleStart = 2130772276;
+			
+			// aapt resource value: 0x7f010132
+			public const int cFillColor = 2130772274;
+			
+			// aapt resource value: 0x7f010131
+			public const int cRadius = 2130772273;
+			
+			// aapt resource value: 0x7f010133
+			public const int cStrokeColor = 2130772275;
+			
 			// aapt resource value: 0x7f01011b
 			public const int cameraBearing = 2130772251;
 			
@@ -6071,6 +6086,29 @@ namespace Nearest.Droid
 			
 			// aapt resource value: 1
 			public const int ViewStubCompat_android_layout = 1;
+			
+			public static int[] circleView = new int[]
+			{
+					2130772273,
+					2130772274,
+					2130772275,
+					2130772276,
+					2130772277};
+			
+			// aapt resource value: 4
+			public const int circleView_cAngleEnd = 4;
+			
+			// aapt resource value: 3
+			public const int circleView_cAngleStart = 3;
+			
+			// aapt resource value: 1
+			public const int circleView_cFillColor = 1;
+			
+			// aapt resource value: 0
+			public const int circleView_cRadius = 0;
+			
+			// aapt resource value: 2
+			public const int circleView_cStrokeColor = 2;
 			
 			static Styleable()
 			{

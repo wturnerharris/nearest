@@ -145,6 +145,7 @@
     <AndroidResource Include="Resources\values-v23\Colors.xml" />
     <AndroidResource Include="Resources\drawable-hdpi\circle_outline_thin.xml" />
     <AndroidResource Include="Resources\drawable-hdpi\vertical_line.xml" />
+    <AndroidResource Include="Resources\values-v23\Attrs.xml" />
   </ItemGroup>
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

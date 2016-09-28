@@ -35,13 +35,13 @@ namespace Nearest.Droid
 		public CircleView(Context context, IAttributeSet attrs) :
 			base(context, attrs)
 		{
-			Initialize();
+			Initialize(context, attrs);
 		}
 
 		public CircleView(Context context, IAttributeSet attrs, int defStyle) :
 			base(context, attrs, defStyle)
 		{
-			Initialize();
+			Initialize(context, attrs);
 		}
 
 		public double CircleValue
@@ -141,7 +141,7 @@ namespace Nearest.Droid
 			return result;
 		}
 
-		void Initialize()
+		void Initialize(Context context, IAttributeSet attrs)
 		{
 			_positivePaint = new Paint
 			{
@@ -156,19 +156,17 @@ namespace Nearest.Droid
 				Color = Color.Rgb(0xff, 0x44, 0x44)
 			};
 			_negativePaint.SetStyle(Paint.Style.FillAndStroke);
-		}
 
-		public void init(AttributeSet attrs)
-		{
 			// Go through all custom attrs.
-			TypedArray attrsArray = Android.Content.Context.ObtainStyledAttributes(attrs, Resource.Styleable.circleview);
-			circleRadius = attrsArray.getInteger(R.styleable.circleview_cRadius, 0);
-			circleFillColor = attrsArray.getColor(R.styleable.circleview_cFillColor, 16777215);
-			circleStrokeColor = attrsArray.getColor(R.styleable.circleview_cStrokeColor, -1);
-			circleStartAngle = attrsArray.getInteger(R.styleable.circleview_cAngleStart, 0);
-			circleEndAngle = attrsArray.getInteger(R.styleable.circleview_cAngleEnd, 360);
+			var attrsArray = context.ObtainStyledAttributes(attrs, Resource.Styleable.circleView);
+			circleRadius = attrsArray.GetInteger(Resource.Styleable.circleView_cRadius, 0);
+			circleFillColor = attrsArray.GetColor(Resource.Styleable.circleView_cFillColor, 16777215);
+			circleStrokeColor = attrsArray.GetColor(Resource.Styleable.circleView_cStrokeColor, -1);
+			circleStartAngle = attrsArray.GetInteger(Resource.Styleable.circleView_cAngleStart, 0);
+			circleEndAngle = attrsArray.GetInteger(Resource.Styleable.circleView_cAngleEnd, 360);
+
 			// Google tells us to call recycle.
-			attrsArray.recycle();
+			attrsArray.Recycle();
 		}
 	}
 }
