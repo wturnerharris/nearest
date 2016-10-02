@@ -38,21 +38,35 @@ namespace Nearest.Models
 			return (TotalSeconds < seconds);
 		}
 
-		public string GetTimeInMinutes()
+		public string TimeString()
 		{
-			return time(ts);
+			return TimeInMinutesString(ts);
+		}
+
+		public double Time()
+		{
+			return TimeInMinutes(ts);
 		}
 
 		/**
 		 * Return formatted time string
 		 */
-		public static string time(long unixTime)
+		public static string TimeInMinutesString(long unixTime)
 		{
-			var unixDate = FromUnixTime(unixTime);
-			var newDate = (unixDate.TimeOfDay - DateTime.UtcNow.TimeOfDay).TotalMinutes;
-			var min = Math.Floor(newDate);
+			var minutes = TimeInMinutes(unixTime);
+			var min = Math.Floor(minutes);
 			var timeStr = (min < 1 ? "< 1 Min" : min + " Mins");
 			return timeStr;
+		}
+
+		/**
+		 * Return time in minutes
+		 */
+		public static double TimeInMinutes(long unixTime)
+		{
+			var unixDate = FromUnixTime(unixTime);
+			var timeSpan = (unixDate.TimeOfDay - DateTime.UtcNow.TimeOfDay);
+			return timeSpan.TotalMinutes;
 		}
 
 		/**

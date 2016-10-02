@@ -636,7 +636,7 @@ namespace Nearest.Droid
 
 								if (time != null)
 								{
-									time.Text = Train.time(nearestTrain.ts);
+									time.Text = nearestTrain.TimeString();
 								}
 
 								if (!button.HasOnClickListeners)
