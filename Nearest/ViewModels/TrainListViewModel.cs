@@ -70,9 +70,10 @@ namespace Nearest.ViewModels
 
 		public void GetTrains(Nearest NearestApp)
 		{
-			// TODO: compare operation if started from new Nearest object vs being passed by reference
-			if (latitude != null && longitude != null && NearestApp != null && stopList.Count > 0)
+			try
 			{
+				IsBusy = true;
+
 				var i = 0;
 				foreach (var directionList in stopList)
 				{
@@ -83,6 +84,11 @@ namespace Nearest.ViewModels
 					i++;
 				}
 			}
+			finally
+			{
+				IsBusy = false;
+			}
+
 		}
 
 
