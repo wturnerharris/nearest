@@ -83,7 +83,7 @@ namespace Nearest.Droid
 			public const int design_snackbar_out = 2130968591;
 			
 			// aapt resource value: 0x7f040010
-			public const int tada = 2130968592;
+			public const int rotate = 2130968592;
 			
 			static Animation()
 			{

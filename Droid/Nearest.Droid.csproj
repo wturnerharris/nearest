@@ -122,7 +122,7 @@
     <AndroidResource Include="Resources\drawable-xhdpi\Icon.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\Icon.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\Icon.png" />
-    <AndroidResource Include="Resources\anim\tada.xml" />
+    <AndroidResource Include="Resources\anim\rotate.xml" />
     <AndroidResource Include="Resources\layout\Detail.axml" />
     <AndroidResource Include="Resources\values-v23\Styles.xml" />
     <AndroidResource Include="Resources\drawable-hdpi\detail_icon_close.png" />
