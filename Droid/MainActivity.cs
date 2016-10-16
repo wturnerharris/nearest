@@ -76,7 +76,7 @@ namespace Nearest.Droid
 			// Set our view from the "main" layout resource
 			SetContentView(Resource.Layout.Main);
 			UseGooglePlayLocations = true;
-			UseNearestTrainAPI = false;
+			UseNearestTrainAPI = true;
 
 			// Set Typeface and Styles
 			TypefaceStyle tfs = TypefaceStyle.Normal;
@@ -582,7 +582,11 @@ namespace Nearest.Droid
 				Report(origin + " Setting next trains.", 0);
 				RunOnUiThread(() =>
 				{
+					subLayout.Visibility = ViewStates.Invisible;
+					swipeButton.Visibility = ViewStates.Invisible;
+
 					int dir = 0;
+
 					// Loop throuh south and north view groups 
 					foreach (var stops in trainLVM.stopList)
 					{
@@ -625,10 +629,10 @@ namespace Nearest.Droid
 									HandleConnections();
 									return;
 								}*/
-
+								var trainColor = GetTrainColor(nearestTrain.route_id);
 								button.Text = nearestTrain.route_id.Substring(0, 1);
 								button.SetBackgroundResource(GetTrainColorDrawable(nearestTrain.route_id));
-								button.SetTextColor(Color.White);
+								button.SetTextColor(GetTrainTextColor(nearestTrain.route_id));
 								button.Click -= stop.clickHandler;
 								// TODO: animate in
 								button.Visibility = ViewStates.Visible;
@@ -651,7 +655,7 @@ namespace Nearest.Droid
 
 										var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject(nearest);
 										pendingIntent.PutExtra("nearestTrain", toJsonNearestTrain);
-										pendingIntent.PutExtra("nearestTrainColor", GetTrainColor(nearestTrain.route_id));
+										pendingIntent.PutExtra("nearestTrainColor", trainColor);
 
 										var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject(next);
 										pendingIntent.PutExtra("fartherTrains", toJsonFartherTrains);
@@ -710,59 +714,82 @@ namespace Nearest.Droid
 		/// </summary>
 		/// <returns>The train color.</returns>
 		/// <param name="StopId">Stop identifier.</param>
+		public static Color GetTrainTextColor(string StopId)
+		{
+			Color color;
+
+			switch (StopId)
+			{
+				case "N":
+				case "Q":
+				case "R":
+					color = new Color(Resource.Color.textblack);
+					break;
+				default:
+					color = Color.White;
+					break;
+			}
+			return color;
+		}
+
+		/// <summary>
+		/// Gets the color of the train.
+		/// </summary>
+		/// <returns>The train color.</returns>
+		/// <param name="StopId">Stop identifier.</param>
 		public static int GetTrainColor(string StopId)
 		{
-			int resourceDrawable;
+			int resourceColor;
 
 			switch (StopId)
 			{
 				case "1":
 				case "2":
 				case "3":
-					resourceDrawable = Resource.Color.red;
+					resourceColor = Resource.Color.red;
 					break;
 				case "A":
 				case "C":
 				case "E":
-					resourceDrawable = Resource.Color.blue;
+					resourceColor = Resource.Color.blue;
 					break;
 				case "N":
 				case "Q":
 				case "R":
-					resourceDrawable = Resource.Color.yellow;
+					resourceColor = Resource.Color.yellow;
 					break;
 				case "4":
 				case "5":
 				case "5X":
 				case "6":
 				case "6X":
-					resourceDrawable = Resource.Color.green;
+					resourceColor = Resource.Color.green;
 					break;
 				case "G":
-					resourceDrawable = Resource.Color.green_alt;
+					resourceColor = Resource.Color.green_alt;
 					break;
 				case "B":
 				case "D":
 				case "F":
 				case "M":
-					resourceDrawable = Resource.Color.orange;
+					resourceColor = Resource.Color.orange;
 					break;
 				case "7":
 				case "7X":
-					resourceDrawable = Resource.Color.purple;
+					resourceColor = Resource.Color.purple;
 					break;
 				case "J":
 				case "Z":
-					resourceDrawable = Resource.Color.brown;
+					resourceColor = Resource.Color.brown;
 					break;
 				case "L":
-					resourceDrawable = Resource.Color.gray;
+					resourceColor = Resource.Color.gray;
 					break;
 				default:
-					resourceDrawable = Resource.Color.gray;
+					resourceColor = Resource.Color.gray;
 					break;
 			}
-			return resourceDrawable;
+			return resourceColor;
 		}
 
 		/// <summary>
@@ -851,7 +878,6 @@ namespace Nearest.Droid
 				if (IsConnected() && UseNearestTrainAPI)
 				{
 					// Get trains asynchonously from remote api
-					//TODO: get trains from transit api feed
 					Report("Getting trains async...", 0);
 					Task.Run(() => trainLVM.GetTrainsAsync());
 				}
@@ -932,7 +958,8 @@ namespace Nearest.Droid
 		{
 			// Get Last known location
 			var lastLocation = LocationServices.FusedLocationApi.GetLastLocation(googleApiClient);
-			Report(lastLocation == null ? "lastLocation is null" : DescribeLocation(lastLocation), 0);
+			var locationMessage = lastLocation == null ? "lastLocation is null" : DescribeLocation(lastLocation);
+			Report("LocationConnected: " + locationMessage, 0);
 
 			await RequestLocationUpdates();
 		}
@@ -1047,7 +1074,7 @@ namespace Nearest.Droid
 				location.Provider,
 				location.Latitude,
 				location.Longitude,
-				new DateTime(1970, 1, 1, 0, 0, 0).AddMilliseconds(location.Time));
+				new DateTime(1970, 1, 1, 0, 0, 0).AddMilliseconds(location.Time).ToLocalTime());
 		}
 
 	}
