@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Nearest.Models;
 using SQLite.Net;
 using ISQLitePlatform = SQLite.Net.Interop.ISQLitePlatform;
@@ -8,7 +8,6 @@ using ISQLitePlatform = SQLite.Net.Interop.ISQLitePlatform;
 //using ProtoBuf;
 //using transit_realtime;
 //using System.Globalization;
-using System.Linq;
 
 namespace Nearest
 {
@@ -209,7 +208,7 @@ namespace Nearest
 				AND stop_times.stop_id = stops.stop_id
 				AND stop_times.trip_id = trips.trip_id 
 				ORDER BY stop_times.arrival_time;",
-				string.Format(time_compare, 3),
+				string.Format(time_compare, 2),
 				stop_id,
 				GetServiceCalendarQuery()
 			);
@@ -217,9 +216,10 @@ namespace Nearest
 			try
 			{
 				var results = db.Query<Train>(sql);
-				for (var i = 0; i < results.Count; i++)
+
+				foreach (var result in results)
 				{
-					var timeParts = results[i].arrival_time.Split(':');
+					var timeParts = result.arrival_time.Split(':');
 					var hours = int.Parse(timeParts[0]);
 					DateTime time;
 
@@ -232,11 +232,12 @@ namespace Nearest
 					}
 					else
 					{
-						time = Convert.ToDateTime(results[i].arrival_time);
+						time = Convert.ToDateTime(result.arrival_time);
 					}
-					results[i].ts = Train.ConvertToUnixTimestamp(time);
+					result.ts = Train.ConvertToUnixTimestamp(time);
 				}
-				return results.OrderBy(result => result.ts).ToList().GetRange(0, limit);
+				var final = results.Count < limit ? results.Count : limit;
+				return results.OrderBy(result => result.ts).ToList().GetRange(0, final);
 			}
 			catch (Exception Ex)
 			{
