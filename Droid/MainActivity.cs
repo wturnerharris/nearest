@@ -90,6 +90,7 @@ namespace Nearest.Droid
 
 			mainLayout = FindViewById<RelativeLayout>(Resource.Id.mainLayout);
 			mainLayout.SetMinimumHeight(viewport * 70 / 100);
+			mainLayout.SetClipChildren(false);
 			subLayout = FindViewById<RelativeLayout>(Resource.Id.subLayout);
 			subLayout.SetMinimumHeight(viewport * 70 / 100);
 
@@ -121,7 +122,7 @@ namespace Nearest.Droid
 			scrollView.SetOnTouchListener(this);
 
 			var allButtons = GetViewsByTag(scrollView, "button");
-			foreach (Button button in allButtons)
+			foreach (CircleView button in allButtons)
 			{
 				button.SetTypeface(HnLt, tfs);
 			}
@@ -138,7 +139,7 @@ namespace Nearest.Droid
 				times.SetTypeface(HnMd, tfs);
 				label.SetTypeface(HnLt, tfs);
 
-				var button = (Button)direction.FindViewWithTag("button");
+				var button = (CircleView)direction.FindViewWithTag("button");
 				SetTrainsNotice(button, times);
 			}
 		}
@@ -609,17 +610,18 @@ namespace Nearest.Droid
 								subLayout.Visibility = ViewStates.Visible;
 								swipeButton.Visibility = ViewStates.Visible;
 							}
-							var button = (Button)path.FindViewWithTag("button");
+							var button = (CircleView)path.FindViewWithTag("button");
 							var buttons = GetViewsByTag(path, "button");
 							var time = (TextView)path.FindViewWithTag("time");
 							int subIdx = idx - 1;
 
 							if (idx > 0 && buttons.Count > 0 && subIdx < buttons.Count)
 							{
-								button = (Button)buttons[subIdx];
+								button = (CircleView)buttons[subIdx];
 							}
 
 							var nearestTrain = stop != null ? stop.next_train : null;
+
 							if (nearestTrain != null)
 							{
 								/*if (nearestTrain.ExpiredUnder(15))

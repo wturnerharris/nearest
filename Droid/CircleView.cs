@@ -1,7 +1,4 @@
-﻿
-using System;
-
-using Android.Animation;
+﻿using Android.Animation;
 using Android.Content;
 using Android.Graphics;
 using Android.Util;
@@ -9,37 +6,25 @@ using Android.Views;
 
 namespace Nearest.Droid
 {
-	public class CircleView : View
+	public class CircleView : Button
 	{
-
-		private Paint circlePaint;
 		private Paint circleStrokePaint;
-		private RectF circleArc;
+		Paint circlePaint;
+		RectF circleRect;
 
 		// Attrs
-		private int circleRadius;
-		private int circleFillColor;
 		private int circleStrokeColor;
-		private int circleStartAngle;
-		private int circleEndAngle;
+		int circleRadius;
+		Color circleFillColor = Color.Argb(50, 0, 0, 0);
+		float circleEndAngle;
+		float circleStartAngle = 90;
 
-		/*end circle view*/
-
-		const int DefaultHeight = 20;
-		const int DefaultWidth = 120;
-
-		Paint _negativePaint;
-		double _position = 0.5;
-		Paint _positivePaint;
-
-		public CircleView(Context context, IAttributeSet attrs) :
-			base(context, attrs)
+		public CircleView(Context context, IAttributeSet attrs) : base(context, attrs)
 		{
 			Initialize(context, attrs);
 		}
 
-		public CircleView(Context context, IAttributeSet attrs, int defStyle) :
-			base(context, attrs, defStyle)
+		public CircleView(Context context, IAttributeSet attrs, int defStyle) : base(context, attrs, defStyle)
 		{
 			Initialize(context, attrs);
 		}
@@ -97,19 +82,20 @@ namespace Nearest.Droid
 				circleRadius = measuredWidth / 2;
 				int tempRadiusHeight = MeasureHeight(heightMeasureSpec) / 2;
 				if (tempRadiusHeight < circleRadius)
+				{
 					// Check height, if height is smaller than
 					// width, then go half height as radius.
 					circleRadius = tempRadiusHeight;
+				}
 			}
-			// Remove 2 pixels for the stroke.
-			int circleDiameter = circleRadius * 2 - 2;
-			// RectF(float left, float top, float right, float bottom)
-			circleArc = new RectF(0, 0, circleDiameter, circleDiameter);
+			int circleDiameter = circleRadius * 2;
+			circleRect = new RectF(0, 0, circleDiameter, circleDiameter);
+
 			int measuredHeight = MeasureHeight(heightMeasureSpec);
 			SetMeasuredDimension(measuredWidth, measuredHeight);
 		}
 
-		private int MeasureHeight(int measureSpec)
+		int MeasureHeight(int measureSpec)
 		{
 			var specMode = MeasureSpec.GetMode(measureSpec);
 			int specSize = MeasureSpec.GetSize(measureSpec);
@@ -125,7 +111,7 @@ namespace Nearest.Droid
 			return result;
 		}
 
-		private int MeasureWidth(int measureSpec)
+		int MeasureWidth(int measureSpec)
 		{
 			var specMode = MeasureSpec.GetMode(measureSpec);
 			int specSize = MeasureSpec.GetSize(measureSpec);
