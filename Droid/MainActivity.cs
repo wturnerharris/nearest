@@ -646,6 +646,18 @@ namespace Nearest.Droid
 								button.StartAnimation(animation);
 								button.Click -= stop.clickHandler;
 
+								var timer = new System.Timers.Timer();
+								timer.Interval = duration;
+								timer.Elapsed += (object sender, System.Timers.ElapsedEventArgs e) =>
+								{
+									timer.Stop();
+									RunOnUiThread(() =>
+									{
+										ShowAlert("timed");
+									});
+								};
+								timer.Start();
+
 								if (time != null)
 								{
 									time.Text = nearestTrain.TimeString();
