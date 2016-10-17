@@ -52,7 +52,7 @@
                     android:orientation="vertical"
                     android:layout_below="@id/TextViewTagline"
                     android:tag="layout">
-                    <Button
+                    <Nearest.Droid.CircleView xmlns:circle_view="http://schemas.android.com/apk/res-auto"
                         android:text=""
                         android:layout_width="75dip"
                         android:layout_height="75dip"
@@ -62,7 +62,6 @@
                         android:fontFamily="sans-serif-light"
                         android:textSize="60dip"
                         android:textStyle="normal"
-                        android:shadowColor="@android:color/transparent"
                         android:tag="button" />
                     <TextView
                         android:layout_width="match_parent"
@@ -92,13 +91,13 @@
                     android:layout_below="@id/TextViewTagline"
                     android:layout_alignParentRight="true"
                     android:tag="layout">
-                    <Button
+                    <Nearest.Droid.CircleView xmlns:circle_view="http://schemas.android.com/apk/res-auto"
                         android:text=""
                         android:layout_width="75dip"
                         android:layout_height="75dip"
                         android:layout_marginLeft="60dip"
                         android:layout_marginRight="60dip"
-                        android:background="@drawable/Circle"
+                        android:background="@drawable/circle"
                         android:fontFamily="sans-serif-light"
                         android:textSize="60dip"
                         android:textStyle="normal"
@@ -168,7 +167,7 @@
                         android:textColor="@color/textgray"
                         android:textSize="18dip"
                         android:tag="label" />
-                    <Button
+                    <Nearest.Droid.CircleView xmlns:circle_view="http://schemas.android.com/apk/res-auto"
                         android:layout_width="75dip"
                         android:layout_height="75dip"
                         android:layout_marginLeft="60dip"
@@ -180,7 +179,7 @@
                         android:textSize="60dip"
                         android:textStyle="normal"
                         android:tag="button" />
-                    <Button
+                    <Nearest.Droid.CircleView xmlns:circle_view="http://schemas.android.com/apk/res-auto"
                         android:layout_width="75dip"
                         android:layout_height="75dip"
                         android:layout_marginLeft="60dip"
@@ -192,7 +191,7 @@
                         android:textSize="60dip"
                         android:textStyle="normal"
                         android:tag="button" />
-                    <Button
+                    <Nearest.Droid.CircleView xmlns:circle_view="http://schemas.android.com/apk/res-auto"
                         android:layout_width="75dip"
                         android:layout_height="75dip"
                         android:layout_marginLeft="60dip"
@@ -204,7 +203,7 @@
                         android:textSize="60dip"
                         android:textStyle="normal"
                         android:tag="button" />
-                    <Button
+                    <Nearest.Droid.CircleView xmlns:circle_view="http://schemas.android.com/apk/res-auto"
                         android:layout_width="75dip"
                         android:layout_height="75dip"
                         android:layout_marginLeft="60dip"
@@ -236,7 +235,7 @@
                         android:textSize="18dip"
                         android:textStyle="normal"
                         android:tag="label" />
-                    <Button
+                    <Nearest.Droid.CircleView xmlns:circle_view="http://schemas.android.com/apk/res-auto"
                         android:layout_width="75dip"
                         android:layout_height="75dip"
                         android:layout_marginLeft="60dip"
@@ -248,7 +247,7 @@
                         android:textSize="60dip"
                         android:textStyle="normal"
                         android:tag="button" />
-                    <Button
+                    <Nearest.Droid.CircleView xmlns:circle_view="http://schemas.android.com/apk/res-auto"
                         android:layout_width="75dip"
                         android:layout_height="75dip"
                         android:layout_marginLeft="60dip"
@@ -260,7 +259,7 @@
                         android:textSize="60dip"
                         android:textStyle="normal"
                         android:tag="button" />
-                    <Button
+                    <Nearest.Droid.CircleView xmlns:circle_view="http://schemas.android.com/apk/res-auto"
                         android:layout_width="75dip"
                         android:layout_height="75dip"
                         android:layout_marginLeft="60dip"
@@ -272,7 +271,7 @@
                         android:textSize="60dip"
                         android:textStyle="normal"
                         android:tag="button" />
-                    <Button
+                    <Nearest.Droid.CircleView xmlns:circle_view="http://schemas.android.com/apk/res-auto"
                         android:layout_width="75dip"
                         android:layout_height="75dip"
                         android:layout_marginLeft="60dip"
