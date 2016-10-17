@@ -1,21 +1,23 @@
 ﻿using Android.Animation;
 using Android.Content;
 using Android.Graphics;
+using PaintStyle = Android.Graphics.Paint.Style;
 using Android.Util;
 using Android.Views;
+using Android.Widget;
+using Android.Views.Animations;
 
 namespace Nearest.Droid
 {
 	public class CircleView : Button
 	{
-		private Paint circleStrokePaint;
 		Paint circlePaint;
 		RectF circleRect;
 
 		// Attrs
-		private int circleStrokeColor;
 		int circleRadius;
 		Color circleFillColor = Color.Argb(50, 0, 0, 0);
+		const float circleColorDarkness = 0.99f;
 		float circleEndAngle;
 		float circleStartAngle = 90;
 
@@ -29,46 +31,70 @@ namespace Nearest.Droid
 			Initialize(context, attrs);
 		}
 
-		public double CircleValue
+		public float CircleAngle
 		{
-			get { return _position; }
+			get { return circleEndAngle; }
 			set
 			{
-				_position = Math.Max(0f, Math.Min(value, 1f));
+				circleEndAngle = value;
 				Invalidate();
 			}
 		}
 
-		public void SetCircleValue(double value, bool animate)
+		public Color BackgroundColor
 		{
-			if (!animate)
+			get { return circleFillColor; }
+			set
 			{
-				CircleValue = value;
-				return;
+				circleFillColor = value;
+				Invalidate();
 			}
+		}
 
-			ValueAnimator animator = ValueAnimator.OfFloat((float)_position, (float)Math.Max(0f, Math.Min(value, 1f)));
-			animator.SetDuration(500);
+		public void EnterReveal()
+		{
+			// make the view visible and start the animation
+			Visibility = ViewStates.Visible;
 
-			animator.Update += (sender, e) => CircleValue = (double)e.Animation.AnimatedValue;
-			animator.Start();
+			var cAnimatorSet = new AnimatorSet();
+			var objScaleX = ObjectAnimator.OfFloat(this, "scaleX", 1, 0.9f, 0.9f, 1.2f, 1.2f, 1.1f, 1.1f, 1.1f, 1.1f, 1);
+			var objScaleY = ObjectAnimator.OfFloat(this, "scaleY", 1, 0.9f, 0.9f, 1.2f, 1.2f, 1.1f, 1.1f, 1.1f, 1.1f, 1);
+			var objRotate = ObjectAnimator.OfFloat(this, "rotation", 0, -4, -4, 3, -3, 3, -3, 3, -3, 0);
+
+			cAnimatorSet.PlayTogether(objScaleX, objScaleY, objRotate);
+			cAnimatorSet.Start();
+		}
+
+		public void Hide()
+		{
+			Visibility = ViewStates.Invisible;
+		}
+
+		//Returns darker version of specified <code>color</code>.
+		public Color DarkerColor(float factor)
+		{
+			var color = circleFillColor;
+			//int a = Color.GetAlphaComponent(color);
+			int a = (int)(255 * 0.25);
+			int r = Color.GetRedComponent(color);
+			int g = Color.GetGreenComponent(color);
+			int b = Color.GetBlueComponent(color);
+
+			return Color.Argb(
+				a,
+				System.Math.Max((int)(r * factor), 0),
+				System.Math.Max((int)(g * factor), 0),
+				System.Math.Max((int)(b * factor), 0)
+			);
 		}
 
 		protected override void OnDraw(Canvas canvas)
 		{
 			base.OnDraw(canvas);
-			float middle = canvas.Width * (float)_position;
 
-			canvas.DrawPaint(_negativePaint);
-
-			canvas.DrawRect(0, 0, middle, canvas.Height, _positivePaint);
-
-			// Move canvas down and right 1 pixel.
-			// Otherwise the stroke gets cut off.
-			canvas.Translate(1, 1);
-			//circlePaint.SetColorFilter(circleFillColor);
-			canvas.DrawArc(circleArc, circleStartAngle, circleEndAngle, true, circlePaint);
-			canvas.DrawArc(circleArc, circleStartAngle, circleEndAngle, true, circleStrokePaint);
+			//circlePaint.Color = Color.ParseColor("#FFEE352E");
+			circlePaint.Color = DarkerColor(0.9f);
+			canvas.DrawArc(circleRect, -circleStartAngle, circleEndAngle, true, circlePaint);
 		}
 
 		protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
@@ -129,30 +155,40 @@ namespace Nearest.Droid
 
 		void Initialize(Context context, IAttributeSet attrs)
 		{
-			_positivePaint = new Paint
-			{
-				AntiAlias = true,
-				Color = Color.Rgb(0x99, 0xcc, 0)
-			};
-			_positivePaint.SetStyle(Paint.Style.FillAndStroke);
-
-			_negativePaint = new Paint
-			{
-				AntiAlias = true,
-				Color = Color.Rgb(0xff, 0x44, 0x44)
-			};
-			_negativePaint.SetStyle(Paint.Style.FillAndStroke);
-
 			// Go through all custom attrs.
-			var attrsArray = context.ObtainStyledAttributes(attrs, Resource.Styleable.circleView);
-			circleRadius = attrsArray.GetInteger(Resource.Styleable.circleView_cRadius, 0);
-			circleFillColor = attrsArray.GetColor(Resource.Styleable.circleView_cFillColor, 16777215);
-			circleStrokeColor = attrsArray.GetColor(Resource.Styleable.circleView_cStrokeColor, -1);
-			circleStartAngle = attrsArray.GetInteger(Resource.Styleable.circleView_cAngleStart, 0);
-			circleEndAngle = attrsArray.GetInteger(Resource.Styleable.circleView_cAngleEnd, 360);
+			//var attrsArray = context.ObtainStyledAttributes(attrs, Resource.Styleable.circle_view);
+			//circleFillColor = attrsArray.GetColor(Resource.Styleable.circle_view_cFillColor, 16777215);
+
+			circlePaint = new Paint(PaintFlags.AntiAlias);
+			circlePaint.SetStyle(PaintStyle.Fill);
+			circlePaint.Color = DarkerColor(0.2f);
 
 			// Google tells us to call recycle.
-			attrsArray.Recycle();
+			//attrsArray.Recycle();
+		}
+
+		public class CircleAngleAnimation : Animation
+		{
+
+			CircleView circle;
+
+			float oldAngle;
+			float newAngle;
+
+			public CircleAngleAnimation(CircleView newCircle, int newAngleValue)
+			{
+				this.oldAngle = newCircle.CircleAngle;
+				this.newAngle = newAngleValue;
+				this.circle = newCircle;
+			}
+
+			protected override void ApplyTransformation(float interpolatedTime, Transformation t)
+			{
+				float angle = oldAngle + ((newAngle - oldAngle) * interpolatedTime);
+
+				circle.CircleAngle = angle;
+				circle.RequestLayout();
+			}
 		}
 	}
 }
