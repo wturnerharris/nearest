@@ -90,6 +90,7 @@ namespace Nearest.Droid
 
 			mainLayout = FindViewById<RelativeLayout>(Resource.Id.mainLayout);
 			mainLayout.SetMinimumHeight(viewport * 70 / 100);
+			mainLayout.SetClipChildren(false);
 			subLayout = FindViewById<RelativeLayout>(Resource.Id.subLayout);
 			subLayout.SetMinimumHeight(viewport * 70 / 100);
 
@@ -121,7 +122,7 @@ namespace Nearest.Droid
 			scrollView.SetOnTouchListener(this);
 
 			var allButtons = GetViewsByTag(scrollView, "button");
-			foreach (Button button in allButtons)
+			foreach (CircleView button in allButtons)
 			{
 				button.SetTypeface(HnLt, tfs);
 			}
@@ -138,7 +139,7 @@ namespace Nearest.Droid
 				times.SetTypeface(HnMd, tfs);
 				label.SetTypeface(HnLt, tfs);
 
-				var button = (Button)direction.FindViewWithTag("button");
+				var button = (CircleView)direction.FindViewWithTag("button");
 				SetTrainsNotice(button, times);
 			}
 		}
@@ -609,17 +610,18 @@ namespace Nearest.Droid
 								subLayout.Visibility = ViewStates.Visible;
 								swipeButton.Visibility = ViewStates.Visible;
 							}
-							var button = (Button)path.FindViewWithTag("button");
+							var button = (CircleView)path.FindViewWithTag("button");
 							var buttons = GetViewsByTag(path, "button");
 							var time = (TextView)path.FindViewWithTag("time");
 							int subIdx = idx - 1;
 
 							if (idx > 0 && buttons.Count > 0 && subIdx < buttons.Count)
 							{
-								button = (Button)buttons[subIdx];
+								button = (CircleView)buttons[subIdx];
 							}
 
 							var nearestTrain = stop != null ? stop.next_train : null;
+
 							if (nearestTrain != null)
 							{
 								/*if (nearestTrain.ExpiredUnder(15))
@@ -631,12 +633,18 @@ namespace Nearest.Droid
 								}*/
 								var trainColor = GetTrainColor(nearestTrain.route_id);
 								button.Text = nearestTrain.route_id.Substring(0, 1);
+								button.BackgroundColor = Color.ParseColor(Resources.GetString(trainColor));
+								button.CircleAngle = 0; //reset angle
 								button.SetBackgroundResource(GetTrainColorDrawable(nearestTrain.route_id));
 								button.SetTextColor(GetTrainTextColor(nearestTrain.route_id));
+								button.EnterReveal();
+
+								var timing = (int)nearestTrain.Time();
+								var duration = (timing <= 0 ? 1000 : timing) * 60 * 1000;
+								var animation = new CircleView.CircleAngleAnimation(button, 359);
+								animation.Duration = duration;
+								button.StartAnimation(animation);
 								button.Click -= stop.clickHandler;
-								// TODO: animate in
-								button.Visibility = ViewStates.Visible;
-								//Animation anim = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
 
 								if (time != null)
 								{
@@ -671,8 +679,6 @@ namespace Nearest.Droid
 										if (stop.clickHandler != null)
 										{
 											button.Click -= stop.clickHandler;
-											// TODO: animate out
-											button.Visibility = ViewStates.Invisible;
 											button.AfterTextChanged -= removeHandlers;
 										}
 									};
@@ -699,10 +705,16 @@ namespace Nearest.Droid
 		/// </summary>
 		/// <param name="button">Button.</param>
 		/// <param name="time">Time.</param>
-		public void SetTrainsNotice(Button button, TextView time)
+		public void SetTrainsNotice(CircleView button, TextView time)
 		{
 			button.Text = GetString(Resource.String.error_train_line);
 			button.SetBackgroundResource(GetTrainColorDrawable(""));
+
+			var Rotation = Android.Views.Animations.AnimationUtils.LoadAnimation(this,
+				Resource.Animation.rotate);
+			button.StartAnimation(Rotation);
+
+
 			if (time != null)
 			{
 				time.Text = GetString(Resource.String.error_train_time);
