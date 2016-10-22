@@ -47,24 +47,15 @@ namespace Nearest.ViewModels
 			}
 		}
 
-		public void Update(int i, List<Stop> stops)
+		void Update(int i, List<Stop> stops)
 		{
-			try
-			{
-				IsBusy = true;
+			// empty current list data
+			stopList[i].Clear();
 
-				// empty current list data
-				stopList[i].Clear();
-
-				// overwrite stop list
-				foreach (var stop in stops)
-				{
-					stopList[i].Add(stop);
-				}
-			}
-			finally
+			// overwrite stop list
+			foreach (var stop in stops)
 			{
-				IsBusy = false;
+				stopList[i].Add(stop);
 			}
 		}
 
@@ -91,8 +82,6 @@ namespace Nearest.ViewModels
 
 		}
 
-
-
 		public async Task GetTrainsAsync()
 		{
 			try
@@ -101,8 +90,11 @@ namespace Nearest.ViewModels
 
 				var client = new HttpClient();
 
-				requestString = "http://turnerharris.com/nearest/" +
-				"next.php?action=getTrains&lat=" + latitude + "&lon=" + longitude;
+				requestString = string.Format(
+					"http://turnerharris.com/nearest/next.php?action=getTrains&lat={0}&lon={1}",
+					latitude,
+					longitude
+				);
 
 				for (int i = 0; i < 2; i++)
 				{
