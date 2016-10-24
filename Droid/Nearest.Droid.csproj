@@ -37,6 +37,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <AndroidKeyStore></AndroidKeyStore>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
