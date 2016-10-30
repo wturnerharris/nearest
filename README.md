@@ -8,4 +8,4 @@ For *Android*, indicate the following details:
 2. Android version
 
 ## Contributing
-See the [Contributing Guide](./nearest/blob/master/CONTRIBUTING.md)
+See the [Contributing Guide](./CONTRIBUTING.md)
