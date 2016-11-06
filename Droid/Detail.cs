@@ -54,10 +54,7 @@ namespace Nearest.Droid
 			SetContentView(Resource.Layout.Detail);
 
 			Button ButtonClose = FindViewById<Button>(Resource.Id.DetailClose);
-			ButtonClose.Click += delegate (object sender, EventArgs e)
-			{
-				Finish();
-			};
+			ButtonClose.Click += (sender, e) => Finish();
 
 			LinearLayout detailView = FindViewById<LinearLayout>(Resource.Id.DetailInfo);
 			List<View> detailLabels = MainActivity.GetViewsByTag(detailView, "detail");
@@ -84,7 +81,7 @@ namespace Nearest.Droid
 								detailLabel.Text = train.stop_name;
 								break;
 							case 2:
-								detailLabel.Text = train.GetTimeInMinutes();
+								detailLabel.Text = train.TimeString();
 								break;
 						}
 						t++;
@@ -111,8 +108,7 @@ namespace Nearest.Droid
 						if (i < trains.Count)
 						{
 							Train fartherTrain = trains[i];
-							var TimeInMinutes = fartherTrain.GetTimeInMinutes();
-							timeLabel.Text = TimeInMinutes;
+							timeLabel.Text = fartherTrain.TimeString();
 							points[i + ce].Visibility = ViewStates.Visible;
 							points[i + ce + 1].Visibility = ViewStates.Visible;
 						}

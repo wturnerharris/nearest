@@ -22,7 +22,6 @@ using Android.Util;
 
 using Nearest.ViewModels;
 using Nearest.Models;
-using Android.Preferences;
 
 namespace Nearest.Droid
 {
@@ -31,10 +30,6 @@ namespace Nearest.Droid
 		MainLauncher = true,
 		Icon = "@drawable/icon",
 		ScreenOrientation = ScreenOrientation.Portrait
-	)]
-	[MetaData(
-		PreferenceManager.MetadataKeyPreferences,
-		Resource = "@xml/preferences"
 	)]
 	public class MainActivity : Activity,
 	View.IOnTouchListener,
@@ -55,6 +50,7 @@ namespace Nearest.Droid
 		public ImageButton swipeButton;
 
 		bool UseGooglePlayLocations;
+		bool UseNearestTrainAPI;
 		TimeSpan lastUpdated;
 		public Location lastKnown;
 		LocationManager LocationManager;
@@ -80,6 +76,7 @@ namespace Nearest.Droid
 			// Set our view from the "main" layout resource
 			SetContentView(Resource.Layout.Main);
 			UseGooglePlayLocations = true;
+			UseNearestTrainAPI = true;
 
 			// Set Typeface and Styles
 			TypefaceStyle tfs = TypefaceStyle.Normal;
@@ -93,6 +90,7 @@ namespace Nearest.Droid
 
 			mainLayout = FindViewById<RelativeLayout>(Resource.Id.mainLayout);
 			mainLayout.SetMinimumHeight(viewport * 70 / 100);
+			mainLayout.SetClipChildren(false);
 			subLayout = FindViewById<RelativeLayout>(Resource.Id.subLayout);
 			subLayout.SetMinimumHeight(viewport * 70 / 100);
 
@@ -124,7 +122,7 @@ namespace Nearest.Droid
 			scrollView.SetOnTouchListener(this);
 
 			var allButtons = GetViewsByTag(scrollView, "button");
-			foreach (Button button in allButtons)
+			foreach (CircleView button in allButtons)
 			{
 				button.SetTypeface(HnLt, tfs);
 			}
@@ -141,11 +139,16 @@ namespace Nearest.Droid
 				times.SetTypeface(HnMd, tfs);
 				label.SetTypeface(HnLt, tfs);
 
-				var button = (Button)direction.FindViewWithTag("button");
+				var button = (CircleView)direction.FindViewWithTag("button");
 				SetTrainsNotice(button, times);
 			}
+		}
 
-
+		protected override void OnStop()
+		{
+			base.OnStop();
+			NearestApp?.DestroyDatabase();
+			NearestApp = null;
 		}
 
 		public int GetStatusBarHeight()
@@ -216,7 +219,7 @@ namespace Nearest.Droid
 			if (swipeLayout.Refreshing)
 			{
 				HandleConnections();
-				SetNextTrains("refreshing...");
+				SetNextTrains("Refreshing...");
 			}
 			else
 			{
@@ -277,19 +280,21 @@ namespace Nearest.Droid
 			{
 				Task.Run(() =>
 				{
-					var appDataPath = GetExternalFilesDir(null).Path;
-
 					SQLite.Net.Interop.ISQLitePlatform platform;
 					platform = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid();
-					NearestApp = new Nearest(platform, appDataPath, new Utility());
+					NearestApp = new Nearest(platform, new Utility());
 				});
 			}
-			if (lastKnown != null)
+			else
+			{
+				Report("Using existing NearestApp instance. Setting next trains", 0);
+			}
+			if (lastKnown != null && NearestApp != null)
 			{
 				GetTrainModels(lastKnown);
+				Report("StartApplication => GetTrainModels", 0);
 			}
-			Report("Using existing NearestApp instance. Setting next trains", 0);
-			SetNextTrains("Resuming...");
+			SetNextTrains("Start Application...");
 		}
 
 		/// <summary>
@@ -506,10 +511,7 @@ namespace Nearest.Droid
 			{
 				LocationServices.FusedLocationApi.RemoveLocationUpdates(googleApiClient, this);
 			}
-			if (LocationManager != null)
-			{
-				LocationManager.RemoveUpdates(this);
-			}
+			LocationManager?.RemoveUpdates(this);
 			lastUpdated = DateTime.Now.TimeOfDay;
 		}
 
@@ -553,7 +555,7 @@ namespace Nearest.Droid
 				}
 
 				object tagObj = child.Tag;
-				if (tagObj != null && tagObj.ToString() == tag)
+				if (tagObj?.ToString() == tag)
 				{
 					views.Add(child);
 				}
@@ -563,7 +565,7 @@ namespace Nearest.Droid
 		}
 
 		/// <summary>
-		/// Sets the next trains.
+		/// Sets the next trains. This only sets trains and never gets them.
 		/// </summary>
 		public void SetNextTrains(string origin)
 		{
@@ -581,7 +583,11 @@ namespace Nearest.Droid
 				Report(origin + " Setting next trains.", 0);
 				RunOnUiThread(() =>
 				{
+					subLayout.Visibility = ViewStates.Invisible;
+					swipeButton.Visibility = ViewStates.Invisible;
+
 					int dir = 0;
+
 					// Loop throuh south and north view groups 
 					foreach (var stops in trainLVM.stopList)
 					{
@@ -604,17 +610,18 @@ namespace Nearest.Droid
 								subLayout.Visibility = ViewStates.Visible;
 								swipeButton.Visibility = ViewStates.Visible;
 							}
-							var button = (Button)path.FindViewWithTag("button");
+							var button = (CircleView)path.FindViewWithTag("button");
 							var buttons = GetViewsByTag(path, "button");
 							var time = (TextView)path.FindViewWithTag("time");
 							int subIdx = idx - 1;
 
 							if (idx > 0 && buttons.Count > 0 && subIdx < buttons.Count)
 							{
-								button = (Button)buttons[subIdx];
+								button = (CircleView)buttons[subIdx];
 							}
 
 							var nearestTrain = stop != null ? stop.next_train : null;
+
 							if (nearestTrain != null)
 							{
 								/*if (nearestTrain.ExpiredUnder(15))
@@ -624,23 +631,29 @@ namespace Nearest.Droid
 									HandleConnections();
 									return;
 								}*/
-
+								var trainColor = GetTrainColor(nearestTrain.route_id);
 								button.Text = nearestTrain.route_id.Substring(0, 1);
+								button.BackgroundColor = Color.ParseColor(Resources.GetString(trainColor));
+								button.CircleAngle = 0; //reset angle
 								button.SetBackgroundResource(GetTrainColorDrawable(nearestTrain.route_id));
-								button.SetTextColor(Color.White);
+								button.SetTextColor(GetTrainTextColor(nearestTrain.route_id));
+								button.EnterReveal();
+
+								var timing = (int)nearestTrain.Time();
+								var duration = (timing <= 0 ? 1000 : timing) * 60 * 1000;
+								var animation = new CircleView.CircleAngleAnimation(button, 359);
+								animation.Duration = duration;
+								button.StartAnimation(animation);
 								button.Click -= stop.clickHandler;
-								// TODO: animate in
-								button.Visibility = ViewStates.Visible;
-								//Animation anim = AnimationUtils.LoadAnimation (this, Resource.Animation.tada);
 
 								if (time != null)
 								{
-									time.Text = Train.time(nearestTrain.ts);
+									time.Text = nearestTrain.TimeString();
 								}
 
 								if (!button.HasOnClickListeners)
 								{
-									stop.clickHandler = delegate (object sender, EventArgs args)
+									stop.clickHandler = delegate
 									{
 										ActivityOptions options = ActivityOptions.MakeScaleUpAnimation(button, 0, 0, 60, 60);
 										var pendingIntent = new Intent(this, typeof(Detail));
@@ -650,30 +663,26 @@ namespace Nearest.Droid
 
 										var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject(nearest);
 										pendingIntent.PutExtra("nearestTrain", toJsonNearestTrain);
-										pendingIntent.PutExtra("nearestTrainColor", GetTrainColor(nearestTrain.route_id));
+										pendingIntent.PutExtra("nearestTrainColor", trainColor);
 
 										var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject(next);
 										pendingIntent.PutExtra("fartherTrains", toJsonFartherTrains);
 
 										StartActivity(pendingIntent, options.ToBundle());
 										button.Click -= stop.clickHandler;
-
 									};
 
 									// event needed to clear click handlers after update
 									EventHandler<AfterTextChangedEventArgs> removeHandlers = null;
-									removeHandlers = delegate (object sender, AfterTextChangedEventArgs e)
+									removeHandlers = delegate
 									{
 										if (stop.clickHandler != null)
 										{
 											button.Click -= stop.clickHandler;
-											// TODO: animate out
-											button.Visibility = ViewStates.Invisible;
 											button.AfterTextChanged -= removeHandlers;
 										}
 									};
 									button.AfterTextChanged += removeHandlers;
-
 									button.Click += stop.clickHandler;
 								}
 							}
@@ -696,10 +705,16 @@ namespace Nearest.Droid
 		/// </summary>
 		/// <param name="button">Button.</param>
 		/// <param name="time">Time.</param>
-		public void SetTrainsNotice(Button button, TextView time)
+		public void SetTrainsNotice(CircleView button, TextView time)
 		{
 			button.Text = GetString(Resource.String.error_train_line);
 			button.SetBackgroundResource(GetTrainColorDrawable(""));
+
+			var Rotation = Android.Views.Animations.AnimationUtils.LoadAnimation(this,
+				Resource.Animation.rotate);
+			button.StartAnimation(Rotation);
+
+
 			if (time != null)
 			{
 				time.Text = GetString(Resource.String.error_train_time);
@@ -711,59 +726,82 @@ namespace Nearest.Droid
 		/// </summary>
 		/// <returns>The train color.</returns>
 		/// <param name="StopId">Stop identifier.</param>
+		public static Color GetTrainTextColor(string StopId)
+		{
+			Color color;
+
+			switch (StopId)
+			{
+				case "N":
+				case "Q":
+				case "R":
+					color = new Color(Resource.Color.textblack);
+					break;
+				default:
+					color = Color.White;
+					break;
+			}
+			return color;
+		}
+
+		/// <summary>
+		/// Gets the color of the train.
+		/// </summary>
+		/// <returns>The train color.</returns>
+		/// <param name="StopId">Stop identifier.</param>
 		public static int GetTrainColor(string StopId)
 		{
-			int resourceDrawable;
+			int resourceColor;
 
 			switch (StopId)
 			{
 				case "1":
 				case "2":
 				case "3":
-					resourceDrawable = Resource.Color.red;
+					resourceColor = Resource.Color.red;
 					break;
 				case "A":
 				case "C":
 				case "E":
-					resourceDrawable = Resource.Color.blue;
+					resourceColor = Resource.Color.blue;
 					break;
 				case "N":
 				case "Q":
 				case "R":
-					resourceDrawable = Resource.Color.yellow;
+					resourceColor = Resource.Color.yellow;
 					break;
 				case "4":
 				case "5":
 				case "5X":
 				case "6":
 				case "6X":
-					resourceDrawable = Resource.Color.green;
+					resourceColor = Resource.Color.green;
 					break;
 				case "G":
-					resourceDrawable = Resource.Color.green_alt;
+					resourceColor = Resource.Color.green_alt;
 					break;
 				case "B":
 				case "D":
 				case "F":
 				case "M":
-					resourceDrawable = Resource.Color.orange;
+					resourceColor = Resource.Color.orange;
 					break;
 				case "7":
 				case "7X":
-					resourceDrawable = Resource.Color.purple;
+					resourceColor = Resource.Color.purple;
 					break;
 				case "J":
 				case "Z":
-					resourceDrawable = Resource.Color.brown;
+					resourceColor = Resource.Color.brown;
 					break;
 				case "L":
-					resourceDrawable = Resource.Color.gray;
+					resourceColor = Resource.Color.gray;
 					break;
 				default:
-					resourceDrawable = Resource.Color.gray;
+					resourceColor = Resource.Color.gray;
 					break;
 			}
-			return resourceDrawable;
+			return resourceColor;
 		}
 
 		/// <summary>
@@ -834,8 +872,8 @@ namespace Nearest.Droid
 		{
 			if (locationData != null)
 			{
-				Report("Latitude: " + locationData.Latitude, 0);
-				Report("Longitude: " + locationData.Longitude, 0);
+				var LocationDescription = DescribeLocation(locationData);
+				Report("GetTrainModels: " + LocationDescription, 0);
 
 				if (trainLVM == null)
 				{
@@ -844,16 +882,14 @@ namespace Nearest.Droid
 					// listen to property changes
 					trainLVM.PropertyChanged += delegate
 					{
-						Report("Schedule updated", 0);
 						SetNextTrains("Property changed.");
 					};
 				}
 				trainLVM.SetLocation(locationData.Latitude, locationData.Longitude);
 
-				if (!IsConnected())
+				if (IsConnected() && UseNearestTrainAPI)
 				{
 					// Get trains asynchonously from remote api
-					//TODO: get trains from transit api feed
 					Report("Getting trains async...", 0);
 					Task.Run(() => trainLVM.GetTrainsAsync());
 				}
@@ -861,32 +897,11 @@ namespace Nearest.Droid
 				{
 					// get the trains from schedule
 					Report("Getting train synchronously...", 0);
-					Task.Run(() => GetTrains());
+					Task.Run(() => trainLVM.GetTrains(NearestApp));
 				}
 			}
 			else {
 				Report("Location missing", 2);
-			}
-		}
-
-		public void GetTrains()
-		{
-			if (lastKnown != null && NearestApp != null && trainLVM != null)
-			{
-				var i = 0;
-				foreach (var directionList in trainLVM.stopList)
-				{
-					List<Stop> stops = NearestApp.GetNearestStopsAll(
-						lastKnown.Latitude, lastKnown.Longitude, i
-					);
-					trainLVM.Update(i, stops);
-					SetNextTrains("Manually changed.");
-					i++;
-				}
-			}
-			else
-			{
-				Report("Ahh, no definitive location", 2);
 			}
 		}
 
@@ -955,7 +970,8 @@ namespace Nearest.Droid
 		{
 			// Get Last known location
 			var lastLocation = LocationServices.FusedLocationApi.GetLastLocation(googleApiClient);
-			Report(lastLocation == null ? "lastLocation is null" : DescribeLocation(lastLocation), 0);
+			var locationMessage = lastLocation == null ? "lastLocation is null" : DescribeLocation(lastLocation);
+			Report("LocationConnected: " + locationMessage, 0);
 
 			await RequestLocationUpdates();
 		}
@@ -1070,7 +1086,7 @@ namespace Nearest.Droid
 				location.Provider,
 				location.Latitude,
 				location.Longitude,
-				new DateTime(1970, 1, 1, 0, 0, 0).AddMilliseconds(location.Time));
+				new DateTime(1970, 1, 1, 0, 0, 0).AddMilliseconds(location.Time).ToLocalTime());
 		}
 
 	}

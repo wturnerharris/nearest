@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Nearest.Models;
 using SQLite.Net;
 using ISQLitePlatform = SQLite.Net.Interop.ISQLitePlatform;
@@ -8,7 +8,6 @@ using ISQLitePlatform = SQLite.Net.Interop.ISQLitePlatform;
 //using ProtoBuf;
 //using transit_realtime;
 //using System.Globalization;
-using System.Linq;
 
 namespace Nearest
 {
@@ -20,27 +19,23 @@ namespace Nearest
 		public float latitude, longitude;
 		public SQLiteConnection db;
 		public ISQLitePlatform platform;
-		public string dataPath;
 		public string dbPath;
 		IUtility utility;
 
-		public Nearest(ISQLitePlatform Platform, string DataPath, IUtility Utility)
+		public Nearest(ISQLitePlatform Platform, IUtility Utility)
 		{
 			platform = Platform;
 			utility = Utility;
-			dataPath = DataPath;
 			try
 			{
-				dbPath = utility.CombinePath(dataPath, DB_NAME);
+				dbPath = utility.CopyDatabaseFromAssets(DB_NAME);
+				//222d8a42e097fa050a3509a95aab41d1d69a9297
+				utility.WriteLine("DBPATH: " + dbPath);
+
 				//File does not seem to exist
 				if (!utility.FileExists(dbPath))
 				{
-					//Copy zip from assets
-					utility.CopyFromAssets(dbPath);
-					if (!utility.FileExists(dbPath))
-					{
-						utility.WriteLine("File copy failed.");
-					}
+					utility.WriteLine("File copy failed.");
 				}
 				db = new SQLiteConnection(platform, dbPath);
 				db.CreateTable<Metro.calendar>();
@@ -67,6 +62,13 @@ namespace Nearest
 			foreach (FeedEntity entity in feed.entity) {}
 			*/
 
+		}
+
+		public void DestroyDatabase()
+		{
+			dbPath = null;
+			db.Dispose();
+			db = null;
 		}
 
 		bool DatabaseConnected()
@@ -199,23 +201,50 @@ namespace Nearest
 			var time_compare = "TIME('now', 'localtime', '+{0} minutes')";
 
 			var sql = string.Format(@"
-				SELECT stop_times.arrival_time, trips.route_id, trips.trip_headsign, stops.stop_name,
-				strftime('%s', strftime('%Y-%m-%d', 'now')||' '||stop_times.arrival_time, 'utc') AS ts
-				FROM stop_times, trips, stops WHERE arrival_time >= {0}
-				AND arrival_time <= {1}
-				AND stop_times.stop_id = '{2}'
-				AND trips.service_id IN ( {3} )
+				SELECT stop_times.arrival_time, trips.route_id, trips.trip_headsign, stops.stop_name, 1 as ts
+				FROM stop_times, trips, stops WHERE stop_times.arrival_time >= {0}
+				AND stop_times.stop_id = '{1}'
+				AND trips.service_id IN ( {2} )
 				AND stop_times.stop_id = stops.stop_id
 				AND stop_times.trip_id = trips.trip_id 
-				ORDER BY arrival_time ASC LIMIT {4};",
-				string.Format(time_compare, 3),
-				string.Format(time_compare, 25),
+				ORDER BY stop_times.arrival_time;",
+				string.Format(time_compare, 2),
 				stop_id,
-				GetServiceCalendarQuery(),
-				limit
+				GetServiceCalendarQuery()
 			);
-			var results = db.Query<Train>(sql);
-			return results;
+
+			try
+			{
+				var results = db.Query<Train>(sql);
+
+				foreach (var result in results)
+				{
+					var timeParts = result.arrival_time.Split(':');
+					var hours = int.Parse(timeParts[0]);
+					DateTime time;
+
+					if (hours >= 24)
+					{
+						var newTime = (hours - 24) + ":" + timeParts[1] + ":" + timeParts[2];
+						var date = Convert.ToDateTime(newTime);
+						var span = new TimeSpan(24, 0, 0);
+						time = date.Add(span);
+					}
+					else
+					{
+						time = Convert.ToDateTime(result.arrival_time);
+					}
+					result.ts = Train.ConvertToUnixTimestamp(time);
+				}
+				var final = results.Count < limit ? results.Count : limit;
+				return results.OrderBy(result => result.ts).ToList().GetRange(0, final);
+			}
+			catch (Exception Ex)
+			{
+				utility.WriteLine(sql);
+				utility.WriteLine(Ex.Message);
+			}
+			return new List<Train>();
 		}
 
 		public double GetDistance(double lat1, double lon1, double lat2, double lon2, string unit = "M")

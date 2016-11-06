@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.ComponentModel;
@@ -33,6 +32,8 @@ namespace Nearest.ViewModels
 
 		bool busy;
 
+		public string info;
+
 		public bool IsBusy
 		{
 			get { return busy; }
@@ -46,22 +47,39 @@ namespace Nearest.ViewModels
 			}
 		}
 
-		public void Update(int i, List<Stop> stops)
+		void Update(int i, List<Stop> stops)
+		{
+			// empty current list data
+			stopList[i].Clear();
+
+			// overwrite stop list
+			foreach (var stop in stops)
+			{
+				stopList[i].Add(stop);
+			}
+		}
+
+		public void GetTrains(Nearest NearestApp)
 		{
 			try
 			{
-				// empty current list data
-				stopList[i].Clear();
+				IsBusy = true;
 
-				// overwrite stop list
-				foreach (var stop in stops)
+				var i = 0;
+				foreach (var directionList in stopList)
 				{
-					stopList[i].Add(stop);
+					List<Stop> stops = NearestApp.GetNearestStopsAll(
+						double.Parse(latitude), double.Parse(longitude), i
+					);
+					Update(i, stops);
+					i++;
 				}
 			}
-			catch (Exception ex)
+			finally
 			{
+				IsBusy = false;
 			}
+
 		}
 
 		public async Task GetTrainsAsync()
@@ -72,8 +90,11 @@ namespace Nearest.ViewModels
 
 				var client = new HttpClient();
 
-				requestString = "http://turnerharris.com/nearest/" +
-				"next.php?action=getTrains&lat=" + latitude + "&lon=" + longitude;
+				requestString = string.Format(
+					"http://turnerharris.com/nearest/next.php?action=getTrains&lat={0}&lon={1}",
+					latitude,
+					longitude
+				);
 
 				for (int i = 0; i < 2; i++)
 				{
@@ -104,8 +125,6 @@ namespace Nearest.ViewModels
 				return;
 
 			changed(this, new PropertyChangedEventArgs(name));
-
-
 		}
 	}
 }

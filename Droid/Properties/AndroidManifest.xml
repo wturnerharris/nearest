@@ -1,14 +1,36 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.turnerharris.nearest">
-	<uses-sdk android:minSdkVersion="23" />
-	<application android:label="Nearest" android:configChanges="orientation" android:screenOrientation="portrait" android:icon="@drawable/icon" android:theme="@style/Theme.Nearest">
-		<activity android:name=".MainActivity" android:configChanges="orientation" android:screenOrientation="portrait" />
-		<activity android:name=".Detail" android:configChanges="orientation" android:screenOrientation="portrait" />
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:versionName="0.1.2"
+	package="com.turnerharris.nearest"
+	android:versionCode="2">
+	<uses-sdk
+		android:minSdkVersion="23" />
+	<application
+		android:label="Nearest"
+		android:configChanges="orientation"
+		android:screenOrientation="portrait"
+		android:icon="@drawable/icon"
+		android:theme="@style/Theme.Nearest">
+		<activity
+			android:name="MainActivity"
+			android:configChanges="orientation"
+			android:screenOrientation="portrait" />
+		<activity
+			android:name="Detail"
+			android:configChanges="orientation"
+			android:screenOrientation="portrait" />
 	</application>
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	<uses-configuration android:reqTouchScreen="finger" />
+	<uses-permission
+		android:name="android.permission.INTERNET" />
+	<uses-permission
+		android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission
+		android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission
+		android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission
+		android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-configuration
+		android:reqTouchScreen="finger" />
 </manifest>
