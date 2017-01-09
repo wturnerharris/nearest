@@ -12,6 +12,7 @@ using Android.OS;
 using Android.Text;
 using Android.Graphics;
 using Android.Locations;
+using Android.Preferences;
 using Android.Net;
 using Animations = Android.Views.Animations;
 using Android.Support.Design.Widget;
