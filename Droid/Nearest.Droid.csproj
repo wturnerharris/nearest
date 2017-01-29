@@ -131,6 +131,7 @@
     <Compile Include="Detail.cs" />
     <Compile Include="Resources\helpers\Utility.cs" />
     <Compile Include="CircleView.cs" />
+    <Compile Include="Fragments\Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -177,6 +178,7 @@
     <Folder Include="Resources\anim\" />
     <Folder Include="Resources\xml\" />
     <Folder Include="Resources\helpers\" />
+    <Folder Include="Fragments\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\fonts\HelveticaNeueLTCom-Bd.ttf" />
