@@ -1,21 +1,62 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-	<PreferenceCategory android:title="Inline Preferences">
-		<CheckBoxPreference android:key="checkbox_preference" android:title="Checkbox Preference Title" android:summary="Checkbox Preference Summary" />
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:title="Settings">
+	<PreferenceCategory
+		android:title="Nearest Settings">
+		<Preference
+			android:title="Version"
+			android:key="VersionNumberString"
+			android:selectable="false"
+			android:summary="0.0.0 (0)" />
 	</PreferenceCategory>
-	<PreferenceCategory android:title="Dialog Based Preferences">
-		<EditTextPreference android:key="edittext_preference" android:title="EditText Preference Title" android:summary="EditText Preference Summary" android:dialogTitle="Edit Text Preferrence Dialog Title" />
+	<PreferenceCategory
+		android:title="Units of Measurement">
+		<ListPreference
+			android:key="UomDistance"
+			android:title="Distance"
+			android:entries="@array/settings_uom_distance"
+			android:entryValues="@array/integer_sequence"
+			android:defaultValue="0" />
+		<ListPreference
+			android:key="UomTime"
+			android:title="Time"
+			android:entries="@array/settings_uom_time"
+			android:entryValues="@array/integer_sequence"
+			android:defaultValue="0" />
 	</PreferenceCategory>
-	<PreferenceCategory android:title="Launch Preferences">
-		<!-- This PreferenceScreen tag serves as a screen break (similar to page break
-             in word processing). Like for other preference types, we assign a key
-             here so it is able to save and restore its instance state. -->
-		<PreferenceScreen android:key="screen_preference" android:title="Title Screen Preferences" android:summary="Summary Screen Preferences">
-			<!-- You can place more preferences here that will be shown on the next screen. -->
-			<CheckBoxPreference android:key="next_screen_checkbox_preference" android:title="Next Screen Toggle Preference Title" android:summary="Next Screen Toggle Preference Summary" />
-		</PreferenceScreen>
-		<PreferenceScreen android:title="Intent Preference Title" android:summary="Intent Preference Summary">
-			<intent android:action="android.intent.action.VIEW" android:data="http://www.android.com" />
-		</PreferenceScreen>
+	<PreferenceCategory
+		android:title="Thresholds">
+		<SeekBarPreference
+			android:key="UomDistanceThreshold"
+			android:title="Distance"
+			android:summary="Showing trains within this proximity."
+			android:max="8"
+			android:defaultValue="1" />
+		<SeekBarPreference
+			android:key="UomTimeThreshold"
+			android:title="Time"
+			android:summary="Showing trains after this period."
+			android:max="5"
+			android:defaultValue="2" />
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:title="User Interface">
+		<CheckBoxPreference
+			android:title="Show all stations"
+			android:key="ShowAllStations"
+			android:defaultValue="true"
+			android:summary="Only show nearest stations for the same train lines." />
+		<CheckBoxPreference
+			android:title="Use web API"
+			android:key="UseInternetServices"
+			android:defaultValue="true"
+			android:summary="Access schedules from the internet." />
+	</PreferenceCategory>
+	<PreferenceCategory>
+		<Preference
+			android:key="Copyright"
+			android:summary="© 2017 Wes Turner"
+			android:selectable="false" />
 	</PreferenceCategory>
 </PreferenceScreen>

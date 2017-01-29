@@ -134,6 +134,7 @@
     <Compile Include="Settings\SettingAccessors.cs" />
     <Compile Include="Settings\SettingUtilities.cs" />
     <Compile Include="Fragments\Settings.cs" />
+    <Compile Include="Popup.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -172,6 +173,8 @@
     <AndroidResource Include="Resources\drawable-hdpi\circle_outline_thin.xml" />
     <AndroidResource Include="Resources\drawable-hdpi\vertical_line.xml" />
     <AndroidResource Include="Resources\values-v23\Attrs.xml" />
+    <AndroidResource Include="Resources\layout\Popup.axml" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_action_overflow.png" />
   </ItemGroup>
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
