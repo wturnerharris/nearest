@@ -13,13 +13,11 @@ namespace Nearest
 {
 	public class Nearest
 	{
-		public const string DB_NAME = "nearest.db";
-
-		public string service_id;
-		public float latitude, longitude;
-		public SQLiteConnection db;
-		public ISQLitePlatform platform;
-		public string dbPath;
+		const string DB_NAME = "nearest.db";
+		string service_id;
+		SQLiteConnection db;
+		ISQLitePlatform platform;
+		string dbPath;
 		IUtility utility;
 
 		public Nearest(ISQLitePlatform Platform, IUtility Utility)
@@ -43,7 +41,6 @@ namespace Nearest
 				db.CreateTable<Metro.stop_times>();
 				db.CreateTable<Metro.trips>();
 
-				//final sanity checks
 				if (!TablesExist() || null == GetServiceId())
 				{
 					utility.WriteLine("Tables do not exist or service_id is null.");
@@ -54,6 +51,10 @@ namespace Nearest
 				utility.WriteLine(Ex.Message);
 			}
 			/*
+			MTA FEED KEY - ba77750b760c246dda98cc80f11a90de
+			static - http://web.mta.info/developers/data/nyct/subway/google_transit.zip
+			
+
 			.NET
 			Install-Package GtfsRealtimeBindings
 
@@ -104,11 +105,12 @@ namespace Nearest
 			}
 			try
 			{
-				// This is the default query for checking
-				var sql = GetServiceCalendarQuery();
+				//final sanity checks
+				var WeekDay = DateTime.Today.DayOfWeek;
+				var calendarQuery = string.Format("SELECT service_id FROM calendar WHERE {0} = 1", WeekDay);
 
 				// Run the query to obtain the service_id
-				var calendar = db.Query<Metro.calendar>(sql);
+				var calendar = db.Query<Metro.calendar>(calendarQuery);
 				if (calendar.Count > 0)
 				{
 					service_id = calendar[0].service_id;
@@ -116,8 +118,8 @@ namespace Nearest
 				}
 
 				// Alternate way to query to obtain the service_id
-				var command = db.CreateCommand(sql);
-				command.CommandText = sql;
+				var command = db.CreateCommand(calendarQuery);
+				command.CommandText = calendarQuery;
 				var dbQuery = command.ExecuteQuery<Metro.calendar>();
 				if (dbQuery.Count > 0)
 				{
@@ -133,36 +135,15 @@ namespace Nearest
 			return service_id;
 		}
 
-		string GetServiceCalendarQuery()
-		{
-			var WeekDay = DateTime.Today.DayOfWeek;
-			return string.Format("SELECT service_id FROM calendar WHERE {0} = 1", WeekDay);
-		}
-
 		public List<Stop> GetNearestStopsAll(double lat, double lon, int dir = 0)
 		{
 			var sql = "SELECT stop_id, stop_lat, stop_lon FROM stops WHERE location_type = 1;";
-			var results = db.Query<stop_data>(sql);
-			var locations = new List<stop_data>();
-
-			foreach (stop_data stop in results)
-			{
-				locations.Add(new stop_data
-				{
-					stop_id = stop.stop_id,
-					stop_lat = stop.stop_lat,
-					stop_lon = stop.stop_lon
-				});
-			}
-
-			return GetNearestTrains(locations, lat, lon, dir);
-		}
-
-		List<Stop> GetNearestTrains(List<stop_data> locations, double lat, double lon, int dir = 0)
-		{
 			var direction = dir > 0 ? "N" : "S";
 			var threshold = 0.6; // hardcoded (in miles)
 			var distances = new Dictionary<string, double>();
+
+			// find stations within threshold
+			var locations = db.Query<stop_data>(sql);
 			foreach (var location in locations)
 			{
 				var distance = GetDistance(lat, lon, location.stop_lat, location.stop_lon);
@@ -177,10 +158,17 @@ namespace Nearest
 			distancesList.Sort((pair1, pair2) => pair1.Value.CompareTo(pair2.Value));
 
 			var trains = new List<Stop>();
+			string lastTrain = null;
 			foreach (var distance in distancesList)
 			{
+				if (null != lastTrain && lastTrain.Remove(1) == distance.Key.Remove(1))
+				{
+					utility.WriteLine(lastTrain.Remove(1) + " compared with " + distance.Key.Remove(1) + " skipping...");
+					continue;
+				}
 				var times = GetTrainsByStopId(distance.Key, direction);
 				Train next_train = times.GetRange(0, 1)[0];
+				utility.WriteLine(next_train.arrival_time);
 				times.RemoveAt(0);
 				trains.Add(new Stop
 				{
@@ -190,6 +178,7 @@ namespace Nearest
 					next_train = next_train,
 					direction = direction
 				});
+				lastTrain = distance.Key;
 			}
 
 			return trains;
@@ -198,19 +187,18 @@ namespace Nearest
 		List<Train> GetTrainsByStopId(string stop_id, string cardinality = "N", int limit = 8)
 		{
 			stop_id += cardinality;
-			var time_compare = "TIME('now', 'localtime', '+{0} minutes')";
 
 			var sql = string.Format(@"
-				SELECT stop_times.arrival_time, trips.route_id, trips.trip_headsign, stops.stop_name, 1 as ts
-				FROM stop_times, trips, stops WHERE stop_times.arrival_time >= {0}
+				SELECT stop_times.arrival_time AS arrival_time, 
+				trips.route_id, trips.trip_headsign, stops.stop_name, NULL as ts
+				FROM stop_times, trips, stops WHERE TIME(arrival_time) >= {0}
 				AND stop_times.stop_id = '{1}'
 				AND trips.service_id IN ( {2} )
 				AND stop_times.stop_id = stops.stop_id
-				AND stop_times.trip_id = trips.trip_id 
-				ORDER BY stop_times.arrival_time;",
-				string.Format(time_compare, 2),
+				AND stop_times.trip_id = trips.trip_id",
+				string.Format("TIME('now', 'localtime', '+{0} minutes')", 3),
 				stop_id,
-				GetServiceCalendarQuery()
+				string.Format("SELECT service_id FROM calendar WHERE {0} = 1", DateTime.Today.DayOfWeek)
 			);
 
 			try
