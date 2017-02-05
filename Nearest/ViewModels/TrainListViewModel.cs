@@ -89,11 +89,16 @@ namespace Nearest.ViewModels
 				IsBusy = true;
 
 				var client = new HttpClient();
+				var distance = 0.6;
+				var time = 3;
 
 				requestString = string.Format(
-					"http://turnerharris.com/nearest/next.php?action=getTrains&lat={0}&lon={1}",
+					"http://{0}?action=getTrains&lat={1}&lon={2}&d={3}&t={4}",
+					"turnerharris.com/nearest/next.php",
 					latitude,
-					longitude
+					longitude,
+					distance,
+					time
 				);
 
 				for (int i = 0; i < 2; i++)
@@ -128,4 +133,3 @@ namespace Nearest.ViewModels
 		}
 	}
 }
-
