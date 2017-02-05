@@ -13,6 +13,7 @@ using Android.Text;
 using Android.Graphics;
 using Android.Locations;
 using Android.Net;
+using Animations = Android.Views.Animations;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Widget;
 using Android.Gms.Location;
@@ -710,10 +711,10 @@ namespace Nearest.Droid
 			button.Text = GetString(Resource.String.error_train_line);
 			button.SetBackgroundResource(GetTrainColorDrawable(""));
 
-			var Rotation = Android.Views.Animations.AnimationUtils.LoadAnimation(this,
-				Resource.Animation.rotate);
+			var Rotation = Animations.AnimationUtils.LoadAnimation(this, Resource.Animation.rotate);
+			Rotation.RepeatCount = Animations.Animation.Infinite;
+			Rotation.RepeatMode = Animations.RepeatMode.Restart;
 			button.StartAnimation(Rotation);
-
 
 			if (time != null)
 			{
