@@ -138,24 +138,6 @@ namespace Nearest
 		public List<Stop> GetNearestStopsAll(double lat, double lon, int dir = 0)
 		{
 			var sql = "SELECT stop_id, stop_lat, stop_lon FROM stops WHERE location_type = 1;";
-			var results = db.Query<stop_data>(sql);
-			var locations = new List<stop_data>();
-
-			foreach (stop_data stop in results)
-			{
-				locations.Add(new stop_data
-				{
-					stop_id = stop.stop_id,
-					stop_lat = stop.stop_lat,
-					stop_lon = stop.stop_lon
-				});
-			}
-
-			return GetNearestTrains(locations, lat, lon, dir);
-		}
-
-		List<Stop> GetNearestTrains(List<stop_data> locations, double lat, double lon, int dir = 0)
-		{
 			var direction = dir > 0 ? "N" : "S";
 			var threshold = 0.6; // hardcoded (in miles)
 			var distances = new Dictionary<string, double>();
