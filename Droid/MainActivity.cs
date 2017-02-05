@@ -634,7 +634,7 @@ namespace Nearest.Droid
 								var trainColor = GetTrainColor(nearestTrain.route_id);
 								button.Text = nearestTrain.route_id.Substring(0, 1);
 								button.BackgroundColor = Color.ParseColor(Resources.GetString(trainColor));
-								button.CircleAngle = 0; //reset angle
+								button.EndAngle = 0; //reset angle
 								button.SetBackgroundResource(GetTrainColorDrawable(nearestTrain.route_id));
 								button.SetTextColor(GetTrainTextColor(nearestTrain.route_id));
 								button.EnterReveal();
