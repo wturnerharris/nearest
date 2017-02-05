@@ -13,13 +13,11 @@ namespace Nearest
 {
 	public class Nearest
 	{
-		public const string DB_NAME = "nearest.db";
-
-		public string service_id;
-		public float latitude, longitude;
-		public SQLiteConnection db;
-		public ISQLitePlatform platform;
-		public string dbPath;
+		const string DB_NAME = "nearest.db";
+		string service_id;
+		SQLiteConnection db;
+		ISQLitePlatform platform;
+		string dbPath;
 		IUtility utility;
 
 		public Nearest(ISQLitePlatform Platform, IUtility Utility)
@@ -43,7 +41,6 @@ namespace Nearest
 				db.CreateTable<Metro.stop_times>();
 				db.CreateTable<Metro.trips>();
 
-				//final sanity checks
 				if (!TablesExist() || null == GetServiceId())
 				{
 					utility.WriteLine("Tables do not exist or service_id is null.");
@@ -54,6 +51,10 @@ namespace Nearest
 				utility.WriteLine(Ex.Message);
 			}
 			/*
+			MTA FEED KEY - ba77750b760c246dda98cc80f11a90de
+			static - http://web.mta.info/developers/data/nyct/subway/google_transit.zip
+			
+
 			.NET
 			Install-Package GtfsRealtimeBindings
 
