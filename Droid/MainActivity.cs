@@ -473,7 +473,7 @@ namespace Nearest.Droid
 			catch (Exception ex)
 			{
 				Report("Unable to get location\nDBG Exception: " + ex, 2);
-				Report(GetString(Resource.String.common_google_play_services_api_unavailable_text), 0);
+				Report(GetString(Resource.String.common_google_play_services_unsupported_text), 0);
 				Snackbar.Make(coordinatorView,
 					Resource.String.error_play_missing,
 					Snackbar.LengthIndefinite)
