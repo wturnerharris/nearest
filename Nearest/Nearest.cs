@@ -104,11 +104,12 @@ namespace Nearest
 			}
 			try
 			{
-				// This is the default query for checking
-				var sql = GetServiceCalendarQuery();
+				//final sanity checks
+				var WeekDay = DateTime.Today.DayOfWeek;
+				var calendarQuery = string.Format("SELECT service_id FROM calendar WHERE {0} = 1", WeekDay);
 
 				// Run the query to obtain the service_id
-				var calendar = db.Query<Metro.calendar>(sql);
+				var calendar = db.Query<Metro.calendar>(calendarQuery);
 				if (calendar.Count > 0)
 				{
 					service_id = calendar[0].service_id;
@@ -116,8 +117,8 @@ namespace Nearest
 				}
 
 				// Alternate way to query to obtain the service_id
-				var command = db.CreateCommand(sql);
-				command.CommandText = sql;
+				var command = db.CreateCommand(calendarQuery);
+				command.CommandText = calendarQuery;
 				var dbQuery = command.ExecuteQuery<Metro.calendar>();
 				if (dbQuery.Count > 0)
 				{
@@ -131,12 +132,6 @@ namespace Nearest
 			}
 
 			return service_id;
-		}
-
-		string GetServiceCalendarQuery()
-		{
-			var WeekDay = DateTime.Today.DayOfWeek;
-			return string.Format("SELECT service_id FROM calendar WHERE {0} = 1", WeekDay);
 		}
 
 		public List<Stop> GetNearestStopsAll(double lat, double lon, int dir = 0)
@@ -210,7 +205,7 @@ namespace Nearest
 				ORDER BY stop_times.arrival_time;",
 				string.Format(time_compare, 2),
 				stop_id,
-				GetServiceCalendarQuery()
+				string.Format("SELECT service_id FROM calendar WHERE {0} = 1", DateTime.Today.DayOfWeek)
 			);
 
 			try
