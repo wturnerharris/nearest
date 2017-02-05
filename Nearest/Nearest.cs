@@ -141,6 +141,9 @@ namespace Nearest
 			var direction = dir > 0 ? "N" : "S";
 			var threshold = 0.6; // hardcoded (in miles)
 			var distances = new Dictionary<string, double>();
+
+			// find stations within threshold
+			var locations = db.Query<stop_data>(sql);
 			foreach (var location in locations)
 			{
 				var distance = GetDistance(lat, lon, location.stop_lat, location.stop_lon);
@@ -155,10 +158,17 @@ namespace Nearest
 			distancesList.Sort((pair1, pair2) => pair1.Value.CompareTo(pair2.Value));
 
 			var trains = new List<Stop>();
+			string lastTrain = null;
 			foreach (var distance in distancesList)
 			{
+				if (null != lastTrain && lastTrain.Remove(1) == distance.Key.Remove(1))
+				{
+					utility.WriteLine(lastTrain.Remove(1) + " compared with " + distance.Key.Remove(1) + " skipping...");
+					continue;
+				}
 				var times = GetTrainsByStopId(distance.Key, direction);
 				Train next_train = times.GetRange(0, 1)[0];
+				utility.WriteLine(next_train.arrival_time);
 				times.RemoveAt(0);
 				trains.Add(new Stop
 				{
@@ -168,6 +178,7 @@ namespace Nearest
 					next_train = next_train,
 					direction = direction
 				});
+				lastTrain = distance.Key;
 			}
 
 			return trains;
@@ -176,17 +187,16 @@ namespace Nearest
 		List<Train> GetTrainsByStopId(string stop_id, string cardinality = "N", int limit = 8)
 		{
 			stop_id += cardinality;
-			var time_compare = "TIME('now', 'localtime', '+{0} minutes')";
 
 			var sql = string.Format(@"
-				SELECT stop_times.arrival_time, trips.route_id, trips.trip_headsign, stops.stop_name, 1 as ts
-				FROM stop_times, trips, stops WHERE stop_times.arrival_time >= {0}
+				SELECT stop_times.arrival_time AS arrival_time, 
+				trips.route_id, trips.trip_headsign, stops.stop_name, NULL as ts
+				FROM stop_times, trips, stops WHERE TIME(arrival_time) >= {0}
 				AND stop_times.stop_id = '{1}'
 				AND trips.service_id IN ( {2} )
 				AND stop_times.stop_id = stops.stop_id
-				AND stop_times.trip_id = trips.trip_id 
-				ORDER BY stop_times.arrival_time;",
-				string.Format(time_compare, 2),
+				AND stop_times.trip_id = trips.trip_id",
+				string.Format("TIME('now', 'localtime', '+{0} minutes')", 3),
 				stop_id,
 				string.Format("SELECT service_id FROM calendar WHERE {0} = 1", DateTime.Today.DayOfWeek)
 			);
