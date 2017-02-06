@@ -91,14 +91,16 @@ namespace Nearest.ViewModels
 				var client = new HttpClient();
 				var distance = 0.6;
 				var time = 3;
+				var showDupes = (true ? "1" : "0");
 
 				requestString = string.Format(
-					"http://{0}?action=getTrains&lat={1}&lon={2}&d={3}&t={4}",
+					"http://{0}?action=getTrains&lat={1}&lon={2}&d={3}&t={4}&x={5}",
 					"turnerharris.com/nearest/next.php",
 					latitude,
 					longitude,
 					distance,
-					time
+					time,
+					showDupes
 				);
 
 				for (int i = 0; i < 2; i++)
