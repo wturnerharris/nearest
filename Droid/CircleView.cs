@@ -11,15 +11,15 @@ namespace Nearest.Droid
 {
 	public class CircleView : Button
 	{
-		Paint circlePaint;
-		RectF circleRect;
+		Paint paint;
+		RectF rect;
 
 		// Attrs
-		int circleRadius;
-		Color circleFillColor = Color.Argb(50, 0, 0, 0);
-		const float circleColorDarkness = 0.99f;
-		float circleEndAngle;
-		float circleStartAngle = 90;
+		int radius;
+		Color fillColor = Color.Argb(50, 0, 0, 0);
+		const float darkness = 0.99f;
+		float endAngle;
+		float START_ANGLE = 90;
 
 		public CircleView(Context context, IAttributeSet attrs) : base(context, attrs)
 		{
@@ -31,22 +31,22 @@ namespace Nearest.Droid
 			Initialize(context, attrs);
 		}
 
-		public float CircleAngle
+		public float EndAngle
 		{
-			get { return circleEndAngle; }
+			get { return endAngle; }
 			set
 			{
-				circleEndAngle = value;
+				endAngle = value;
 				Invalidate();
 			}
 		}
 
 		public Color BackgroundColor
 		{
-			get { return circleFillColor; }
+			get { return fillColor; }
 			set
 			{
-				circleFillColor = value;
+				fillColor = value;
 				Invalidate();
 			}
 		}
@@ -73,9 +73,9 @@ namespace Nearest.Droid
 		//Returns darker version of specified <code>color</code>.
 		public Color DarkerColor(float factor)
 		{
-			var color = circleFillColor;
+			var color = fillColor;
 			//int a = Color.GetAlphaComponent(color);
-			int a = (int)(255 * 0.25);
+			var a = (int)(255 * 0.25);
 			int r = Color.GetRedComponent(color);
 			int g = Color.GetGreenComponent(color);
 			int b = Color.GetBlueComponent(color);
@@ -92,32 +92,34 @@ namespace Nearest.Droid
 		{
 			base.OnDraw(canvas);
 
-			//circlePaint.Color = Color.ParseColor("#FFEE352E");
-			circlePaint.Color = DarkerColor(0.9f);
-			canvas.DrawArc(circleRect, -circleStartAngle, circleEndAngle, true, circlePaint);
+			//paint.Color = Color.ParseColor("#FFEE352E");
+			paint.Color = DarkerColor(0.2f);
+			canvas.DrawArc(rect, -START_ANGLE, endAngle, false, paint);
 		}
 
 		protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
 		{
 
 			int measuredWidth = MeasureWidth(widthMeasureSpec);
+			int measuredHeight = MeasureHeight(heightMeasureSpec);
+			int s = 10;
+
 			// No radius specified.
-			if (circleRadius == 0)
+			if (radius == 0)
 			{
 				// Check width size. Make radius half of available.
-				circleRadius = measuredWidth / 2;
-				int tempRadiusHeight = MeasureHeight(heightMeasureSpec) / 2;
-				if (tempRadiusHeight < circleRadius)
+				radius = measuredWidth / 2;
+				int tmpRadius = measuredHeight / 2;
+				if (tmpRadius < radius)
 				{
 					// Check height, if height is smaller than
 					// width, then go half height as radius.
-					circleRadius = tempRadiusHeight;
+					radius = tmpRadius;
 				}
 			}
-			int circleDiameter = circleRadius * 2;
-			circleRect = new RectF(0, 0, circleDiameter, circleDiameter);
+			int diameter = radius * 2;
+			rect = new RectF(s, s, diameter - s, diameter - s);
 
-			int measuredHeight = MeasureHeight(heightMeasureSpec);
 			SetMeasuredDimension(measuredWidth, measuredHeight);
 		}
 
@@ -128,7 +130,7 @@ namespace Nearest.Droid
 			int result = 0;
 			if (specMode == MeasureSpecMode.AtMost)
 			{
-				result = circleRadius * 2;
+				result = radius * 2;
 			}
 			else if (specMode == MeasureSpecMode.Exactly)
 			{
@@ -156,37 +158,38 @@ namespace Nearest.Droid
 		void Initialize(Context context, IAttributeSet attrs)
 		{
 			// Go through all custom attrs.
-			//var attrsArray = context.ObtainStyledAttributes(attrs, Resource.Styleable.circle_view);
-			//circleFillColor = attrsArray.GetColor(Resource.Styleable.circle_view_cFillColor, 16777215);
+			var attrsArray = context.ObtainStyledAttributes(attrs, Resource.Styleable.circle_view);
+			fillColor = attrsArray.GetColor(Resource.Styleable.circle_view_cFillColor, 16777215);
 
-			circlePaint = new Paint(PaintFlags.AntiAlias);
-			circlePaint.SetStyle(PaintStyle.Fill);
-			circlePaint.Color = DarkerColor(0.2f);
+			//paint = new Paint(PaintFlags.AntiAlias);
+			paint = new Paint();
+			paint.AntiAlias = true;
+			paint.SetStyle(PaintStyle.Stroke);
+			paint.StrokeWidth = 20;
+			paint.Color = DarkerColor(0.2f);
 
 			// Google tells us to call recycle.
-			//attrsArray.Recycle();
+			attrsArray.Recycle();
 		}
 
 		public class CircleAngleAnimation : Animation
 		{
-
-			CircleView circle;
-
-			float oldAngle;
-			float newAngle;
+			readonly CircleView circle;
+			readonly float oldAngle;
+			readonly float newAngle;
 
 			public CircleAngleAnimation(CircleView newCircle, int newAngleValue)
 			{
-				this.oldAngle = newCircle.CircleAngle;
-				this.newAngle = newAngleValue;
-				this.circle = newCircle;
+				oldAngle = newCircle.EndAngle;
+				newAngle = newAngleValue;
+				circle = newCircle;
 			}
 
 			protected override void ApplyTransformation(float interpolatedTime, Transformation t)
 			{
 				float angle = oldAngle + ((newAngle - oldAngle) * interpolatedTime);
 
-				circle.CircleAngle = angle;
+				circle.EndAngle = angle;
 				circle.RequestLayout();
 			}
 		}
