@@ -13,6 +13,7 @@ using Android.Text;
 using Android.Graphics;
 using Android.Locations;
 using Android.Net;
+using Animations = Android.Views.Animations;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Widget;
 using Android.Gms.Location;
@@ -472,7 +473,7 @@ namespace Nearest.Droid
 			catch (Exception ex)
 			{
 				Report("Unable to get location\nDBG Exception: " + ex, 2);
-				Report(GetString(Resource.String.common_google_play_services_api_unavailable_text), 0);
+				Report(GetString(Resource.String.common_google_play_services_unsupported_text), 0);
 				Snackbar.Make(coordinatorView,
 					Resource.String.error_play_missing,
 					Snackbar.LengthIndefinite)
@@ -634,7 +635,7 @@ namespace Nearest.Droid
 								var trainColor = GetTrainColor(nearestTrain.route_id);
 								button.Text = nearestTrain.route_id.Substring(0, 1);
 								button.BackgroundColor = Color.ParseColor(Resources.GetString(trainColor));
-								button.CircleAngle = 0; //reset angle
+								button.EndAngle = 0; //reset angle
 								button.SetBackgroundResource(GetTrainColorDrawable(nearestTrain.route_id));
 								button.SetTextColor(GetTrainTextColor(nearestTrain.route_id));
 								button.EnterReveal();
@@ -710,10 +711,10 @@ namespace Nearest.Droid
 			button.Text = GetString(Resource.String.error_train_line);
 			button.SetBackgroundResource(GetTrainColorDrawable(""));
 
-			var Rotation = Android.Views.Animations.AnimationUtils.LoadAnimation(this,
-				Resource.Animation.rotate);
+			var Rotation = Animations.AnimationUtils.LoadAnimation(this, Resource.Animation.rotate);
+			Rotation.RepeatCount = Animations.Animation.Infinite;
+			Rotation.RepeatMode = Animations.RepeatMode.Restart;
 			button.StartAnimation(Rotation);
-
 
 			if (time != null)
 			{
