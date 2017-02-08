@@ -33,9 +33,11 @@
                         android:layout_height="wrap_content">
                         <Button
                             android:id="@+id/toolbarButton"
-                            android:background="@drawable/ic_action_overflow"
-                            android:layout_width="33dip"
-                            android:layout_height="33dip" />
+                            android:background="@drawable/ic_pref_menu"
+                            android:layout_width="42dip"
+                            android:layout_height="42dip"
+                            android:layout_marginLeft="20.0dp"
+                            android:layout_marginTop="20.0dp" />
                     </RelativeLayout>
                     <TextView
                         android:id="@+id/TextViewTitle"
