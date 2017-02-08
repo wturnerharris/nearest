@@ -29,8 +29,8 @@ namespace Nearest.Droid
 			Context context = Context;
 			var pinfo = context.PackageManager.GetPackageInfo(context.PackageName, 0);
 
-			Settings.VersionNumber = pinfo.VersionCode.ToString();
-			Settings.BuildNumber = pinfo.VersionName;
+			Settings.VersionNumber = pinfo.VersionName;
+			Settings.BuildNumber = pinfo.VersionCode.ToString();
 			FindPreference("VersionNumberString").Summary = $"{Settings.VersionNumber} ({Settings.BuildNumber})";
 		}
 
