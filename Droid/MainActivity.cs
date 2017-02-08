@@ -289,7 +289,13 @@ namespace Nearest.Droid
 				{
 					SQLite.Net.Interop.ISQLitePlatform platform;
 					platform = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid();
-					NearestApp = new Nearest(platform, new Utility());
+					string[] prefs = {
+						Settings.UomDistance.ToString(),
+						Settings.UomDistanceThreshold.ToString(),
+						Settings.UomTime.ToString(),
+						Settings.UomTimeThreshold.ToString()
+					};
+					NearestApp = new Nearest(platform, new Utility(), prefs);
 				});
 			}
 			else
