@@ -114,11 +114,11 @@ namespace Nearest.Droid
 			{
 				switch (i)
 				{
-					case 0:
+					case 1:
 						var title = (TextView)mainLayout.GetChildAt(i);
 						title.SetTypeface(HnBd, tfs);
 						break;
-					case 1:
+					case 2:
 						var tagLine = (TextView)mainLayout.GetChildAt(i);
 						tagLine.SetTypeface(HnLt, tfs);
 						break;
@@ -138,7 +138,7 @@ namespace Nearest.Droid
 			swipeButton.SetMinimumHeight(viewport * 30 / 100);
 			swipeButton.SetOnTouchListener(this);
 
-			for (var i = 0; i < 2; i++)
+			for (var i = 1; i < 3; i++)
 			{
 				var direction = (LinearLayout)mainLayout.GetChildAt(i + 2);
 				var times = (TextView)direction.FindViewWithTag("time");
@@ -615,7 +615,7 @@ namespace Nearest.Droid
 							LinearLayout path;
 							if (idx < 1)
 							{
-								path = (LinearLayout)mainLayout.GetChildAt(dir + 2);
+								path = (LinearLayout)mainLayout.GetChildAt(dir + 3);
 							}
 							else
 							{
