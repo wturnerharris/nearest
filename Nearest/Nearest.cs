@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nearest.Models;
@@ -14,16 +14,23 @@ namespace Nearest
 	public class Nearest
 	{
 		const string DB_NAME = "nearest.db";
+		const int DISTANCE = 0;
+		const int DISTANCE_THRESH = 1;
+		const int TIME = 2;
+		const int TIME_THRESH = 3;
+
 		string service_id;
 		SQLiteConnection db;
 		ISQLitePlatform platform;
 		string dbPath;
 		IUtility utility;
+		string[] prefs;
 
-		public Nearest(ISQLitePlatform Platform, IUtility Utility)
+		public Nearest(ISQLitePlatform Platform, IUtility Utility, string[] Prefs)
 		{
 			platform = Platform;
 			utility = Utility;
+			prefs = Prefs;
 			try
 			{
 				dbPath = utility.CopyDatabaseFromAssets(DB_NAME);
@@ -139,14 +146,16 @@ namespace Nearest
 		{
 			var sql = "SELECT stop_id, stop_lat, stop_lon FROM stops WHERE location_type = 1;";
 			var direction = dir > 0 ? "N" : "S";
-			var threshold = 0.6; // hardcoded (in miles)
+			var uom = prefs[DISTANCE].Remove(1);
+			var opt = int.Parse(prefs[DISTANCE_THRESH]);
+			float threshold = (opt / 8f) * 2f; // scaled to factor of 2
 			var distances = new Dictionary<string, double>();
 
 			// find stations within threshold
 			var locations = db.Query<stop_data>(sql);
 			foreach (var location in locations)
 			{
-				var distance = GetDistance(lat, lon, location.stop_lat, location.stop_lon);
+				var distance = GetDistance(lat, lon, location.stop_lat, location.stop_lon, uom);
 				if (distance.CompareTo(threshold) <= 0)
 				{
 					distances.Add(location.stop_id, distance);
@@ -187,6 +196,8 @@ namespace Nearest
 		List<Train> GetTrainsByStopId(string stop_id, string cardinality = "N", int limit = 8)
 		{
 			stop_id += cardinality;
+			var uom = prefs[TIME];
+			var opt = int.Parse(prefs[TIME_THRESH]);
 
 			var sql = string.Format(@"
 				SELECT stop_times.arrival_time AS arrival_time, 
@@ -196,7 +207,7 @@ namespace Nearest
 				AND trips.service_id IN ( {2} )
 				AND stop_times.stop_id = stops.stop_id
 				AND stop_times.trip_id = trips.trip_id",
-				string.Format("TIME('now', 'localtime', '+{0} minutes')", 3),
+				string.Format("TIME('now', 'localtime', '+{0} minutes')", opt),
 				stop_id,
 				string.Format("SELECT service_id FROM calendar WHERE {0} = 1", DateTime.Today.DayOfWeek)
 			);

@@ -12,6 +12,7 @@ using Android.OS;
 using Android.Text;
 using Android.Graphics;
 using Android.Locations;
+using Android.Preferences;
 using Android.Net;
 using Animations = Android.Views.Animations;
 using Android.Support.Design.Widget;
@@ -23,6 +24,7 @@ using Android.Util;
 
 using Nearest.ViewModels;
 using Nearest.Models;
+using SettingsStudio;
 
 namespace Nearest.Droid
 {
@@ -31,6 +33,10 @@ namespace Nearest.Droid
 		MainLauncher = true,
 		Icon = "@drawable/icon",
 		ScreenOrientation = ScreenOrientation.Portrait
+	)]
+	[MetaData(
+		PreferenceManager.MetadataKeyPreferences,
+		Resource = "@xml/preferences"
 	)]
 	public class MainActivity : Activity,
 	View.IOnTouchListener,
@@ -51,7 +57,6 @@ namespace Nearest.Droid
 		public ImageButton swipeButton;
 
 		bool UseGooglePlayLocations;
-		bool UseNearestTrainAPI;
 		TimeSpan lastUpdated;
 		public Location lastKnown;
 		LocationManager LocationManager;
@@ -76,8 +81,15 @@ namespace Nearest.Droid
 
 			// Set our view from the "main" layout resource
 			SetContentView(Resource.Layout.Main);
+			var preferences = FindViewById<Button>(Resource.Id.toolbarButton);
+			preferences.Click += (sender, e) =>
+			{
+				ActivityOptions options = ActivityOptions.MakeSceneTransitionAnimation(this);
+				var pendingIntent = new Intent(this, typeof(Popup));
+				StartActivity(pendingIntent, options.ToBundle());
+			};
+
 			UseGooglePlayLocations = true;
-			UseNearestTrainAPI = true;
 
 			// Set Typeface and Styles
 			TypefaceStyle tfs = TypefaceStyle.Normal;
@@ -108,11 +120,11 @@ namespace Nearest.Droid
 			{
 				switch (i)
 				{
-					case 0:
+					case 1:
 						var title = (TextView)mainLayout.GetChildAt(i);
 						title.SetTypeface(HnBd, tfs);
 						break;
-					case 1:
+					case 2:
 						var tagLine = (TextView)mainLayout.GetChildAt(i);
 						tagLine.SetTypeface(HnLt, tfs);
 						break;
@@ -132,7 +144,7 @@ namespace Nearest.Droid
 			swipeButton.SetMinimumHeight(viewport * 30 / 100);
 			swipeButton.SetOnTouchListener(this);
 
-			for (var i = 0; i < 2; i++)
+			for (var i = 1; i < 3; i++)
 			{
 				var direction = (LinearLayout)mainLayout.GetChildAt(i + 2);
 				var times = (TextView)direction.FindViewWithTag("time");
@@ -283,7 +295,13 @@ namespace Nearest.Droid
 				{
 					SQLite.Net.Interop.ISQLitePlatform platform;
 					platform = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid();
-					NearestApp = new Nearest(platform, new Utility());
+					string[] prefs = {
+						Settings.UomDistance.ToString(),
+						Settings.UomDistanceThreshold.ToString(),
+						Settings.UomTime.ToString(),
+						Settings.UomTimeThreshold.ToString()
+					};
+					NearestApp = new Nearest(platform, new Utility(), prefs);
 				});
 			}
 			else
@@ -603,7 +621,7 @@ namespace Nearest.Droid
 							LinearLayout path;
 							if (idx < 1)
 							{
-								path = (LinearLayout)mainLayout.GetChildAt(dir + 2);
+								path = (LinearLayout)mainLayout.GetChildAt(dir + 3);
 							}
 							else
 							{
@@ -887,8 +905,9 @@ namespace Nearest.Droid
 					};
 				}
 				trainLVM.SetLocation(locationData.Latitude, locationData.Longitude);
+				Report("UseNet: " + Settings.UseInternetServices, 1);
 
-				if (IsConnected() && UseNearestTrainAPI)
+				if (IsConnected() && Settings.UseInternetServices)
 				{
 					// Get trains asynchonously from remote api
 					Report("Getting trains async...", 0);

@@ -14,4 +14,29 @@
 	<string name="snackbar_button_ok">OK</string>
 	<string name="snackbar_button_try_again">Try Again</string>
 	<string name="menu_settings">Options</string>
+	<!-- Units of Measurement -->
+	<string-array name="settings_uom_time">
+		<item>Auto</item>
+		<item>Seconds</item>
+		<item>Minutes</item>
+	</string-array>
+	<string-array name="settings_uom_time_threshold">
+		<item>Miles</item>
+		<item>Kilometers</item>
+	</string-array>
+	<string-array name="settings_uom_distance">
+		<item>Miles</item>
+		<item>Kilometers</item>
+	</string-array>
+	<string-array name="settings_uom_distance_threshold">
+		<item>Inches</item>
+		<item>Millimeters</item>
+	</string-array>
+	<string-array name="integer_sequence">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+	</string-array>
 </resources>
