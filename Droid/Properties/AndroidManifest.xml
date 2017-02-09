@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:versionName="0.2.0"
+	android:versionName="0.3.0"
 	package="com.turnerharris.nearest"
-	android:versionCode="3">
+	android:versionCode="4">
 	<uses-sdk
 		android:minSdkVersion="23" />
 	<application
