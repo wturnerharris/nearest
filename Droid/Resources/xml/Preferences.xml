@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:title="Settings">
+	<PreferenceCategory
+		android:title="Nearest Settings">
+		<Preference
+			android:title="Version"
+			android:key="VersionNumberString"
+			android:selectable="false"
+			android:summary="0.0.0 (0)" />
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:title="Units of Measurement">
+		<ListPreference
+			android:key="UomDistance"
+			android:title="Distance"
+			android:entries="@array/settings_uom_distance"
+			android:entryValues="@array/integer_sequence"
+			android:defaultValue="0" />
+		<ListPreference
+			android:key="UomTime"
+			android:title="Time"
+			android:entries="@array/settings_uom_time"
+			android:entryValues="@array/integer_sequence"
+			android:defaultValue="0" />
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:title="Thresholds">
+		<SeekBarPreference
+			android:key="UomDistanceThreshold"
+			android:title="Distance"
+			android:summary="Showing trains within this proximity."
+			android:max="8"
+			android:defaultValue="1" />
+		<SeekBarPreference
+			android:key="UomTimeThreshold"
+			android:title="Time"
+			android:summary="Showing trains after this period."
+			android:max="5"
+			android:defaultValue="2" />
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:title="User Interface">
+		<CheckBoxPreference
+			android:title="Show all stations"
+			android:key="ShowAllStations"
+			android:defaultValue="true"
+			android:summary="Only show nearest stations for the same train lines." />
+		<CheckBoxPreference
+			android:title="Use web API"
+			android:key="UseInternetServices"
+			android:defaultValue="true"
+			android:summary="Access schedules from the internet." />
+	</PreferenceCategory>
+	<PreferenceCategory>
+		<Preference
+			android:key="Copyright"
+			android:summary="© 2017 Wes Turner"
+			android:selectable="false" />
+	</PreferenceCategory>
+</PreferenceScreen>
