@@ -82,6 +82,14 @@ namespace Nearest.Droid
 
 			// Set our view from the "main" layout resource
 			SetContentView(Resource.Layout.Main);
+			var preferences = FindViewById<Button>(Resource.Id.toolbarButton);
+			preferences.Click += (sender, e) =>
+			{
+				ActivityOptions options = ActivityOptions.MakeSceneTransitionAnimation(this);
+				var pendingIntent = new Intent(this, typeof(Popup));
+				StartActivity(pendingIntent, options.ToBundle());
+			};
+
 			UseGooglePlayLocations = true;
 			UseNearestTrainAPI = true;
 
