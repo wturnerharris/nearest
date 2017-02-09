@@ -57,7 +57,6 @@ namespace Nearest.Droid
 		public ImageButton swipeButton;
 
 		bool UseGooglePlayLocations;
-		bool UseNearestTrainAPI;
 		TimeSpan lastUpdated;
 		public Location lastKnown;
 		LocationManager LocationManager;
@@ -91,7 +90,6 @@ namespace Nearest.Droid
 			};
 
 			UseGooglePlayLocations = true;
-			UseNearestTrainAPI = true;
 
 			// Set Typeface and Styles
 			TypefaceStyle tfs = TypefaceStyle.Normal;
@@ -907,8 +905,9 @@ namespace Nearest.Droid
 					};
 				}
 				trainLVM.SetLocation(locationData.Latitude, locationData.Longitude);
+				Report("UseNet: " + Settings.UseInternetServices, 1);
 
-				if (IsConnected() && UseNearestTrainAPI)
+				if (IsConnected() && Settings.UseInternetServices)
 				{
 					// Get trains asynchonously from remote api
 					Report("Getting trains async...", 0);
