@@ -93,7 +93,7 @@ namespace SettingsStudio
 		}
 
 
-		public static bool BoolForKey(string key, bool def = false)
+		public static bool BoolForKey(string key, bool def = true)
 		{
 			using (var sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context))
 				return sharedPreferences.GetBoolean(key, def);
