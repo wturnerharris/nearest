@@ -651,11 +651,12 @@ namespace Nearest.Droid
 									return;
 								}*/
 								var trainColor = GetTrainColor(nearestTrain.route_id);
+								var trainTextColor = GetTrainTextColor(nearestTrain.route_id);
 								button.Text = nearestTrain.route_id.Substring(0, 1);
 								button.BackgroundColor = Color.ParseColor(Resources.GetString(trainColor));
 								button.EndAngle = 0; //reset angle
 								button.SetBackgroundResource(GetTrainColorDrawable(nearestTrain.route_id));
-								button.SetTextColor(GetTrainTextColor(nearestTrain.route_id));
+								button.SetTextColor(trainTextColor);
 								button.EnterReveal();
 
 								var timing = (int)nearestTrain.Time();
@@ -683,6 +684,7 @@ namespace Nearest.Droid
 										var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject(nearest);
 										pendingIntent.PutExtra("nearestTrain", toJsonNearestTrain);
 										pendingIntent.PutExtra("nearestTrainColor", trainColor);
+										pendingIntent.PutExtra("nearestTrainTextColor", trainTextColor.ToArgb());
 
 										var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject(next);
 										pendingIntent.PutExtra("fartherTrains", toJsonFartherTrains);
@@ -754,7 +756,7 @@ namespace Nearest.Droid
 				case "N":
 				case "Q":
 				case "R":
-					color = new Color(Resource.Color.textblack);
+					color = Color.Black;
 					break;
 				default:
 					color = Color.White;
