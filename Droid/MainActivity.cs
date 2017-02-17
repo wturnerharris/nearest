@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -674,11 +674,13 @@ namespace Nearest.Droid
 									Report("===> Times: " + nearestTrain.Time() + ", " + nearestTrain.ts + ", " + nearestTrain.arrival_time, 0);
 								}
 								var trainColor = GetTrainColor(nearestTrain.route_id);
+								var trainTextColor = GetTrainTextColor(nearestTrain.route_id);
 								button.Text = nearestTrain.route_id.Substring(0, 1);
 								button.BackgroundColor = Color.ParseColor(Resources.GetString(trainColor));
 								button.Visibility = ViewStates.Visible;
 								button.SetBackgroundResource(GetTrainColorDrawable(nearestTrain.route_id));
-								button.SetTextColor(GetTrainTextColor(nearestTrain.route_id));
+								button.SetTextColor(trainTextColor);
+								button.EnterReveal();
 
 								if (animate)
 								{
@@ -708,6 +710,7 @@ namespace Nearest.Droid
 										var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject(nearestTrain);
 										pendingIntent.PutExtra("nearestTrain", toJsonNearestTrain);
 										pendingIntent.PutExtra("nearestTrainColor", trainColor);
+										pendingIntent.PutExtra("nearestTrainTextColor", trainTextColor.ToArgb());
 
 										var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject(stop.trains);
 										pendingIntent.PutExtra("fartherTrains", toJsonFartherTrains);
@@ -781,7 +784,7 @@ namespace Nearest.Droid
 				case "N":
 				case "Q":
 				case "R":
-					color = new Color(Resource.Color.textblack);
+					color = Color.Black;
 					break;
 				default:
 					color = Color.White;

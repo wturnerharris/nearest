@@ -25,6 +25,8 @@ namespace Nearest.Droid
 			base.OnCreate(savedInstanceState);
 
 			var nearestTrainColor = Intent.GetIntExtra("nearestTrainColor", -1);
+			var nearestTrainTextColor = Intent.GetIntExtra("nearestTrainTextColor", -1);
+
 			if (nearestTrainColor > 0)
 			{
 				Window window = Window;
@@ -71,6 +73,7 @@ namespace Nearest.Droid
 					int t = 0;
 					foreach (TextView detailLabel in detailLabels)
 					{
+						detailLabel.SetTextColor(new Color(nearestTrainTextColor));
 						switch (t)
 						{
 							case 0:
