@@ -61,6 +61,7 @@ namespace Nearest.Droid
 		public Location lastKnown;
 		LocationManager LocationManager;
 		string LocationProvider;
+		System.Timers.Timer timer;
 
 		readonly string[] PermissionsLocation = {
 			Manifest.Permission.AccessCoarseLocation,
@@ -160,6 +161,7 @@ namespace Nearest.Droid
 		protected override void OnStop()
 		{
 			base.OnStop();
+			timer.Stop();
 			NearestApp?.DestroyDatabase();
 			NearestApp = null;
 		}
@@ -274,6 +276,17 @@ namespace Nearest.Droid
 			{
 				SetNextTrains("Resuming...");
 			}
+			// set timer to refresh UI
+			timer = new System.Timers.Timer();
+			timer.Interval = 60000;
+			timer.Elapsed += (object sender, System.Timers.ElapsedEventArgs e) =>
+			{
+				RunOnUiThread(() =>
+				{
+					SetNextTrains("timed");
+				});
+			};
+			timer.Start();
 		}
 
 		/// <Docs>Called as part of the activity lifecycle when an activity is going into
@@ -284,6 +297,7 @@ namespace Nearest.Droid
 		protected override void OnPause()
 		{
 			base.OnPause();
+			timer.Stop();
 			EndLocationUpdates();
 		}
 
@@ -586,7 +600,7 @@ namespace Nearest.Droid
 		/// <summary>
 		/// Sets the next trains. This only sets trains and never gets them.
 		/// </summary>
-		public void SetNextTrains(string origin)
+		public void SetNextTrains(string origin, bool animate = false)
 		{
 			if (trainLVM == null)
 			{
@@ -656,29 +670,22 @@ namespace Nearest.Droid
 								var trainColor = GetTrainColor(nearestTrain.route_id);
 								button.Text = nearestTrain.route_id.Substring(0, 1);
 								button.BackgroundColor = Color.ParseColor(Resources.GetString(trainColor));
-								button.EndAngle = 0; //reset angle
+								button.Visibility = ViewStates.Visible;
 								button.SetBackgroundResource(GetTrainColorDrawable(nearestTrain.route_id));
 								button.SetTextColor(GetTrainTextColor(nearestTrain.route_id));
-								button.EnterReveal();
 
-								var timing = (int)nearestTrain.Time();
-								var duration = (timing <= 0 ? 1000 : timing) * 60 * 1000;
-								var animation = new CircleView.CircleAngleAnimation(button, 359);
-								animation.Duration = duration;
-								button.StartAnimation(animation);
-								button.Click -= stop.clickHandler;
-
-								var timer = new System.Timers.Timer();
-								timer.Interval = duration;
-								timer.Elapsed += (object sender, System.Timers.ElapsedEventArgs e) =>
+								if (animate)
 								{
-									timer.Stop();
-									RunOnUiThread(() =>
-									{
-										ShowAlert("timed");
-									});
-								};
-								timer.Start();
+									button.EndAngle = 0; //reset angle
+									button.EnterReveal();
+
+									var timing = (int)nearestTrain.Time();
+									var duration = (timing <= 0 ? 1000 : timing) * 60 * 1000;
+									var animation = new CircleView.CircleAngleAnimation(button, 359);
+									animation.Duration = duration;
+									button.StartAnimation(animation);
+								}
+								button.Click -= stop.clickHandler;
 
 								if (time != null)
 								{
@@ -916,7 +923,7 @@ namespace Nearest.Droid
 					// listen to property changes
 					trainLVM.PropertyChanged += delegate
 					{
-						SetNextTrains("Property changed.");
+						SetNextTrains("Property changed.", true);
 					};
 				}
 				trainLVM.SetLocation(locationData.Latitude, locationData.Longitude);
