@@ -619,6 +619,12 @@ namespace Nearest.Droid
 					subLayout.Visibility = ViewStates.Invisible;
 					swipeButton.Visibility = ViewStates.Invisible;
 
+					var allButtons = GetViewsByTag(subLayout, "button");
+					foreach (CircleView button in allButtons)
+					{
+						button.Visibility = ViewStates.Invisible;
+					}
+
 					int dir = 0;
 
 					// Loop throuh south and north view groups 
@@ -746,6 +752,8 @@ namespace Nearest.Droid
 		public void SetTrainsNotice(CircleView button, TextView time)
 		{
 			button.Text = GetString(Resource.String.error_train_line);
+			button.EndAngle = 0; //reset angle
+			button.SetTextColor(Color.Black);
 			button.SetBackgroundResource(GetTrainColorDrawable(""));
 
 			var Rotation = Animations.AnimationUtils.LoadAnimation(this, Resource.Animation.rotate);
