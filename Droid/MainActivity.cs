@@ -699,14 +699,11 @@ namespace Nearest.Droid
 										ActivityOptions options = ActivityOptions.MakeScaleUpAnimation(button, 0, 0, 60, 60);
 										var pendingIntent = new Intent(this, typeof(Detail));
 
-										Train nearest = nearestTrain;
-										List<Train> next = stop.trains;
-
-										var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject(nearest);
+										var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject(nearestTrain);
 										pendingIntent.PutExtra("nearestTrain", toJsonNearestTrain);
 										pendingIntent.PutExtra("nearestTrainColor", trainColor);
 
-										var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject(next);
+										var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject(stop.trains);
 										pendingIntent.PutExtra("fartherTrains", toJsonFartherTrains);
 
 										StartActivity(pendingIntent, options.ToBundle());
