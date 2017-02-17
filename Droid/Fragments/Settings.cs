@@ -1,6 +1,5 @@
 ﻿using Android.OS;
 using Android.Content;
-using Android.Views;
 using Android.Preferences;
 
 using SettingsStudio;
@@ -31,19 +30,9 @@ namespace Nearest.Droid
 
 			Settings.VersionNumber = pinfo.VersionName;
 			Settings.BuildNumber = pinfo.VersionCode.ToString();
-			FindPreference("VersionNumberString").Summary = $"{Settings.VersionNumber} ({Settings.BuildNumber})";
+			FindPreference(SettingsKeys.VersionNumber).Summary = $"{Settings.VersionNumber} ({Settings.BuildNumber})";
+
 		}
-
-
-		public override void OnCreateOptionsMenu(IMenu menu, MenuInflater inflater)
-		{
-			base.OnCreateOptionsMenu(menu, inflater);
-
-			//menu.RemoveItem(Resource.Id.action_search);
-			//menu.RemoveItem(Resource.Id.action_radar);
-			//menu.RemoveItem(Resource.Id.action_settings);
-		}
-
 
 		public override void OnResume()
 		{
@@ -59,6 +48,23 @@ namespace Nearest.Droid
 			foreach (var item in UomSeekBarPreferences)
 			{
 				var preference = FindPreference(item);
+				string timeFormat;
+				switch (preference.Key)
+				{
+					case SettingsKeys.UomDistanceThreshold:
+						timeFormat = "Showing stations within {0} miles.";
+						float floatVal = Settings.UomDistanceThreshold > 0 ? ((int)Settings.UomDistanceThreshold / 8f) * 2f : 0;
+						preference.Title = string.Format(timeFormat, floatVal);
+						break;
+					case SettingsKeys.UomTimeThreshold:
+						timeFormat = "Showing trains arriving {0}.";
+						var stringVal = Settings.UomTimeThreshold == 0 ? "now" : string.Format("after {0} mins", Settings.UomTimeThreshold);
+						preference.Title = string.Format(timeFormat, stringVal); //"after 3 minutes" or "now"
+						break;
+					default:
+						preference.Title = preference.Title;
+						break;
+				}
 				preference.PreferenceChange += handlePreferenceChange;
 			}
 		}
@@ -85,17 +91,33 @@ namespace Nearest.Droid
 
 		void handlePreferenceChange(object sender, Preference.PreferenceChangeEventArgs e)
 		{
-			var listPreference = e.Preference as ListPreference;
-
 			int val = 0;
+			var listPreference = e.Preference as ListPreference;
+			var newValue = e.NewValue.ToString();
+			string timeFormat;
 
-			if (listPreference != null && int.TryParse(e.NewValue.ToString(), out val))
+			if (listPreference != null && int.TryParse(newValue, out val))
 			{
 				listPreference.Summary = listPreference.GetEntries()[val];
 			}
 			else
 			{
-				e.Preference.Summary = e.NewValue.ToString();
+				switch (e.Preference.Key)
+				{
+					case SettingsKeys.UomDistanceThreshold:
+						timeFormat = "Showing stations within {0} miles.";
+						var floatVal = int.Parse(newValue) > 0 ? (int.Parse(newValue) / 8f) * 2f : 0;
+						e.Preference.Title = string.Format(timeFormat, floatVal);
+						break;
+					case SettingsKeys.UomTimeThreshold:
+						timeFormat = "Showing trains arriving {0}.";
+						var stringVal = newValue == "0" ? "now" : string.Format("after {0} mins", newValue);
+						e.Preference.Title = string.Format(timeFormat, stringVal); //"after 3 minutes" or "now"
+						break;
+					default:
+						e.Preference.Title = e.Preference.Title + ": " + e.NewValue;
+						break;
+				}
 			}
 		}
 	}
