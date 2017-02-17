@@ -641,15 +641,18 @@ namespace Nearest.Droid
 
 							var nearestTrain = stop != null ? stop.next_train : null;
 
-							if (nearestTrain != null)
+							if (nearestTrain != null && !stop.stale)
 							{
-								/*if (nearestTrain.ExpiredUnder(15))
+								if (nearestTrain.ExpiredUnder(15))
 								{
-									Report("===>ExpiredUnder", 0);
-									// refresh these if the first time is stale
-									HandleConnections();
-									return;
-								}*/
+									Report("===> ExpiredUnder: " + nearestTrain.Time() + ", " + nearestTrain.ts + ", " + nearestTrain.arrival_time, 0);
+									stop.shift();
+									animate = true;
+									continue;
+								}
+								else {
+									Report("===> Times: " + nearestTrain.Time() + ", " + nearestTrain.ts + ", " + nearestTrain.arrival_time, 0);
+								}
 								var trainColor = GetTrainColor(nearestTrain.route_id);
 								button.Text = nearestTrain.route_id.Substring(0, 1);
 								button.BackgroundColor = Color.ParseColor(Resources.GetString(trainColor));
