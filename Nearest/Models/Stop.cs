@@ -8,6 +8,8 @@ namespace Nearest.Models
 
 		public bool stale = false;
 
+		int TRASH_BEYOND = 3;
+
 		public string stop_id { get; set; }
 
 		public string distance { get; set; }
