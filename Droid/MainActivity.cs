@@ -61,6 +61,7 @@ namespace Nearest.Droid
 		public Location lastKnown;
 		LocationManager LocationManager;
 		string LocationProvider;
+		System.Timers.Timer timer;
 
 		readonly string[] PermissionsLocation = {
 			Manifest.Permission.AccessCoarseLocation,
@@ -160,6 +161,7 @@ namespace Nearest.Droid
 		protected override void OnStop()
 		{
 			base.OnStop();
+			timer.Stop();
 			NearestApp?.DestroyDatabase();
 			NearestApp = null;
 		}
@@ -274,6 +276,17 @@ namespace Nearest.Droid
 			{
 				SetNextTrains("Resuming...");
 			}
+			// set timer to refresh UI
+			timer = new System.Timers.Timer();
+			timer.Interval = 60000;
+			timer.Elapsed += (object sender, System.Timers.ElapsedEventArgs e) =>
+			{
+				RunOnUiThread(() =>
+				{
+					SetNextTrains("timed");
+				});
+			};
+			timer.Start();
 		}
 
 		/// <Docs>Called as part of the activity lifecycle when an activity is going into
@@ -284,6 +297,7 @@ namespace Nearest.Droid
 		protected override void OnPause()
 		{
 			base.OnPause();
+			timer.Stop();
 			EndLocationUpdates();
 		}
 
@@ -586,7 +600,7 @@ namespace Nearest.Droid
 		/// <summary>
 		/// Sets the next trains. This only sets trains and never gets them.
 		/// </summary>
-		public void SetNextTrains(string origin)
+		public void SetNextTrains(string origin, bool animate = false)
 		{
 			if (trainLVM == null)
 			{
@@ -604,6 +618,12 @@ namespace Nearest.Droid
 				{
 					subLayout.Visibility = ViewStates.Invisible;
 					swipeButton.Visibility = ViewStates.Invisible;
+
+					var allButtons = GetViewsByTag(subLayout, "button");
+					foreach (CircleView button in allButtons)
+					{
+						button.Visibility = ViewStates.Invisible;
+					}
 
 					int dir = 0;
 
@@ -641,28 +661,36 @@ namespace Nearest.Droid
 
 							var nearestTrain = stop != null ? stop.next_train : null;
 
-							if (nearestTrain != null)
+							if (nearestTrain != null && !stop.stale)
 							{
-								/*if (nearestTrain.ExpiredUnder(15))
+								if (nearestTrain.ExpiredUnder(15))
 								{
-									Report("===>ExpiredUnder", 0);
-									// refresh these if the first time is stale
-									HandleConnections();
-									return;
-								}*/
+									Report("===> ExpiredUnder: " + nearestTrain.Time() + ", " + nearestTrain.ts + ", " + nearestTrain.arrival_time, 0);
+									stop.shift();
+									animate = true;
+									continue;
+								}
+								else {
+									Report("===> Times: " + nearestTrain.Time() + ", " + nearestTrain.ts + ", " + nearestTrain.arrival_time, 0);
+								}
 								var trainColor = GetTrainColor(nearestTrain.route_id);
 								button.Text = nearestTrain.route_id.Substring(0, 1);
 								button.BackgroundColor = Color.ParseColor(Resources.GetString(trainColor));
-								button.EndAngle = 0; //reset angle
+								button.Visibility = ViewStates.Visible;
 								button.SetBackgroundResource(GetTrainColorDrawable(nearestTrain.route_id));
 								button.SetTextColor(GetTrainTextColor(nearestTrain.route_id));
-								button.EnterReveal();
 
-								var timing = (int)nearestTrain.Time();
-								var duration = (timing <= 0 ? 1000 : timing) * 60 * 1000;
-								var animation = new CircleView.CircleAngleAnimation(button, 359);
-								animation.Duration = duration;
-								button.StartAnimation(animation);
+								if (animate)
+								{
+									button.EndAngle = 0; //reset angle
+									button.EnterReveal();
+
+									var timing = (int)nearestTrain.Time();
+									var duration = (timing <= 0 ? 1000 : timing) * 60 * 1000;
+									var animation = new CircleView.CircleAngleAnimation(button, 359);
+									animation.Duration = duration;
+									button.StartAnimation(animation);
+								}
 								button.Click -= stop.clickHandler;
 
 								if (time != null)
@@ -677,14 +705,11 @@ namespace Nearest.Droid
 										ActivityOptions options = ActivityOptions.MakeScaleUpAnimation(button, 0, 0, 60, 60);
 										var pendingIntent = new Intent(this, typeof(Detail));
 
-										Train nearest = nearestTrain;
-										List<Train> next = stop.trains;
-
-										var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject(nearest);
+										var toJsonNearestTrain = Newtonsoft.Json.JsonConvert.SerializeObject(nearestTrain);
 										pendingIntent.PutExtra("nearestTrain", toJsonNearestTrain);
 										pendingIntent.PutExtra("nearestTrainColor", trainColor);
 
-										var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject(next);
+										var toJsonFartherTrains = Newtonsoft.Json.JsonConvert.SerializeObject(stop.trains);
 										pendingIntent.PutExtra("fartherTrains", toJsonFartherTrains);
 
 										StartActivity(pendingIntent, options.ToBundle());
@@ -727,6 +752,8 @@ namespace Nearest.Droid
 		public void SetTrainsNotice(CircleView button, TextView time)
 		{
 			button.Text = GetString(Resource.String.error_train_line);
+			button.EndAngle = 0; //reset angle
+			button.SetTextColor(Color.Black);
 			button.SetBackgroundResource(GetTrainColorDrawable(""));
 
 			var Rotation = Animations.AnimationUtils.LoadAnimation(this, Resource.Animation.rotate);
@@ -901,7 +928,7 @@ namespace Nearest.Droid
 					// listen to property changes
 					trainLVM.PropertyChanged += delegate
 					{
-						SetNextTrains("Property changed.");
+						SetNextTrains("Property changed.", true);
 					};
 				}
 				trainLVM.SetLocation(locationData.Latitude, locationData.Longitude);

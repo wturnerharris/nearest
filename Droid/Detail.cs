@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Android.App;
 using Android.Content;
@@ -88,15 +87,10 @@ namespace Nearest.Droid
 					}
 				}
 			}
-			else
-			{
-				Console.WriteLine("Detail: Json error!!");
-			}
 
 			var fartherTrains = Intent.GetStringExtra("fartherTrains");
 			if (fartherTrains != null)
 			{
-				Console.WriteLine("Detail: has Farther Trains");
 				List<Train> trains = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Train>>(fartherTrains);
 				int i = 0;
 				int ce = 0;
@@ -108,22 +102,20 @@ namespace Nearest.Droid
 						if (i < trains.Count)
 						{
 							Train fartherTrain = trains[i];
+							timeLabel.Visibility = ViewStates.Visible;
 							timeLabel.Text = fartherTrain.TimeString();
 							points[i + ce].Visibility = ViewStates.Visible;
 							points[i + ce + 1].Visibility = ViewStates.Visible;
 						}
 						else
 						{
+							timeLabel.Visibility = ViewStates.Invisible;
 							points[i + ce].Visibility = ViewStates.Invisible;
 							points[i + ce + 1].Visibility = ViewStates.Invisible;
 						}
 						i++;
 						ce++;
 					}
-				}
-				else
-				{
-					Console.WriteLine("Detail: no Farther Trains");
 				}
 			}
 		}

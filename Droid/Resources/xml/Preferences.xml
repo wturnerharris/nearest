@@ -7,7 +7,7 @@
 		<Preference
 			android:title="Version"
 			android:key="VersionNumberString"
-			android:selectable="false"
+			android:selectable="true"
 			android:summary="0.0.0 (0)" />
 	</PreferenceCategory>
 	<PreferenceCategory
@@ -48,7 +48,7 @@
 			android:defaultValue="true"
 			android:summary="Only show nearest stations for the same train lines." />
 		<CheckBoxPreference
-			android:title="Use web API"
+			android:title="Use Web Services"
 			android:key="UseInternetServices"
 			android:defaultValue="true"
 			android:summary="Access schedules from the internet." />

@@ -6,6 +6,10 @@ namespace Nearest.Models
 	public class Stop
 	{
 
+		public bool stale = false;
+
+		int TRASH_BEYOND = 3;
+
 		public string stop_id { get; set; }
 
 		public string distance { get; set; }
@@ -17,6 +21,19 @@ namespace Nearest.Models
 		public string direction { get; set; }
 
 		public EventHandler clickHandler { get; set; }
+
+		public void shift()
+		{
+			if (trains.Count < TRASH_BEYOND)
+			{
+				stale = true;
+			}
+			else
+			{
+			}
+			next_train = trains.GetRange(0, 1)[0];
+			trains.RemoveAt(0);
+		}
 	}
 }
 
