@@ -6,7 +6,7 @@ namespace Nearest.Models
 	public class Stop
 	{
 
-		public bool stale = false;
+		public bool stale;
 
 		int TRASH_BEYOND = 3;
 
@@ -27,9 +27,6 @@ namespace Nearest.Models
 			if (trains.Count < TRASH_BEYOND)
 			{
 				stale = true;
-			}
-			else
-			{
 			}
 			next_train = trains.GetRange(0, 1)[0];
 			trains.RemoveAt(0);
