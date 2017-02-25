@@ -139,6 +139,10 @@
     <Compile Include="Settings\SettingUtilities.cs" />
     <Compile Include="Fragments\Settings.cs" />
     <Compile Include="Popup.cs" />
+    <Compile Include="Locations\LocationBinder.cs" />
+    <Compile Include="Locations\LocationService.cs" />
+    <Compile Include="Locations\IGetLocation.cs" />
+    <Compile Include="Locations\LocationServiceConnection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -189,6 +193,7 @@
     <Folder Include="Resources\helpers\" />
     <Folder Include="Settings\" />
     <Folder Include="Fragments\" />
+    <Folder Include="Locations\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\fonts\HelveticaNeueLTCom-Bd.ttf" />
