@@ -1,38 +1,57 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="title">Nearest</string>
-	<string name="tagline">Trains headed your way.</string>
-	<string name="info_last_updated">Last updated: {0} {1} ago.</string>
-	<string name="error_play_missing">Google Play Services is required to get your location.</string>
-	<string name="error_no_internet">Internet access is required to access live train times.</string>
-	<string name="error_exception">Exception:\n</string>
-	<string name="error_location_required">Location access is required to show trains nearest you.</string>
-	<string name="error_location_permission">Location permission is denied.</string>
-	<string name="error_location_unavailable">Location Services Not Available for the given request.</string>
-	<string name="error_train_time">Coming</string>
-	<string name="error_train_line">↻</string>
-	<string name="snackbar_button_ok">OK</string>
-	<string name="snackbar_button_try_again">Try Again</string>
-	<string name="menu_settings">Options</string>
+	<string
+		name="title">Nearest</string>
+	<string
+		name="tagline">Trains headed your way.</string>
+	<string
+		name="info_last_updated">Last updated: {0} {1} ago.</string>
+	<string
+		name="error_play_missing">Google Play Services is missing. Try to get location directly?</string>
+	<string
+		name="error_no_internet">Internet access is required to access live train times.</string>
+	<string
+		name="error_exception">Exception:\n</string>
+	<string
+		name="error_location_required">Location access is required to show trains nearest you.</string>
+	<string
+		name="error_location_permission">Location permission is denied.</string>
+	<string
+		name="error_location_unavailable">Location Services Not Available for the given request.</string>
+	<string
+		name="error_train_time">Coming</string>
+	<string
+		name="error_train_line">↻</string>
+	<string
+		name="snackbar_button_ok">OK</string>
+	<string
+		name="snackbar_button_try_again">Try Again</string>
+	<string
+		name="menu_settings">Options</string>
 	<!-- Units of Measurement -->
-	<string-array name="settings_uom_time">
+	<string-array
+		name="settings_uom_time">
 		<item>Auto</item>
 		<item>Seconds</item>
 		<item>Minutes</item>
 	</string-array>
-	<string-array name="settings_uom_time_threshold">
+	<string-array
+		name="settings_uom_time_threshold">
 		<item>Miles</item>
 		<item>Kilometers</item>
 	</string-array>
-	<string-array name="settings_uom_distance">
+	<string-array
+		name="settings_uom_distance">
 		<item>Miles</item>
 		<item>Kilometers</item>
 	</string-array>
-	<string-array name="settings_uom_distance_threshold">
+	<string-array
+		name="settings_uom_distance_threshold">
 		<item>Inches</item>
 		<item>Millimeters</item>
 	</string-array>
-	<string-array name="integer_sequence">
+	<string-array
+		name="integer_sequence">
 		<item>0</item>
 		<item>1</item>
 		<item>2</item>
