@@ -58,6 +58,7 @@ namespace Nearest.Droid
 		TimeSpan lastUpdated;
 		public Location lastKnown;
 		System.Timers.Timer timer;
+		LocationServiceConnection serviceConnection;
 
 		readonly string[] PermissionsLocation = {
 			Manifest.Permission.AccessCoarseLocation,
@@ -160,6 +161,7 @@ namespace Nearest.Droid
 			timer.Stop();
 			NearestApp?.DestroyDatabase();
 			NearestApp = null;
+			UnbindService(serviceConnection);
 		}
 
 		public int GetStatusBarHeight()
@@ -472,6 +474,12 @@ namespace Nearest.Droid
 				else
 				{
 					// try get location via gps directly
+					Report(GetString(Resource.String.common_google_play_services_unsupported_text), 0);
+					Snackbar.Make(coordinatorView,
+						Resource.String.error_play_missing,
+						Snackbar.LengthIndefinite)
+					.SetAction(Resource.String.snackbar_button_ok, v => TryLocationService(v))
+					.Show();
 				}
 			}
 			catch (Exception ex)
@@ -487,13 +495,26 @@ namespace Nearest.Droid
 			}
 		}
 
+		public void TryLocationService(View v)
 		{
+			if (serviceConnection == null)
 			{
+				serviceConnection = new LocationServiceConnection(this);
+			}
 
+			if (serviceConnection.IsConnected)
 			{
+				var NewLocation = new Location("LocationService");
+				NewLocation.Latitude = serviceConnection.Binder.Service.GetLocationArray()[0];
+				NewLocation.Longitude = serviceConnection.Binder.Service.GetLocationArray()[1];
+				OnLocationChanged(NewLocation);
 			}
 			else
 			{
+				var serviceToStart = new Intent(this, typeof(LocationService));
+				BindService(serviceToStart, serviceConnection, Bind.AutoCreate);
+
+				Report("Location Service not connected.", 0);
 			}
 		}
 
