@@ -54,7 +54,6 @@ namespace Nearest.Droid
 		public ScrollView scrollView;
 		public ImageButton swipeButton;
 
-		bool UseGooglePlayLocations;
 		TimeSpan lastUpdated;
 		public Location lastKnown;
 		System.Timers.Timer timer;
@@ -86,8 +85,6 @@ namespace Nearest.Droid
 				var pendingIntent = new Intent(this, typeof(Popup));
 				StartActivity(pendingIntent, options.ToBundle());
 			};
-
-			UseGooglePlayLocations = true;
 
 			// Set Typeface and Styles
 			TypefaceStyle tfs = TypefaceStyle.Normal;
@@ -457,7 +454,7 @@ namespace Nearest.Droid
 		{
 			try
 			{
-				if (IsGooglePlayServicesInstalled() && UseGooglePlayLocations)
+				if (IsGooglePlayServicesInstalled())
 				{
 					Report("Getting gplay services location async...", 0);
 					// register for location updates
