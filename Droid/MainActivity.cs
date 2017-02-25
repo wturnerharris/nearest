@@ -158,7 +158,10 @@ namespace Nearest.Droid
 			timer.Stop();
 			NearestApp?.DestroyDatabase();
 			NearestApp = null;
-			UnbindService(serviceConnection);
+			if (serviceConnection != null)
+			{
+				UnbindService(serviceConnection);
+			}
 		}
 
 		public int GetStatusBarHeight()
