@@ -39,7 +39,6 @@ namespace Nearest.Droid
 	)]
 	public class MainActivity : Activity,
 	View.IOnTouchListener,
-	Android.Locations.ILocationListener,
 	GoogleApiClient.IConnectionCallbacks,
 	GoogleApiClient.IOnConnectionFailedListener,
 	Android.Gms.Location.ILocationListener,
@@ -58,9 +57,8 @@ namespace Nearest.Droid
 		bool UseGooglePlayLocations;
 		TimeSpan lastUpdated;
 		public Location lastKnown;
-		LocationManager LocationManager;
-		string LocationProvider;
 		System.Timers.Timer timer;
+		LocationServiceConnection serviceConnection;
 
 		readonly string[] PermissionsLocation = {
 			Manifest.Permission.AccessCoarseLocation,
@@ -163,6 +161,7 @@ namespace Nearest.Droid
 			timer.Stop();
 			NearestApp?.DestroyDatabase();
 			NearestApp = null;
+			UnbindService(serviceConnection);
 		}
 
 		public int GetStatusBarHeight()
@@ -367,21 +366,6 @@ namespace Nearest.Droid
 			return conn;
 		}
 
-		public void OnProviderDisabled(string provider)
-		{
-			Report("Disabled: " + provider + ".", 0);
-		}
-
-		public void OnProviderEnabled(string provider)
-		{
-			Report("Enabled:  " + provider + ".", 0);
-		}
-
-		public void OnStatusChanged(string provider, Availability status, Bundle extras)
-		{
-			Report("Changed:  " + provider + ".", 0);
-		}
-
 		/// <summary>
 		/// Tries to get the location.
 		/// </summary>
@@ -489,16 +473,13 @@ namespace Nearest.Droid
 				}
 				else
 				{
-					Report("Getting provider location async...", 0);
 					// try get location via gps directly
-					await Task.Run(() =>
-					{
-						RunOnUiThread(() =>
-						{
-							InitializeLocationManager();
-							LocationManager.RequestLocationUpdates(LocationProvider, 0, 0, this);
-						});
-					});
+					Report(GetString(Resource.String.common_google_play_services_unsupported_text), 0);
+					Snackbar.Make(coordinatorView,
+						Resource.String.error_play_missing,
+						Snackbar.LengthIndefinite)
+					.SetAction(Resource.String.snackbar_button_ok, v => TryLocationService(v))
+					.Show();
 				}
 			}
 			catch (Exception ex)
@@ -514,24 +495,27 @@ namespace Nearest.Droid
 			}
 		}
 
-		void InitializeLocationManager()
+		public void TryLocationService(View v)
 		{
-			LocationManager = (LocationManager)GetSystemService(LocationService);
-			var LocationCrtieria = new Criteria
+			if (serviceConnection == null)
 			{
-				Accuracy = Accuracy.Fine
-			};
-			var acceptableLocationProviders = LocationManager.GetProviders(LocationCrtieria, true);
+				serviceConnection = new LocationServiceConnection(this);
+			}
 
-			if (acceptableLocationProviders.Count > 0)
+			if (serviceConnection.IsConnected)
 			{
-				LocationProvider = acceptableLocationProviders[0];
+				var NewLocation = new Location("LocationService");
+				NewLocation.Latitude = serviceConnection.Binder.Service.GetLocationArray()[0];
+				NewLocation.Longitude = serviceConnection.Binder.Service.GetLocationArray()[1];
+				OnLocationChanged(NewLocation);
 			}
 			else
 			{
-				LocationProvider = string.Empty;
+				var serviceToStart = new Intent(this, typeof(LocationService));
+				BindService(serviceToStart, serviceConnection, Bind.AutoCreate);
+
+				Report("Location Service not connected.", 0);
 			}
-			Report("Using " + LocationManager + " . " + LocationProvider, 0);
 		}
 
 		/// <summary>
@@ -543,7 +527,6 @@ namespace Nearest.Droid
 			{
 				LocationServices.FusedLocationApi.RemoveLocationUpdates(googleApiClient, this);
 			}
-			LocationManager?.RemoveUpdates(this);
 			lastUpdated = DateTime.Now.TimeOfDay;
 		}
 
