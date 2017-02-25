@@ -19,6 +19,10 @@ namespace Nearest.Droid
 	public class Detail : Activity
 	{
 		public bool isFullscreen;
+		Train train;
+		List<Train> trains;
+		public List<View> detailLabels;
+		public List<View> timeLabels;
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
@@ -58,14 +62,14 @@ namespace Nearest.Droid
 			ButtonClose.Click += (sender, e) => Finish();
 
 			LinearLayout detailView = FindViewById<LinearLayout>(Resource.Id.DetailInfo);
-			List<View> detailLabels = MainActivity.GetViewsByTag(detailView, "detail");
-			List<View> timeLabels = MainActivity.GetViewsByTag(detailView, "time");
+			detailLabels = MainActivity.GetViewsByTag(detailView, "detail");
+			timeLabels = MainActivity.GetViewsByTag(detailView, "time");
 			List<View> points = MainActivity.GetViewsByTag(detailView, "point");
 
 			var nearestTrain = Intent.GetStringExtra("nearestTrain");
 			if (nearestTrain != null)
 			{
-				Train train = Newtonsoft.Json.JsonConvert.DeserializeObject<Train>(nearestTrain);
+				train = Newtonsoft.Json.JsonConvert.DeserializeObject<Train>(nearestTrain);
 				if (detailLabels.Count > 0 && train != null)
 				{
 					TextView DetailRouteId = FindViewById<TextView>(Resource.Id.DetailRouteId);
@@ -94,7 +98,7 @@ namespace Nearest.Droid
 			var fartherTrains = Intent.GetStringExtra("fartherTrains");
 			if (fartherTrains != null)
 			{
-				List<Train> trains = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Train>>(fartherTrains);
+				trains = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Train>>(fartherTrains);
 				int i = 0;
 				int ce = 0;
 				if (timeLabels.Count > 0 && trains != null && trains.Count > 0)
