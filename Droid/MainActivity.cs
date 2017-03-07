@@ -269,7 +269,6 @@ namespace Nearest.Droid
 				}
 				Report("Waking up, restarting app...", 0);
 				HandleConnections();
-				StartApplication();
 			}
 			else
 			{
@@ -298,32 +297,6 @@ namespace Nearest.Droid
 			base.OnPause();
 			timer.Stop();
 			EndLocationUpdates();
-		}
-
-		public void StartApplication()
-		{
-			if (NearestApp == null)
-			{
-				SQLite.Net.Interop.ISQLitePlatform platform;
-				platform = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid();
-				string[] prefs = {
-						Settings.UomDistance.ToString(),
-						Settings.UomDistanceThreshold.ToString(),
-						Settings.UomTime.ToString(),
-						Settings.UomTimeThreshold.ToString()
-					};
-				NearestApp = new Nearest(platform, new Utility(), prefs);
-			}
-			else
-			{
-				Report("Using existing NearestApp instance. Setting next trains", 0);
-			}
-			if (lastKnown != null && NearestApp != null)
-			{
-				GetTrainModels(lastKnown);
-				Report("StartApplication => GetTrainModels", 0);
-			}
-			SetNextTrains("Start Application...");
 		}
 
 		/// <summary>
