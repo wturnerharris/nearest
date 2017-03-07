@@ -304,18 +304,15 @@ namespace Nearest.Droid
 		{
 			if (NearestApp == null)
 			{
-				Task.Run(() =>
-				{
-					SQLite.Net.Interop.ISQLitePlatform platform;
-					platform = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid();
-					string[] prefs = {
+				SQLite.Net.Interop.ISQLitePlatform platform;
+				platform = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid();
+				string[] prefs = {
 						Settings.UomDistance.ToString(),
 						Settings.UomDistanceThreshold.ToString(),
 						Settings.UomTime.ToString(),
 						Settings.UomTimeThreshold.ToString()
 					};
-					NearestApp = new Nearest(platform, new Utility(), prefs);
-				});
+				NearestApp = new Nearest(platform, new Utility(), prefs);
 			}
 			else
 			{
