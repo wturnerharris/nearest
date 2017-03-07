@@ -6,9 +6,9 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using Android.Graphics;
 
 using Nearest.Models;
-using Android.Graphics;
 
 namespace Nearest.Droid
 {
@@ -16,9 +16,13 @@ namespace Nearest.Droid
 		Label = "Detail",
 		ScreenOrientation = ScreenOrientation.Portrait
 	)]
-	public class Detail : Activity
+	public class Detail : Activity, View.IOnTouchListener
 	{
 		public bool isFullscreen;
+		Train train;
+		List<Train> trains;
+		public List<View> detailLabels;
+		public List<View> timeLabels;
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
@@ -58,14 +62,15 @@ namespace Nearest.Droid
 			ButtonClose.Click += (sender, e) => Finish();
 
 			LinearLayout detailView = FindViewById<LinearLayout>(Resource.Id.DetailInfo);
-			List<View> detailLabels = MainActivity.GetViewsByTag(detailView, "detail");
-			List<View> timeLabels = MainActivity.GetViewsByTag(detailView, "time");
+			detailView.SetOnTouchListener(this);
+			detailLabels = MainActivity.GetViewsByTag(detailView, "detail");
+			timeLabels = MainActivity.GetViewsByTag(detailView, "time");
 			List<View> points = MainActivity.GetViewsByTag(detailView, "point");
 
 			var nearestTrain = Intent.GetStringExtra("nearestTrain");
 			if (nearestTrain != null)
 			{
-				Train train = Newtonsoft.Json.JsonConvert.DeserializeObject<Train>(nearestTrain);
+				train = Newtonsoft.Json.JsonConvert.DeserializeObject<Train>(nearestTrain);
 				if (detailLabels.Count > 0 && train != null)
 				{
 					TextView DetailRouteId = FindViewById<TextView>(Resource.Id.DetailRouteId);
@@ -83,7 +88,7 @@ namespace Nearest.Droid
 								detailLabel.Text = train.stop_name;
 								break;
 							case 2:
-								detailLabel.Text = train.TimeString();
+								detailLabel.Text = train.TimeString;
 								break;
 						}
 						t++;
@@ -94,7 +99,7 @@ namespace Nearest.Droid
 			var fartherTrains = Intent.GetStringExtra("fartherTrains");
 			if (fartherTrains != null)
 			{
-				List<Train> trains = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Train>>(fartherTrains);
+				trains = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Train>>(fartherTrains);
 				int i = 0;
 				int ce = 0;
 				if (timeLabels.Count > 0 && trains != null && trains.Count > 0)
@@ -106,7 +111,7 @@ namespace Nearest.Droid
 						{
 							Train fartherTrain = trains[i];
 							timeLabel.Visibility = ViewStates.Visible;
-							timeLabel.Text = fartherTrain.TimeString();
+							timeLabel.Text = fartherTrain.TimeString;
 							points[i + ce].Visibility = ViewStates.Visible;
 							points[i + ce + 1].Visibility = ViewStates.Visible;
 						}
@@ -121,6 +126,49 @@ namespace Nearest.Droid
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// Raises the touch event.
+		/// </summary>
+		/// <param name="v">View.</param>
+		/// <param name="e">MotionEvent.</param>
+		public bool OnTouch(View v, MotionEvent e)
+		{
+			switch (e.Action)
+			{
+				case MotionEventActions.Move:
+					//still moving
+					break;
+				case MotionEventActions.Down:
+					//finger down
+					SetTimeLabels("arrival_time");
+					break;
+				case MotionEventActions.Up:
+					//finger up
+					SetTimeLabels("TimeString");
+					break;
+			}
+
+			return true;
+		}
+
+		void SetTimeLabels(string property)
+		{
+			int i = 0;
+			(detailLabels[2] as TextView).Text = (string)GetProperty(train, property);
+			foreach (TextView timeLabel in timeLabels)
+			{
+				if (trains.Equals(null))
+					continue;
+				timeLabel.Text = (string)GetProperty(trains[i], property);
+				i++;
+			}
+		}
+
+		object GetProperty(object obj, string prop)
+		{
+			return obj?.GetType().GetProperty(prop).GetValue(obj);
 		}
 	}
 }

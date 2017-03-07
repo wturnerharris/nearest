@@ -38,14 +38,20 @@ namespace Nearest.Models
 			return (TotalSeconds < seconds);
 		}
 
-		public string TimeString()
+		public string TimeString
 		{
-			return TimeInMinutesString(ts);
+			get
+			{
+				return TimeInMinutesString(ts);
+			}
 		}
 
-		public double Time()
+		public double TimeRemaining
 		{
-			return TimeInMinutes(ts);
+			get
+			{
+				return TimeInMinutes(ts);
+			}
 		}
 
 		/**

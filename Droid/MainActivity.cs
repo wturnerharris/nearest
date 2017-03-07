@@ -81,9 +81,8 @@ namespace Nearest.Droid
 			var preferences = FindViewById<Button>(Resource.Id.toolbarButton);
 			preferences.Click += (sender, e) =>
 			{
-				ActivityOptions options = ActivityOptions.MakeSceneTransitionAnimation(this);
 				var pendingIntent = new Intent(this, typeof(Popup));
-				StartActivity(pendingIntent, options.ToBundle());
+				StartActivity(pendingIntent);
 			};
 
 			// Set Typeface and Styles
@@ -191,7 +190,8 @@ namespace Nearest.Droid
 			{
 				startY = (int)e.RawY;
 			}
-			else {
+			else
+			{
 				direction = startY - (int)e.RawY;
 			}
 			switch (e.Action)
@@ -268,7 +268,6 @@ namespace Nearest.Droid
 				}
 				Report("Waking up, restarting app...", 0);
 				HandleConnections();
-				StartApplication();
 			}
 			else
 			{
@@ -297,35 +296,6 @@ namespace Nearest.Droid
 			base.OnPause();
 			timer.Stop();
 			EndLocationUpdates();
-		}
-
-		public void StartApplication()
-		{
-			if (NearestApp == null)
-			{
-				Task.Run(() =>
-				{
-					SQLite.Net.Interop.ISQLitePlatform platform;
-					platform = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid();
-					string[] prefs = {
-						Settings.UomDistance.ToString(),
-						Settings.UomDistanceThreshold.ToString(),
-						Settings.UomTime.ToString(),
-						Settings.UomTimeThreshold.ToString()
-					};
-					NearestApp = new Nearest(platform, new Utility(), prefs);
-				});
-			}
-			else
-			{
-				Report("Using existing NearestApp instance. Setting next trains", 0);
-			}
-			if (lastKnown != null && NearestApp != null)
-			{
-				GetTrainModels(lastKnown);
-				Report("StartApplication => GetTrainModels", 0);
-			}
-			SetNextTrains("Start Application...");
 		}
 
 		/// <summary>
@@ -669,7 +639,7 @@ namespace Nearest.Droid
 									button.EndAngle = 0; //reset angle
 									button.EnterReveal();
 
-									var timing = (int)nearestTrain.Time();
+									var timing = (int)nearestTrain.TimeRemaining;
 									var duration = (timing <= 0 ? 1000 : timing) * 60 * 1000;
 									var animation = new CircleView.CircleAngleAnimation(button, 359);
 									animation.Duration = duration;
@@ -679,7 +649,7 @@ namespace Nearest.Droid
 
 								if (time != null)
 								{
-									time.Text = nearestTrain.TimeString();
+									time.Text = nearestTrain.TimeString;
 								}
 
 								if (!button.HasOnClickListeners)
@@ -917,7 +887,7 @@ namespace Nearest.Droid
 					};
 				}
 				trainLVM.SetLocation(locationData.Latitude, locationData.Longitude);
-				Report("UseNet: " + Settings.UseInternetServices, 1);
+				Report("UseNet: " + Settings.UseInternetServices, 0);
 
 				if (IsConnected() && Settings.UseInternetServices)
 				{
@@ -929,10 +899,23 @@ namespace Nearest.Droid
 				{
 					// get the trains from schedule
 					Report("Getting train synchronously...", 0);
-					Task.Run(() => trainLVM.GetTrains(NearestApp));
+					Task.Run(() =>
+					{
+						SQLite.Net.Interop.ISQLitePlatform platform;
+						platform = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid();
+						string[] prefs = {
+							Settings.UomDistance.ToString(),
+							Settings.UomDistanceThreshold.ToString(),
+							Settings.UomTime.ToString(),
+							Settings.UomTimeThreshold.ToString()
+						};
+						NearestApp = new Nearest(platform, new Utility(), prefs);
+						trainLVM.GetTrains(NearestApp);
+					});
 				}
 			}
-			else {
+			else
+			{
 				Report("Location missing", 2);
 			}
 		}
