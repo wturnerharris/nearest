@@ -918,7 +918,7 @@ namespace Nearest.Droid
 					};
 				}
 				trainLVM.SetLocation(locationData.Latitude, locationData.Longitude);
-				Report("UseNet: " + Settings.UseInternetServices, 1);
+				Report("UseNet: " + Settings.UseInternetServices, 0);
 
 				if (IsConnected() && Settings.UseInternetServices)
 				{
