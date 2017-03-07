@@ -191,7 +191,8 @@ namespace Nearest.Droid
 			{
 				startY = (int)e.RawY;
 			}
-			else {
+			else
+			{
 				direction = startY - (int)e.RawY;
 			}
 			switch (e.Action)
@@ -669,7 +670,7 @@ namespace Nearest.Droid
 									button.EndAngle = 0; //reset angle
 									button.EnterReveal();
 
-									var timing = (int)nearestTrain.Time();
+									var timing = (int)nearestTrain.TimeRemaining;
 									var duration = (timing <= 0 ? 1000 : timing) * 60 * 1000;
 									var animation = new CircleView.CircleAngleAnimation(button, 359);
 									animation.Duration = duration;
@@ -679,7 +680,7 @@ namespace Nearest.Droid
 
 								if (time != null)
 								{
-									time.Text = nearestTrain.TimeString();
+									time.Text = nearestTrain.TimeString;
 								}
 
 								if (!button.HasOnClickListeners)

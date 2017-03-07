@@ -87,7 +87,7 @@ namespace Nearest.Droid
 								detailLabel.Text = train.stop_name;
 								break;
 							case 2:
-								detailLabel.Text = train.TimeString();
+								detailLabel.Text = train.TimeString;
 								break;
 						}
 						t++;
@@ -110,7 +110,7 @@ namespace Nearest.Droid
 						{
 							Train fartherTrain = trains[i];
 							timeLabel.Visibility = ViewStates.Visible;
-							timeLabel.Text = fartherTrain.TimeString();
+							timeLabel.Text = fartherTrain.TimeString;
 							points[i + ce].Visibility = ViewStates.Visible;
 							points[i + ce + 1].Visibility = ViewStates.Visible;
 						}
