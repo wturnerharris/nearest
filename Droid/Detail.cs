@@ -6,9 +6,9 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using Android.Graphics;
 
 using Nearest.Models;
-using Android.Graphics;
 
 namespace Nearest.Droid
 {
@@ -16,7 +16,7 @@ namespace Nearest.Droid
 		Label = "Detail",
 		ScreenOrientation = ScreenOrientation.Portrait
 	)]
-	public class Detail : Activity
+	public class Detail : Activity, View.IOnTouchListener
 	{
 		public bool isFullscreen;
 		Train train;
@@ -62,6 +62,7 @@ namespace Nearest.Droid
 			ButtonClose.Click += (sender, e) => Finish();
 
 			LinearLayout detailView = FindViewById<LinearLayout>(Resource.Id.DetailInfo);
+			detailView.SetOnTouchListener(this);
 			detailLabels = MainActivity.GetViewsByTag(detailView, "detail");
 			timeLabels = MainActivity.GetViewsByTag(detailView, "time");
 			List<View> points = MainActivity.GetViewsByTag(detailView, "point");
@@ -125,6 +126,49 @@ namespace Nearest.Droid
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// Raises the touch event.
+		/// </summary>
+		/// <param name="v">View.</param>
+		/// <param name="e">MotionEvent.</param>
+		public bool OnTouch(View v, MotionEvent e)
+		{
+			switch (e.Action)
+			{
+				case MotionEventActions.Move:
+					//still moving
+					break;
+				case MotionEventActions.Down:
+					//finger down
+					SetTimeLabels("arrival_time");
+					break;
+				case MotionEventActions.Up:
+					//finger up
+					SetTimeLabels("TimeString");
+					break;
+			}
+
+			return true;
+		}
+
+		void SetTimeLabels(string property)
+		{
+			int i = 0;
+			(detailLabels[2] as TextView).Text = (string)GetProperty(train, property);
+			foreach (TextView timeLabel in timeLabels)
+			{
+				if (trains.Equals(null))
+					continue;
+				timeLabel.Text = (string)GetProperty(trains[i], property);
+				i++;
+			}
+		}
+
+		object GetProperty(object obj, string prop)
+		{
+			return obj?.GetType().GetProperty(prop).GetValue(obj);
 		}
 	}
 }
