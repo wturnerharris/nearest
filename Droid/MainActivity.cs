@@ -900,10 +900,23 @@ namespace Nearest.Droid
 				{
 					// get the trains from schedule
 					Report("Getting train synchronously...", 0);
-					Task.Run(() => trainLVM.GetTrains(NearestApp));
+					Task.Run(() =>
+					{
+						SQLite.Net.Interop.ISQLitePlatform platform;
+						platform = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid();
+						string[] prefs = {
+							Settings.UomDistance.ToString(),
+							Settings.UomDistanceThreshold.ToString(),
+							Settings.UomTime.ToString(),
+							Settings.UomTimeThreshold.ToString()
+						};
+						NearestApp = new Nearest(platform, new Utility(), prefs);
+						trainLVM.GetTrains(NearestApp);
+					});
 				}
 			}
-			else {
+			else
+			{
 				Report("Location missing", 2);
 			}
 		}
