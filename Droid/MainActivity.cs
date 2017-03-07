@@ -81,9 +81,8 @@ namespace Nearest.Droid
 			var preferences = FindViewById<Button>(Resource.Id.toolbarButton);
 			preferences.Click += (sender, e) =>
 			{
-				ActivityOptions options = ActivityOptions.MakeSceneTransitionAnimation(this);
 				var pendingIntent = new Intent(this, typeof(Popup));
-				StartActivity(pendingIntent, options.ToBundle());
+				StartActivity(pendingIntent);
 			};
 
 			// Set Typeface and Styles
