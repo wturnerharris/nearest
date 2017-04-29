@@ -23,6 +23,7 @@ using Android.Gms.Common.Apis;
 using Android.Util;
 
 using Nearest.ViewModels;
+using Nearest.Models;
 using SettingsStudio;
 
 namespace Nearest.Droid
@@ -615,16 +616,25 @@ namespace Nearest.Droid
 
 							if (nearestTrain != null && !stop.stale)
 							{
+								var unixDate = Train.FromUnixTime(nearestTrain.ts);
+								var uds = unixDate.ToString();
+								var now = DateTime.UtcNow.ToString();
+								var timeSpan = (unixDate.TimeOfDay - DateTime.UtcNow.TimeOfDay);
 								if (nearestTrain.ExpiredUnder(15))
 								{
-									Report("===> ExpiredUnder: " + nearestTrain.Time() + ", " + nearestTrain.ts + ", " + nearestTrain.arrival_time, 0);
+									Report($"===> ExpiredUnder: {nearestTrain.TimeRemaining}, {nearestTrain.ts}, {nearestTrain.arrival_time}", 0);
+									Report($"===> UnixDateTime: {uds}, Now: {now}, Span: {timeSpan}", 0);
+
 									stop.shift();
 									animate = true;
 									continue;
 								}
-								else {
-									Report("===> Times: " + nearestTrain.Time() + ", " + nearestTrain.ts + ", " + nearestTrain.arrival_time, 0);
+								else
+								{
+									Report($"===> Times: {nearestTrain.TimeRemaining}, {nearestTrain.ts}, {nearestTrain.arrival_time}", 0);
+									Report($"===> UnixDateTime: {uds}, Now: {now}, Span: {timeSpan}", 0);
 								}
+
 								var trainColor = GetTrainColor(nearestTrain.route_id);
 								var trainTextColor = GetTrainTextColor(nearestTrain.route_id);
 								button.Text = nearestTrain.route_id.Substring(0, 1);
